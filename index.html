@@ -120,7 +120,7 @@
                         </div>
                     </div>
                     <div class="p-3 bg-indigo-950/40 rounded-xl border border-indigo-900/30">
-                        <p class="text-[11px] text-indigo-300">ℹ️ <strong>Sistem Pintar Aktif:</strong> Bulan mulai cicilan Anda akan dihitung otomatis secara real-time berdasarkan sisa periode aktif yang diatur pada panel administrasi global.</p>
+                        <p class="text-[11px] text-indigo-300">ℹ️ <strong>Sistem Pintar Aktif:</strong> Bulan mulai cicilan dihitung otomatis. Kode unik hanya dibuat 1x saat pendaftaran dan dikunci secara permanen.</p>
                     </div>
                     <button type="submit" class="w-full bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-bold py-3.5 px-4 rounded-xl text-sm transition-all shadow-md cursor-pointer text-center">Daftar Buat Akun</button>
                 </form>
@@ -150,11 +150,26 @@
                 </div>
             </div>
 
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="glass-card p-4 bg-emerald-950/20 border-emerald-500/20">
+                    <span class="text-[11px] text-emerald-400 uppercase tracking-wider block font-medium">Total Sudah Ditransfer</span>
+                    <strong id="lbl-user-transferred-total" class="text-xl text-emerald-300 font-mono block mt-1">Rp 0</strong>
+                </div>
+                <div class="glass-card p-4 bg-slate-900/40">
+                    <span class="text-[11px] text-slate-400 uppercase tracking-wider block font-medium">Alokasi Dana Pokok</span>
+                    <strong id="lbl-user-transferred-pokok" class="text-xl text-white font-mono block mt-1">Rp 0</strong>
+                </div>
+                <div class="glass-card p-4 bg-slate-900/40">
+                    <span class="text-[11px] text-slate-400 uppercase tracking-wider block font-medium">Akumulasi Kode Unik</span>
+                    <strong id="lbl-user-transferred-unik" class="text-xl text-amber-400 font-mono block mt-1">Rp 0</strong>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="space-y-6 lg:col-span-1">
                     <div class="glass-card p-5 space-y-4">
                         <h3 class="text-base font-bold text-indigo-400">➕ Tambah Keluarga (Smart Amortisasi)</h3>
-                        <p class="text-xs text-slate-400">Jika ditambahkan di tengah periode, biaya bulan lalu yang terlewat otomatis dialokasikan ke sisa bulan depan.</p>
+                        <p class="text-xs text-slate-400">Jika ditambahkan saat bulan terlewat, penyesuaian biaya hanya menghitung akumulasi pokok murni tanpa penggandaan kode unik.</p>
                         <form onsubmit="tambahKeluargaBerjalan(event)" class="space-y-3">
                             <div>
                                 <label class="block text-xs font-medium text-slate-400 mb-1">Nama Lengkap</label>
@@ -289,8 +304,8 @@
                         </div>
                     </div>
                     <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800 text-xs flex justify-between items-center">
-                        <div><span class="text-slate-400">Validasi Nominal:</span> <strong id="adm-lbl-hitung-transfer" class="text-amber-400 text-sm block font-mono">Rp 0</strong></div>
-                        <button onclick="saveVerifikasiBulanKaryawanAdmin()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold py-2.5 px-4 rounded-xl cursor-pointer shadow-md">Simpan Konfirmasi</button>
+                        <div><span class="text-slate-400">Validasi Nominal (+Ekor Tetap):</span> <strong id="adm-lbl-hitung-transfer" class="text-amber-400 text-sm block font-mono">Rp 0</strong></div>
+                        <button onclick="saveVerifikasiBulanKaryawanAdmin()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold py-2.5 px-4 rounded-xl cursor-pointer shadow-md">Simpan Confirm</button>
                     </div>
                 </div>
             </div>
@@ -305,7 +320,8 @@
                                 <th class="p-3 text-center">Ekor</th>
                                 <th class="p-3">Keluarga</th>
                                 <th class="p-3 text-center">Total Pax</th>
-                                <th class="p-3">Target Penuh</th>
+                                <th class="p-3">Total Transfer Terverifikasi</th>
+                                <th class="p-3">Rincian Finansial Masuk</th>
                                 <th class="p-3">Status Angsuran Bulanan</th>
                                 <th class="p-3">Aksi Sistem</th>
                             </tr>
@@ -327,8 +343,8 @@
 
         let session = { role: null, userId: null }; 
 
-        if (localStorage.getItem("famGatheringDB_V8")) {
-            DB = JSON.parse(localStorage.getItem("famGatheringDB_V8"));
+        if (localStorage.getItem("famGatheringDB_V9")) {
+            DB = JSON.parse(localStorage.getItem("famGatheringDB_V9"));
         } else {
             saveDB();
         }
@@ -344,7 +360,7 @@
         });
 
         function saveDB() {
-            localStorage.setItem("famGatheringDB_V8", JSON.stringify(DB));
+            localStorage.setItem("famGatheringDB_V9", JSON.stringify(DB));
         }
 
         function initAppCoreData() {
@@ -402,7 +418,7 @@
             return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(num);
         }
 
-        // ================= SECURITY AUTH & SMART RESET ENGINE =================
+        // ================= SECURITY AUTH & ENGINE =================
         function loginAdmin(e) {
             e.preventDefault();
             if(document.getElementById("admin-pass").value === "1234") {
@@ -454,19 +470,19 @@
             if(!namaInput) return showToast("Masukkan nama Anda terlebih dahulu!", "error");
 
             const user = DB.karyawan.find(k => k.nama.toLowerCase() === namaInput.toLowerCase());
-            if(!user) return showToast("Nama karyawan tidak ditemukan di database!", "error");
+            if(!user) return showToast("Nama Karyawan tidak ditemukan!", "error");
 
             if(user.statusReset === true) {
-                showToast("Izin diverifikasi! Silakan buat password baru.");
+                showToast("Izin diverifikasi! Buat password baru.");
                 document.getElementById("form-input-pass-baru").classList.remove("hidden");
                 document.getElementById("btn-cek-izin-reset").classList.add("hidden");
             } else {
-                alert("Peringatan: Silakan hubungi Admin terlebih dahulu untuk mengaktifkan izin reset password Anda!");
+                alert("Silakan hubungi Admin untuk mengaktifkan izin reset password Anda!");
                 showToast("Izin ditolak. Hubungi Admin.", "error");
             }
         }
 
-        function prosesSimpanPasswordBaru() {
+        function prosesPasswordBaru() {
             const namaInput = document.getElementById("reset-nama-user").value.trim();
             const passBaru = document.getElementById("reset-pass-baru").value;
 
@@ -477,7 +493,7 @@
                 DB.karyawan[idx].password = passBaru;
                 DB.karyawan[idx].statusReset = false; 
                 saveDB();
-                showToast("Password berhasil diperbarui! Silakan login.");
+                showToast("Password diperbarui! Silakan login.");
                 tutupModulResetKaryawan();
             }
         }
@@ -488,7 +504,7 @@
                 DB.karyawan[idx].statusReset = true;
                 saveDB();
                 renderTabelAdmin();
-                showToast(`Izin reset password untuk ${namaKaryawan} berhasil dibuka.`);
+                showToast(`Izin reset password untuk ${namaKaryawan} dibuka.`);
             }
         }
 
@@ -537,10 +553,7 @@
             let eCode = Math.floor(Math.random() * 100) + 1;
             while(DB.karyawan.some(k => k.kodeUnik === eCode)) { eCode = Math.floor(Math.random() * 100) + 1; }
 
-            // LOGIKA PINTAR: Mendeteksi bulan berjalan secara otomatis di backend simulasi
-            // Sebagai default pendaftaran baru saat ini, di-set langsung masuk ke "Bulan Ke-1" berjalan
             let bulanMulaiOtomatis = 1; 
-
             const totalPeriode = hitungSisaBulan();
             let bStatus = {};
             
@@ -561,17 +574,20 @@
             saveDB(); 
             initAppCoreData();
             document.getElementById("form-pendaftaran").reset();
-            showToast(`Sukses! Silakan login.`);
+            showToast(`Sukses mendaftar dengan kode ekor ${String(eCode).padStart(3,'0')}.`);
         }
 
+        // LOGIKA BARU: Amortisasi Pokok Murni + 1 Ekor Unik Permanen di Belakang
         function hitungSkemaSkalaBulanKaryawan(user) {
             const totalPeriode = hitungSisaBulan();
             let skemaPerBulan = {};
             
+            // Inisialisasi struktur pokok murni per bulan
             for(let i = 1; i <= totalPeriode; i++) {
-                skemaPerBulan[i] = { murni: 0, tunggakanAmortisasi: 0, totalHarusBayar: 0 };
+                skemaPerBulan[i] = { murniPokok: 0, akumulasiAmortisasiTerlewat: 0, totalPokokBulat: 0, totalHarusBayar: 0 };
             }
 
+            // Distribusikan pokok murni per pax berdasarkan bulan bergabung
             user.manifestPeserta.forEach(p => {
                 const bJoin = p.bulanJoin || 1;
                 const sisaBulanTersedia = totalPeriode - bJoin + 1;
@@ -580,19 +596,65 @@
 
                 for(let i = 1; i <= totalPeriode; i++) {
                     if(i >= bJoin) {
-                        skemaPerBulan[i].murni += nominalBasePerBulan;
+                        skemaPerBulan[i].murniPokok += nominalBasePerBulan;
                         if(akumulasiTerlewat > 0 && sisaBulanTersedia > 0) {
-                            skemaPerBulan[i].tunggakanAmortisasi += Math.floor(akumulasiTerlewat / sisaBulanTersedia);
+                            skemaPerBulan[i].akumulasiAmortisasiTerlewat += Math.floor(akumulasiTerlewat / sisaBulanTersedia);
                         }
                     }
                 }
             });
 
+            // Tumpuk pokok terlewat jika bulan sebelumnya berstatus 'belum/sebagian' tanpa menumpuk kode unik
+            let carryForwardPokok = 0;
             for(let i = 1; i <= totalPeriode; i++) {
-                skemaPerBulan[i].totalHarusBayar = skemaPerBulan[i].murni + skemaPerBulan[i].tunggakanAmortisasi + user.kodeUnik;
+                const statusBulanLalu = user.pembayaranBulanan[i] || "belum";
+                
+                // Pokok bulan ini adalah pokok dasar + hasil penyesuaian pendaftaran keluarga baru
+                let pokokBulanIni = skemaPerBulan[i].murniPokok + skemaPerBulan[i].akumulasiAmortisasiTerlewat;
+                
+                // Tambahkan sisa tunggakan pokok murni bulan lalu
+                skemaPerBulan[i].totalPokokBulat = pokokBulanIni + carryForwardPokok;
+                
+                // Total yang harus ditransfer adalah Total Pokok Bulat + 1 Kode Unik Pendaftaran Permanen
+                skemaPerBulan[i].totalHarusBayar = skemaPerBulan[i].totalPokokBulat + user.kodeUnik;
+
+                // Hitung sisa yang akan dibawa ke bulan depan jika bulan ini dilewati/belum lunas
+                if(statusBulanLalu === "belum" || statusBulanLalu === "terlewat") {
+                    carryForwardPokok = skemaPerBulan[i].totalPokokBulat;
+                    // Pada bulan berjalan berjalan, nilai bayar bulan terlewat yang ditampilkan di-reset murni pokok saja
+                } else if(statusBulanLalu === "sebagian") {
+                    carryForwardPokok = Math.floor(skemaPerBulan[i].totalPokokBulat * 0.5);
+                } else {
+                    carryForwardPokok = 0; // Jika lunas, beban pokok bersih kembali ke normal
+                }
             }
 
             return skemaPerBulan;
+        }
+
+        // Menghitung akumulasi total transfer terkumpul, dipisah Pokok dan Kode Unik
+        function hitungTotalAkumulasiTransferMurni(user) {
+            const totalPeriode = hitungSisaBulan();
+            const skema = hitungSkemaSkalaBulanKaryawan(user);
+            let totalPokok = 0;
+            let totalUnik = 0;
+
+            for(let i = 1; i <= totalPeriode; i++) {
+                const st = user.pembayaranBulanan[i] || "belum";
+                if(st === "lunas") {
+                    totalPokok += skema[i].totalPokokBulat;
+                    totalUnik += user.kodeUnik;
+                } else if(st === "sebagian") {
+                    totalPokok += Math.floor(skema[i].totalPokokBulat * 0.5);
+                    totalUnik += Math.floor(user.kodeUnik * 0.5); // Proporsional
+                }
+            }
+
+            return {
+                pokok: totalPokok,
+                unik: totalUnik,
+                grandTotal: totalPokok + totalUnik
+            };
         }
 
         function renderDashboardKaryawan() {
@@ -602,6 +664,12 @@
             document.getElementById("lbl-user-logged").innerText = user.nama;
             document.getElementById("lbl-user-ekor").innerText = String(user.kodeUnik).padStart(3, '0');
             document.getElementById("lbl-user-total-tagihan").innerText = formatRupiah(user.targetBiayaTotal);
+
+            // Tampilkan Statistik Transfer Murni di Karyawan
+            const danaMasuk = hitungTotalAkumulasiTransferMurni(user);
+            document.getElementById("lbl-user-transferred-total").innerText = formatRupiah(danaMasuk.grandTotal);
+            document.getElementById("lbl-user-transferred-pokok").innerText = formatRupiah(danaMasuk.pokok);
+            document.getElementById("lbl-user-transferred-unik").innerText = formatRupiah(danaMasuk.unik);
 
             const listM = document.getElementById("user-manifest-list");
             listM.innerHTML = user.manifestPeserta.map(p => `
@@ -624,11 +692,11 @@
                 let badge = `<span class="text-rose-400 bg-rose-950/40 border border-rose-900/30 px-2 py-1 rounded-lg text-[11px]">Belum Bayar</span>`;
                 if(status === 'lunas') badge = `<span class="text-emerald-400 bg-emerald-950/40 border border-emerald-900/30 px-2 py-1 rounded-lg text-[11px] font-bold">✓ Terverifikasi Lunas</span>`;
                 if(status === 'sebagian') badge = `<span class="text-amber-400 bg-amber-950/40 border border-amber-900/30 px-2 py-1 rounded-lg text-[11px]">Terbayar Sebagian</span>`;
-                if(status === 'terlewat') badge = `<span class="text-slate-400 bg-slate-900 px-2 py-1 rounded-lg text-[11px]">Nol (Belum Join)</span>`;
+                if(status === 'terlewat') badge = `<span class="text-slate-400 bg-slate-900 px-2 py-1 rounded-lg text-[11px]">Amortisasi Pokok</span>`;
 
-                let rincianText = `Pokok: ${formatRupiah(dataBulan.murni)}`;
-                if(dataBulan.tunggakanAmortisasi > 0) {
-                    rincianText += ` + Penyesuaian Terlewat: ${formatRupiah(dataBulan.tunggakanAmortisasi)}`;
+                let rincianText = `Pokok: ${formatRupiah(dataBulan.totalPokokBulat)}`;
+                if(dataBulan.akumulasiAmortisasiTerlewat > 0) {
+                    rincianText += ` (Inc. Penyesuaian Anggota)`;
                 }
 
                 tbody.innerHTML += `
@@ -666,7 +734,7 @@
                 return showToast("Nama anggota ini sudah ada!", "error");
             }
 
-            // LOGIKA PINTAR: Deteksi otomatis bulan berjalan dinamis
+            // Deteksi otomatis bulan berjalan dinamis untuk pendaftaran keluarga baru
             let bulanBerjalanSekarang = 1;
             const totalPeriode = hitungSisaBulan();
             for(let i = 1; i <= totalPeriode; i++) {
@@ -688,7 +756,7 @@
             renderTabelAdmin();
             document.getElementById("add-fam-nama").value = "";
             document.getElementById("add-fam-usia").value = "";
-            showToast(`Sukses! ${nama} berhasil ditambahkan. Tunggakan bulan terlewat otomatis diamortisasi.`);
+            showToast(`Sukses! ${nama} bergabung di Bulan Ke-${bulanBerjalanSekarang}. Pokok disesuaikan pintar.`);
         }
 
         // ================= BUS ENGINE GRID =================
@@ -724,7 +792,7 @@
                 return;
             }
             tempSelectedSeat = seatId;
-            showToast(`Bangku ${seatId} dipilih. Klik tombol 'Plot Kursi'.`);
+            showToast(`Bangku ${seatId} dipilih. Klik 'Plot Kursi'.`);
         }
 
         function simpanPlotKursiKaryawan() {
@@ -735,7 +803,7 @@
             saveDB(); generateLargeBusSeats(); showToast("Kursi berhasil di-plot!");
         }
 
-        // ================= ADVANCED PANEL ADMIN MANAGEMENT =================
+        // ================= PANEL ADMIN MANAGEMENT =================
         function saveAdminSettings() {
             DB.settings.targetBiaya = parseInt(document.getElementById("adm-target-biaya").value) || 0;
             DB.settings.tglBerangkat = document.getElementById("adm-tgl-berangkat").value;
@@ -804,19 +872,19 @@
                 DB.karyawan[idx].pembayaranBulanan[bulan] = status;
                 saveDB(); 
                 renderTabelAdmin(); 
-                showToast(`Sukses mengubah status Bulan Ke-${bulan} untuk ${nama} menjadi [${status.toUpperCase()}].`);
+                showToast(`Status Dana Masuk Terverifikasi.`);
             }
         }
 
         function renderTabelAdmin() {
             const tbody = document.getElementById("adm-tabel-peserta");
             if (DB.karyawan.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center p-6 text-slate-500">Belum ada data manifest.</td></tr>`; return;
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center p-6 text-slate-500">Belum ada data manifest.</td></tr>`; return;
             }
 
             const totalPeriode = hitungSisaBulan();
             tbody.innerHTML = DB.karyawan.map(k => {
-                const listFam = k.manifestPeserta.map(p => `<li>• ${p.nama} <span class="text-slate-500 text-[10px]">(Join B-${p.bulanJoin || 1})</span></li>`).join("");
+                const listFam = k.manifestPeserta.map(p => `<li>• ${p.nama} <span class="text-slate-500 text-[10px]">(B-${p.bulanJoin || 1})</span></li>`).join("");
                 
                 let logBulan = '<div class="grid grid-cols-2 gap-1 font-mono text-[10px] min-w-[140px]">';
                 for(let i = 1; i <= totalPeriode; i++) {
@@ -829,7 +897,10 @@
                 }
                 logBulan += '</div>';
 
-                const textBtnReset = k.statusReset ? "⏳ Menunggu User" : "🔓 Buka Izin Reset";
+                // Hitung Rincian Real Ditransfer Karyawan di sisi Tabel Master Admin
+                const danaMasuk = hitungTotalAkumulasiTransferMurni(k);
+
+                const textBtnReset = k.statusReset ? "⏳ Menunggu User" : "🔓 Izin Reset";
                 const classBtnReset = k.statusReset ? "bg-amber-950 text-amber-400 border border-amber-800/30" : "bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10";
 
                 return `
@@ -838,7 +909,14 @@
                         <td class="p-3 text-center text-amber-400 font-bold font-mono">${String(k.kodeUnik).padStart(3, '0')}</td>
                         <td class="p-3"><ul class="space-y-0.5 text-slate-300">${listFam}</ul></td>
                         <td class="p-3 text-center font-bold">${k.manifestPeserta.length}</td>
-                        <td class="p-3 font-semibold text-white whitespace-nowrap">${formatRupiah(k.targetBiayaTotal)}</td>
+                        
+                        <td class="p-3 font-bold text-emerald-400 font-mono whitespace-nowrap">${formatRupiah(danaMasuk.grandTotal)}</td>
+                        
+                        <td class="p-3 font-mono text-slate-300 whitespace-nowrap">
+                            <span class="block text-white">Pokok: ${formatRupiah(danaMasuk.pokok)}</span>
+                            <span class="block text-amber-400 text-[10px]">Unik : ${formatRupiah(danaMasuk.unik)}</span>
+                        </td>
+                        
                         <td class="p-3">${logBulan}</td>
                         <td class="p-3">
                             <button onclick="aktifkanIzinResetAdmin('${k.nama}')" class="px-2 py-1.5 rounded text-[10px] font-bold cursor-pointer transition-all ${classBtnReset}">
