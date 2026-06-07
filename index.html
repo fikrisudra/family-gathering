@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporate Family Gathering 2027</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            min-height: 100vh;
+            color: #f8fafc;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 1rem;
+        }
+        .glass-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .glass-input:focus {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #6366f1;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <header class="mb-8 text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-3xl font-bold tracking-tight bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">Family Gathering 2027</h1>
+                <p class="text-slate-400 text-sm mt-1">Sistem Perencanaan & Keuangan Terintegrasi</p>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="switchView('karyawan')" id="btn-nav-karyawan" class="px-4 py-2 rounded-lg font-medium text-sm transition-all bg-indigo-600 text-white">Menu Karyawan</button>
+                <button onclick="switchView('admin')" id="btn-nav-admin" class="px-4 py-2 rounded-lg font-medium text-sm transition-all glass-card text-slate-300 hover:bg-white/5">Panel Admin</button>
+            </div>
+        </header>
+
+        <!-- NOTIFICATION TOAST -->
+        <div id="toast" class="hidden fixed top-5 right-5 z-50 px-4 py-3 rounded-xl shadow-lg text-sm transition-all duration-300 transform translate-y-[-20px] opacity-0"></div>
+
+        <!-- ================= PANEL ADMIN ================= -->
+        <main id="panel-admin" class="hidden space-y-6">
+            <!-- Pengaturan Gathering -->
+            <div class="glass-card p-6">
+                <h2 class="text-xl font-semibold mb-4 text-indigo-400">⚙️ Pengaturan Gathering & Target Keuangan</h2>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Target Biaya / Orang</label>
+                        <input type="number" id="adm-target-biaya" class="w-full glass-input px-3 py-2 rounded-lg text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Bulan Keberangkatan</label>
+                        <input type="month" id="adm-tgl-berangkat" class="w-full glass-input px-3 py-2 rounded-lg text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Buka Pemilihan Kursi?</label>
+                        <select id="adm-status-kursi" class="w-full glass-input px-3 py-2 rounded-lg text-sm">
+                            <option value="tutup">Tutup</option>
+                            <option value="buka">Buka Akses</option>
+                        </select>
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="saveAdminSettings()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition-all shadow-md">Simpan & Update Sistem</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Managemen Kode Registrasi & Data Karyawan -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Generate Token -->
+                <div class="glass-card p-6 h-fit">
+                    <h2 class="text-lg font-semibold mb-3 text-indigo-400">🔑 Token Pendaftaran Karyawan</h2>
+                    <p class="text-xs text-slate-400 mb-4">Generate kode otorisasi unik agar tidak ada pihak luar yang mendaftar tanpa sepengetahuan admin.</p>
+                    <div class="flex gap-2 mb-4">
+                        <input type="text" id="adm-input-token" class="flex-1 glass-input px-3 py-2 rounded-lg text-sm font-mono tracking-wider" placeholder="Ketik/Generate..." readonly>
+                        <button onclick="generateToken()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm px-3 py-2 rounded-lg font-medium">Acak</button>
+                    </div>
+                    <button onclick="addTokenToList()" class="w-full glass-card hover:bg-white/5 text-white text-sm py-2 px-4 rounded-lg font-medium transition-all">Simpan Token Ke Sistem</button>
+                    
+                    <div class="mt-4">
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Daftar Token Aktif:</label>
+                        <div id="adm-token-list" class="flex flex-wrap gap-2 max-h-32 overflow-y-auto p-2 bg-black/20 rounded-lg font-mono text-xs text-cyan-400">
+                            <!-- Token list -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Update Manual Pembayaran -->
+                <div class="glass-card p-6 lg:col-span-2">
+                    <h2 class="text-lg font-semibold mb-3 text-indigo-400">💵 Update Pembayaran Manual (Verifikasi Tanggal 30)</h2>
+                    <p class="text-xs text-slate-400 mb-4">Pilih karyawan dan masukkan total akumulasi dana yang sudah sukses ditransfer sesuai data mutasi rekening.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Pilih Karyawan</label>
+                            <select id="adm-pilih-karyawan" class="w-full glass-input px-3 py-2 rounded-lg text-sm"></select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Total Sudah Dibayar (Rp)</label>
+                            <input type="number" id="adm-nominal-bayar" class="w-full glass-input px-3 py-2 rounded-lg text-sm" placeholder="Contoh: 400035">
+                        </div>
+                        <div class="flex items-end">
+                            <button onclick="updatePembayaranKaryawan()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition-all">Update Data</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabel Monitoring Database -->
+            <div class="glass-card p-6 overflow-x-auto">
+                <h2 class="text-lg font-semibold mb-4 text-indigo-400">📋 Database Manifest Karyawan & Status Keuangan</h2>
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="border-b border-slate-700 text-slate-400">
+                            <th class="p-3">Nama Karyawan</th>
+                            <th class="p-3">Token Pengikut</th>
+                            <th class="p-3">Total Peserta</th>
+                            <th class="p-3">Kode Unik</th>
+                            <th class="p-3">Target Biaya</th>
+                            <th class="p-3">Sudah Dibayar</th>
+                            <th class="p-3">Status Sisa</th>
+                            <th class="p-3">Kursi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adm-tabel-peserta" class="divide-y divide-slate-800">
+                        <!-- Render via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+        <!-- ================= PANEL KARYAWAN ================= -->
+        <main id="panel-karyawan" class="space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Form Registrasi -->
+                <div class="glass-card p-6 h-fit">
+                    <h2 class="text-xl font-semibold mb-1 text-indigo-400">📝 Pendaftaran Peserta</h2>
+                    <p class="text-xs text-slate-400 mb-4">Silakan masukkan kode dari Admin dan daftarkan anggota keluarga Anda.</p>
+                    
+                    <form id="form-pendaftaran" onsubmit="prosesPendaftaran(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Kode Otorisasi Admin</label>
+                            <input type="text" id="reg-token" class="w-full glass-input px-3 py-2 rounded-lg text-sm font-mono uppercase tracking-wider" required placeholder="X78A-99B">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Nama Lengkap Karyawan</label>
+                            <input type="text" id="reg-nama" class="w-full glass-input px-3 py-2 rounded-lg text-sm" required placeholder="Nama Anda">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Nomor WhatsApp</label>
+                            <input type="tel" id="reg-hp" class="w-full glass-input px-3 py-2 rounded-lg text-sm" required placeholder="08xxxxxxxxxx">
+                        </div>
+
+                        <hr class="border-slate-800 my-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-semibold text-indigo-300">Daftar Anggota Keluarga</span>
+                            <button type="button" onclick="tambahBarisKeluarga()" class="text-xs bg-indigo-600/30 hover:bg-indigo-600 text-indigo-300 hover:text-white px-2 py-1 rounded transition-all">+ Anggota</button>
+                        </div>
+
+                        <!-- Wadah Form Anggota Keluarga dinamis -->
+                        <div id="container-keluarga" class="space-y-3 max-h-60 overflow-y-auto pr-1">
+                            <div class="p-3 bg-white/5 rounded-lg border border-white/5 text-xs">
+                                <span class="font-medium text-indigo-400">Peserta Utama:</span> Diri Sendiri (Karyawan)
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-medium py-2.5 px-4 rounded-lg text-sm transition-all shadow-md mt-2">Daftar & Ambil Kode Unik</button>
+                    </form>
+                </div>
+
+                <!-- Informasi Keuangan & Cek Status Mandiri -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Dashboard Ringkasan Gathering Saat Ini -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="glass-card p-5 flex items-center gap-4">
+                            <div class="p-3 bg-indigo-500/10 rounded-xl text-indigo-400 text-xl">💰</div>
+                            <div>
+                                <p class="text-xs text-slate-400">Target Biaya Master</p>
+                                <p id="lbl-target-master" class="text-lg font-bold text-white">Rp 0</p>
+                                <p id="lbl-info-bulan" class="text-[10px] text-slate-400 mt-0.5">Sisa: - bulan</p>
+                            </div>
+                        </div>
+                        <div class="glass-card p-5 flex items-center gap-4">
+                            <div class="p-3 bg-cyan-500/10 rounded-xl text-cyan-400 text-xl">🚌</div>
+                            <div>
+                                <p class="text-xs text-slate-400">Jadwal Keberangkatan</p>
+                                <p id="lbl-jadwal-master" class="text-lg font-bold text-white">-</p>
+                                <p class="text-[10px] text-emerald-400 mt-0.5">Pemberitahuan: Data diperbarui manual setiap tanggal 30</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pencarian Informasi Pembayaran Per Karyawan -->
+                    <div class="glass-card p-6">
+                        <h2 class="text-lg font-semibold mb-4 text-indigo-400">🔍 Cek Progres Pembayaran & Kode Unik Anda</h2>
+                        <div class="flex gap-2 mb-6">
+                            <input type="text" id="cari-nama-karyawan" class="flex-1 glass-input px-3 py-2 rounded-lg text-sm" placeholder="Masukkan Nama Lengkap Anda saat mendaftar...">
+                            <button onclick="cariDataKaryawan()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-all">Cari</button>
+                        </div>
+
+                        <!-- Tampilan Hasil Pencarian -->
+                        <div id="hasil-pencarian" class="hidden space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                                <div class="bg-black/20 p-3 rounded-lg"><span class="text-slate-400 block">Kode Unik Transfer Anda:</span><strong id="res-kode-unik" class="text-lg text-amber-400 font-mono">-</strong></div>
+                                <div class="bg-black/20 p-3 rounded-lg"><span class="text-slate-400 block">Total Target Biaya (Rombongan):</span><strong id="res-target-total" class="text-lg text-white">-</strong></div>
+                                <div class="bg-black/20 p-3 rounded-lg"><span class="text-slate-400 block">Akumulasi Terbayar (Per Tgl 30):</span><strong id="res-total-terbayar" class="text-lg text-emerald-400">-</strong></div>
+                            </div>
+                            
+                            <!-- Simulasi Per Bulan -->
+                            <div class="bg-white/5 p-4 rounded-xl border border-white/5">
+                                <h3 class="text-xs font-semibold text-indigo-300 mb-2">🗓️ Estimasi Tagihan Bulanan Otomatis</h3>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left border-collapse text-xs">
+                                        <thead>
+                                            <tr class="border-b border-slate-700 text-slate-400">
+                                                <th class="pb-2">Bulan Ke-</th>
+                                                <th class="pb-2">Nominal Tagihan Ideal + Kode Unik</th>
+                                                <th class="pb-2">Status Konfirmasi Admin</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="res-tabel-cicilan" class="divide-y divide-slate-800">
+                                            <!-- Looping bulan -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Menu Pemilihan Kursi Bus -->
+                    <div id="section-kursi-bus" class="glass-card p-6">
+                        <h2 class="text-lg font-semibold mb-2 text-indigo-400">💺 Denah Pemilihan Kursi Bus</h2>
+                        <p id="kursi-status-msg" class="text-xs text-rose-400 mb-4">Menu pemilihan belum dibuka oleh Admin.</p>
+                        
+                        <div id="wrapper-kursi" class="hidden opacity-50 pointer-events-none transition-all">
+                            <div class="flex flex-col md:flex-row gap-4 items-center mb-4">
+                                <select id="sel-karyawan-kursi" class="glass-input px-3 py-1.5 rounded-lg text-xs w-full md:w-64" onchange="loadOpsiManifestKursi()"></select>
+                                <select id="sel-manifest-kursi" class="glass-input px-3 py-1.5 rounded-lg text-xs w-full md:w-64"><option>Pilih Anggota...</option></select>
+                                <button onclick="pesanKursiTerpilih()" class="w-full md:w-auto bg-cyan-600 hover:bg-cyan-700 text-white text-xs px-4 py-2 rounded-lg font-medium">Plot Kursi</button>
+                            </div>
+                            <!-- Denah Grid Kursi -->
+                            <div class="bg-black/30 p-4 rounded-xl max-w-md mx-auto">
+                                <div class="w-full bg-slate-700 text-center py-1 text-[10px] text-slate-300 rounded mb-6 tracking-widest font-bold">KEMUDI SOPIR</div>
+                                <div class="grid grid-cols-5 gap-2 text-center" id="grid-bus-seats">
+                                    <!-- Terisi via JS -->
+                                </div>
+                                <div class="flex justify-center gap-4 mt-4 text-[10px]">
+                                    <div class="flex items-center gap-1"><span class="w-3 h-3 bg-slate-700 rounded block"></span> Tersedia</div>
+                                    <div class="flex items-center gap-1"><span class="w-3 h-3 bg-indigo-600 rounded block"></span> Terisi</div>
+                                    <div class="flex items-center gap-1"><span class="w-3 h-3 bg-emerald-600 rounded block"></span> Kursi Anda</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ================= LOGIKA JAVASCRIPT SYSTEM ================= -->
+    <script>
+        // --- DATA DEFAULT DISET SESUAI PERMINTAAN BARU ---
+        let DB = {
+            settings: { 
+                targetBiaya: 800000,     // Sesuai permintaan baru: Rp 800.000
+                tglBerangkat: "2027-10", // Sesuai permintaan baru: Oktober 2027
+                statusKursi: "tutup" 
+            },
+            tokens: ["ADMIN27", "GATH2027", "VIP2027"],
+            karyawan: [],
+            kursi: {}
+        };
+
+        // Sinkronisasi Local Storage untuk Keperluan Testing Penuh
+        if (localStorage.getItem("famGatheringDB_V2")) {
+            DB = JSON.parse(localStorage.getItem("famGatheringDB_V2"));
+        } else {
+            saveDB();
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            initApp();
+        });
+
+        function saveDB() {
+            localStorage.setItem("famGatheringDB_V2", JSON.stringify(DB));
+        }
+
+        function initApp() {
+            renderGlobalSettings();
+            renderTokenList();
+            renderDropdownKaryawanAdmin();
+            renderTabelAdmin();
+            generateBusSeats();
+        }
+
+        function showToast(message, type = "success") {
+            const t = document.getElementById("toast");
+            t.className = `fixed top-5 right-5 z-50 px-4 py-3 rounded-xl shadow-lg text-sm font-medium transition-all duration-300 ${type === 'success' ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'}`;
+            t.innerText = message;
+            t.classList.remove("hidden");
+            setTimeout(() => { t.style.opacity = "1"; t.style.transform = "translateY(0)"; }, 50);
+            setTimeout(() => {
+                t.style.opacity = "0"; t.style.transform = "translateY(-20px)";
+                setTimeout(() => t.classList.add("hidden"), 300);
+            }, 3000);
+        }
+
+        function switchView(view) {
+            const navKaryawan = document.getElementById("btn-nav-karyawan");
+            const navAdmin = document.getElementById("btn-nav-admin");
+            const pKaryawan = document.getElementById("panel-karyawan");
+            const pAdmin = document.getElementById("panel-admin");
+
+            if (view === 'admin') {
+                pAdmin.classList.remove("hidden"); pKaryawan.classList.add("hidden");
+                navAdmin.className = "px-4 py-2 rounded-lg font-medium text-sm transition-all bg-indigo-600 text-white";
+                navKaryawan.className = "px-4 py-2 rounded-lg font-medium text-sm transition-all glass-card text-slate-300 hover:bg-white/5";
+            } else {
+                pKaryawan.classList.remove("hidden"); pAdmin.classList.add("hidden");
+                navKaryawan.className = "px-4 py-2 rounded-lg font-medium text-sm transition-all bg-indigo-600 text-white";
+                navAdmin.className = "px-4 py-2 rounded-lg font-medium text-sm transition-all glass-card text-slate-300 hover:bg-white/5";
+            }
+        }
+
+        // Hitung Selisih Bulan berdasarkan timeline berjalan saat ini (Juni 2026)
+        function hitungSisaBulan() {
+            const sekarang = new Date("2026-06-07"); 
+            const target = new Date(DB.settings.tglBerangkat + "-30");
+            let months = (target.getFullYear() - sekarang.getFullYear()) * 12 + (target.getMonth() - sekarang.getMonth());
+            return months <= 0 ? 1 : months;
+        }
+
+        function formatRupiah(num) {
+            return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(num);
+        }
+
+        function renderGlobalSettings() {
+            document.getElementById("adm-target-biaya").value = DB.settings.targetBiaya;
+            document.getElementById("adm-tgl-berangkat").value = DB.settings.tglBerangkat;
+            document.getElementById("adm-status-kursi").value = DB.settings.statusKursi;
+
+            document.getElementById("lbl-target-master").innerText = formatRupiah(DB.settings.targetBiaya) + " / Orang";
+            document.getElementById("lbl-jadwal-master").innerText = new Date(DB.settings.tglBerangkat + "-01").toLocaleDateString("id-ID", { year: 'numeric', month: 'long' });
+            document.getElementById("lbl-info-bulan").innerText = `Dibagi Otomatis: ${hitungSisaBulan()} Bulan`;
+
+            const wrapKursi = document.getElementById("wrapper-kursi");
+            const msgKursi = document.getElementById("kursi-status-msg");
+            if (DB.settings.statusKursi === "buka") {
+                wrapKursi.classList.remove("hidden", "opacity-50", "pointer-events-none");
+                msgKursi.className = "text-xs text-emerald-400 mb-4";
+                msgKursi.innerText = "Akses Terbuka! Silakan tentukan nomor bangku rombongan Anda.";
+                renderDropdownKursiKaryawan();
+            } else {
+                wrapKursi.classList.add("hidden", "opacity-50", "pointer-events-none");
+                msgKursi.className = "text-xs text-rose-400 mb-4";
+                msgKursi.innerText = "Menu pemilihan belum dibuka oleh Admin. Akses akan dibuka menjelang hari keberangkatan.";
+            }
+        }
+
+        function saveAdminSettings() {
+            DB.settings.targetBiaya = parseInt(document.getElementById("adm-target-biaya").value) || 0;
+            DB.settings.tglBerangkat = document.getElementById("adm-tgl-berangkat").value;
+            DB.settings.statusKursi = document.getElementById("adm-status-kursi").value;
+            saveDB();
+            initApp();
+            showToast("Pengaturan sistem berhasil diperbarui!");
+            
+            // Jika ada pencarian karyawan yang aktif, perbarui kalkulasinya langsung
+            if(document.getElementById("cari-nama-karyawan").value.trim() !== "") {
+                cariDataKaryawan();
+            }
+        }
+
+        function generateToken() {
+            const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+            let res = "";
+            for (let i = 0; i < 6; i++) res += chars.charAt(Math.floor(Math.random() * chars.length));
+            document.getElementById("adm-input-token").value = res;
+        }
+
+        function addTokenToList() {
+            const tok = document.getElementById("adm-input-token").value;
+            if (!tok) return showToast("Acak kode token terlebih dahulu", "error");
+            if (DB.tokens.includes(tok)) return showToast("Token sudah terdaftar", "error");
+            DB.tokens.push(tok);
+            saveDB();
+            renderTokenList();
+            document.getElementById("adm-input-token").value = "";
+            showToast("Token baru berhasil diaktifkan.");
+        }
+
+        function renderTokenList() {
+            const container = document.getElementById("adm-token-list");
+            container.innerHTML = DB.tokens.length === 0 ? "Tidak ada token aktif." : DB.tokens.map(t => `<span class="bg-indigo-950/80 px-2 py-1 rounded border border-indigo-800/40">${t}</span>`).join("");
+        }
+
+        function tambahBarisKeluarga() {
+            const container = document.getElementById("container-keluarga");
+            const idIdan = "fam-" + Date.now();
+            const div = document.createElement("div");
+            div.id = idIdan;
+            div.className = "grid grid-cols-12 gap-2 p-3 bg-white/5 rounded-lg border border-white/5 items-center";
+            div.innerHTML = `
+                <div class="col-span-4">
+                    <input type="text" placeholder="Nama" class="w-full glass-input px-2 py-1 rounded text-xs fam-nama" required>
+                </div>
+                <div class="col-span-4">
+                    <select class="w-full glass-input px-1 py-1 rounded text-xs fam-hubungan">
+                        <option value="Suami">Suami</option>
+                        <option value="Istri">Istri</option>
+                        <option value="Anak">Anak</option>
+                        <option value="Orang Tua">Orang Tua</option>
+                        <option value="Kakak">Kakak</option>
+                        <option value="Adik">Adik</option>
+                        <option value="Saudara">Saudara</option>
+                        <option value="Keluarga Lainnya">Keluarga Lainnya</option>
+                    </select>
+                </div>
+                <div class="col-span-3">
+                    <input type="number" placeholder="Usia" class="w-full glass-input px-2 py-1 rounded text-xs fam-usia" required>
+                </div>
+                <div class="col-span-1 text-center">
+                    <button type="button" onclick="hapusBarisKeluarga('${idIdan}')" class="text-rose-400 font-bold hover:text-rose-300 text-xs">X</button>
+                </div>
+            `;
+            container.appendChild(div);
+        }
+
+        function hapusBarisKeluarga(id) {
+            document.getElementById(id).remove();
+        }
+
+        function prosesPendaftaran(e) {
+            e.preventDefault();
+            const inputToken = document.getElementById("reg-token").value.trim().toUpperCase();
+            const nama = document.getElementById("reg-nama").value.trim();
+            const hp = document.getElementById("reg-hp").value.trim();
+
+            const tokenIdx = DB.tokens.indexOf(inputToken);
+            if (tokenIdx === -1) return showToast("Kode Otorisasi admin salah atau sudah hangus!", "error");
+
+            if (DB.karyawan.some(k => k.nama.toLowerCase() === nama.toLowerCase())) {
+                return showToast("Nama Karyawan ini sudah terdaftar!", "error");
+            }
+
+            const manifestKeluarga = [{ nama: nama + " (Self)", hubungan: "Karyawan", usia: "-" }];
+            const bNama = document.querySelectorAll(".fam-nama");
+            const bHub = document.querySelectorAll(".fam-hubungan");
+            const bUsia = document.querySelectorAll(".fam-usia");
+
+            bNama.forEach((el, index) => {
+                manifestKeluarga.push({
+                    nama: el.value.trim(),
+                    hubungan: bHub[index].value,
+                    usia: bUsia[index].value
+                });
+            });
+
+            // Mekanisme Keamanan Kode Unik Acak 1-100 (Anti-Tabrakan)
+            const terpakaiCodes = DB.karyawan.map(k => k.kodeUnik);
+            let generatedCode = -1;
+            if (terpakaiCodes.length >= 100) {
+                return showToast("Pendaftaran penuh! Batas limitasi kode unik transfer tercapai.", "error");
+            }
+            while (generatedCode === -1 || terpakaiCodes.includes(generatedCode)) {
+                generatedCode = Math.floor(Math.random() * 100) + 1;
+            }
+
+            const totalAnggota = manifestKeluarga.length;
+            const targetBiayaTotal = totalAnggota * DB.settings.targetBiaya;
+
+            const dataKaryawanBaru = {
+                nama: nama,
+                hp: hp,
+                tokenOtorisasi: inputToken,
+                kodeUnik: generatedCode,
+                totalPeserta: totalAnggota,
+                manifestPeserta: manifestKeluarga,
+                targetBiayaTotal: targetBiayaTotal,
+                sudahDibayar: 0 
+            };
+
+            DB.karyawan.push(dataKaryawanBaru);
+            DB.tokens.splice(tokenIdx, 1); // Hapus token pendaftaran tunggal yang sukses terpakai
+
+            saveDB();
+            initApp();
+
+            document.getElementById("form-pendaftaran").reset();
+            document.getElementById("container-keluarga").innerHTML = `
+                <div class="p-3 bg-white/5 rounded-lg border border-white/5 text-xs"><span class="font-medium text-indigo-400">Peserta Utama:</span> Diri Sendiri (Karyawan)</div>
+            `;
+
+            showToast(`Pendaftaran Berhasil! Kode Unik Transfer Anda: ${generatedCode}`);
+            document.getElementById("cari-nama-karyawan").value = nama;
+            cariDataKaryawan();
+        }
+
+        function cariDataKaryawan() {
+            const namaCari = document.getElementById("cari-nama-karyawan").value.trim().toLowerCase();
+            const karyawan = DB.karyawan.find(k => k.nama.toLowerCase() === namaCari);
+            const boxHasil = document.getElementById("hasil-pencarian");
+
+            if (!karyawan) {
+                boxHasil.classList.add("hidden");
+                return showToast("Nama identitas karyawan tidak ditemukan.", "error");
+            }
+
+            boxHasil.classList.remove("hidden");
+            document.getElementById("res-kode-unik").innerText = String(karyawan.kodeUnik).padStart(3, '0');
+            document.getElementById("res-target-total").innerText = formatRupiah(karyawan.targetBiayaTotal);
+            document.getElementById("res-total-terbayar").innerText = formatRupiah(karyawan.sudahDibayar);
+
+            // Pembagian Otomatis Nominal Tagihan per Bulan Sesuai Sisa Waktu Terbaru
+            const sisaBulan = hitungSisaBulan();
+            const cicilanMurniPerBulan = Math.floor(karyawan.targetBiayaTotal / sisaBulan);
+            const tBody = document.getElementById("res-tabel-cicilan");
+            tBody.innerHTML = "";
+
+            let akumulasiHarusDibayar = 0;
+
+            for (let i = 1; i <= sisaBulan; i++) {
+                // Menyematkan kode unik pada bulan pertama untuk membedakan mutasi dana masuk
+                const tagihanBulanIni = i === 1 ? (cicilanMurniPerBulan + karyawan.kodeUnik) : cicilanMurniPerBulan;
+                akumulasiHarusDibayar += tagihanBulanIni;
+
+                let statusBadge = `<span class="text-rose-400 text-[11px]">Belum Terbayar</span>`;
+                if (karyawan.sudahDibayar >= akumulasiHarusDibayar) {
+                    statusBadge = `<span class="text-emerald-400 font-medium text-[11px]">✓ Lunas Terverifikasi</span>`;
+                } else if (karyawan.sudahDibayar > (akumulasiHarusDibayar - tagihanBulanIni)) {
+                    statusBadge = `<span class="text-amber-400 text-[11px]">Terbayar Sebagian</span>`;
+                }
+
+                tBody.innerHTML += `
+                    <tr class="border-b border-slate-800 text-xs">
+                        <td class="py-2.5 text-slate-300">Bulan ${i}</td>
+                        <td class="py-2.5 font-mono">${formatRupiah(tagihanBulanIni)}</td>
+                        <td class="py-2.5">${statusBadge}</td>
+                    </tr>
+                `;
+            }
+        }
+
+        function renderDropdownKaryawanAdmin() {
+            const select = document.getElementById("adm-pilih-karyawan");
+            select.innerHTML = DB.karyawan.length === 0 ? "<option value=''>Belum ada pendaftar</option>" : DB.karyawan.map(k => `<option value="${k.nama}">${k.nama} (Kode: ${k.kodeUnik})</option>`).join("");
+        }
+
+        function updatePembayaranKaryawan() {
+            const namaKaryawan = document.getElementById("adm-pilih-karyawan").value;
+            const nominal = parseInt(document.getElementById("adm-nominal-bayar").value) || 0;
+
+            if (!namaKaryawan) return showToast("Tidak ada karyawan terpilih", "error");
+
+            const index = DB.karyawan.findIndex(k => k.nama === namaKaryawan);
+            if (index !== -1) {
+                DB.karyawan[index].sudahDibayar = nominal;
+                saveDB();
+                initApp();
+                document.getElementById("adm-nominal-bayar").value = "";
+                showToast(`Data transaksi manual ${namaKaryawan} sukses di-update.`);
+                
+                if(document.getElementById("cari-nama-karyawan").value.trim().toLowerCase() === namaKaryawan.toLowerCase()) {
+                    cariDataKaryawan();
+                }
+            }
+        }
+
+        function renderTabelAdmin() {
+            const tbody = document.getElementById("adm-tabel-peserta");
+            if (DB.karyawan.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center p-4 text-slate-500">Belum ada karyawan yang mendaftar.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = DB.karyawan.map(k => {
+                const sisa = k.targetBiayaTotal - k.sudahDibayar;
+                const statusSisa = sisa <= 0 ? `<span class="bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded-full text-[10px]">Lunas</span>` : `<span class="bg-rose-950 text-rose-400 px-2 py-0.5 rounded-full text-[10px]">Sisa ${formatRupiah(sisa)}</span>`;
+                
+                const kursiKaryawan = [];
+                k.manifestPeserta.forEach(p => {
+                    for (let seatId in DB.kursi) {
+                        if (DB.kursi[seatId] === p.nama) kursiKaryawan.push(`${p.nama.split(" ")[0]}: ${seatId}`);
+                    }
+                });
+
+                return `
+                    <tr class="hover:bg-white/5 border-b border-slate-800">
+                        <td class="p-3 font-medium text-indigo-300">${k.nama}<br><span class="text-slate-500 text-[10px]">${k.hp}</span></td>
+                        <td class="p-3 font-mono">${k.tokenOtorisasi}</td>
+                        <td class="p-3">${k.totalPeserta} Orang</td>
+                        <td class="p-3 font-mono text-amber-400 font-bold">${String(k.kodeUnik).padStart(3, '0')}</td>
+                        <td class="p-3">${formatRupiah(k.targetBiayaTotal)}</td>
+                        <td class="p-3 text-emerald-400 font-mono">${formatRupiah(k.sudahDibayar)}</td>
+                        <td class="p-3">${statusSisa}</td>
+                        <td class="p-3 text-[10px] text-slate-400 max-w-xs overflow-hidden text-ellipsis">${kursiKaryawan.join(", ") || "-"}</td>
+                    </tr>
+                `;
+            }).join("");
+        }
+
+        function renderDropdownKursiKaryawan() {
+            const selKaryawan = document.getElementById("sel-karyawan-kursi");
+            selKaryawan.innerHTML = "<option value=''>Pilih Nama Karyawan Pendaftar...</option>" + DB.karyawan.map(k => `<option value="${k.nama}">${k.nama}</option>`).join("");
+            loadOpsiManifestKursi();
+        }
+
+        function loadOpsiManifestKursi() {
+            const namaKaryawan = document.getElementById("sel-karyawan-kursi").value;
+            const selManifest = document.getElementById("sel-manifest-kursi");
+            if (!namaKaryawan) {
+                selManifest.innerHTML = "<option>Pilih Anggota...</option>";
+                return;
+            }
+            const karyawan = DB.karyawan.find(k => k.nama === namaKaryawan);
+            selManifest.innerHTML = karyawan.manifestPeserta.map(p => {
+                const sudahPunyaKursi = Object.values(DB.kursi).includes(p.nama);
+                return `<option value="${p.nama}" ${sudahPunyaKursi ? 'disabled class="text-slate-500"' : ''}>${p.nama} (${p.hubungan}) ${sudahPunyaKursi ? '[Sudah Di-Plot]' : ''}</option>`;
+            }).join("");
+            generateBusSeats();
+        }
+
+        function generateBusSeats() {
+            const grid = document.getElementById("grid-bus-seats");
+            grid.innerHTML = "";
+            const baris = 10; 
+            const kolom = ["A", "B", "_", "C", "D"];
+
+            const namaKaryawanTerpilih = document.getElementById("sel-karyawan-kursi") ? document.getElementById("sel-karyawan-kursi").value : "";
+            const karyawan = DB.karyawan.find(k => k.nama === namaKaryawanTerpilih);
+            const daftarNamaKeluarga = karyawan ? karyawan.manifestPeserta.map(p => p.nama) : [];
+
+            for (let i = 1; i <= baris; i++) {
+                kolom.forEach(k => {
+                    if (k === "_") {
+                        grid.innerHTML += `<div></div>`;
+                    } else {
+                        const seatId = k + i;
+                        const terisiOleh = DB.kursi[seatId];
+                        let bgClass = "bg-slate-700 hover:bg-slate-600 text-white cursor-pointer";
+                        
+                        if (terisiOleh) {
+                            if (daftarNamaKeluarga.includes(terisiOleh)) {
+                                bgClass = "bg-emerald-600 text-white font-bold cursor-not-allowed";
+                            } else {
+                                bgClass = "bg-indigo-950 border border-indigo-800 text-indigo-500 cursor-not-allowed";
+                            }
+                        }
+
+                        grid.innerHTML += `
+                            <button type="button" onclick="pilihNomorBangku('${seatId}')" title="${terisiOleh ? 'Terisi: ' + terisiOleh : 'Kosong'}" class="${bgClass} text-[10px] p-2 rounded transition-all font-mono">
+                                ${seatId}
+                            </button>
+                        `;
+                    }
+                });
+            }
+        }
+
+        let tempSelectedSeat = null;
+        function pilihNomorBangku(seatId) {
+            if (DB.kursi[seatId]) {
+                return showToast(`Kursi ${seatId} sudah terisi`, "error");
+            }
+            tempSelectedSeat = seatId;
+            showToast(`Kursi ${seatId} dipilih. Klik 'Plot Kursi' untuk mengonfirmasi.`);
+        }
+
+        function pesanKursiTerpilih() {
+            const namaPeserta = document.getElementById("sel-manifest-kursi").value;
+            if (!namaPeserta || namaPeserta.startsWith("Pilih")) return showToast("Pilih salah satu anggota keluarga terlebih dahulu!", "error");
+            if (!tempSelectedSeat) return showToast("Klik salah satu nomor kursi pada denah bus!", "error");
+
+            DB.kursi[tempSelectedSeat] = namaPeserta;
+            saveDB();
+            loadOpsiManifestKursi();
+            tempSelectedSeat = null;
+            renderTabelAdmin();
+            showToast("Sukses melakukan plot alokasi kursi!");
+        }
+    </script>
+</body>
+</html>
