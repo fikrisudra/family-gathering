@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Corporate Family Gathering 2027 - Secure Auth System</title>
+    <title>Corporate Family Gathering 2027 - Advanced Financial System</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,7 +49,7 @@
         <header class="mb-8 text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-5">
             <div>
                 <h1 class="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">Family Gathering 2027</h1>
-                <p class="text-slate-400 text-xs mt-1">Sistem Portal Finansial & Slot Seat Bus Eksekutif</p>
+                <p class="text-slate-400 text-xs mt-1">Sistem Portal Finansial & Smart Amortisasi Tagihan Terlewat</p>
             </div>
             <div id="main-nav" class="flex w-full md:w-auto gap-2 p-1 bg-black/20 rounded-xl border border-white/5">
                 <button onclick="switchPortal('karyawan')" id="nav-karyawan" class="flex-1 md:flex-none text-center px-5 py-3 rounded-lg font-semibold text-sm transition-all bg-indigo-600 text-white shadow-md cursor-pointer">Portal Karyawan</button>
@@ -62,23 +62,42 @@
         <div id="screen-auth-karyawan" class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             <div class="glass-card p-6 space-y-4">
                 <h2 class="text-xl font-bold text-indigo-400">🔑 Masuk Akun Karyawan</h2>
-                <p class="text-xs text-slate-400">Masuk menggunakan nama lengkap dan password yang Anda buat saat pendaftaran.</p>
-                <form onsubmit="loginKaryawan(event)" class="space-y-4">
+                
+                <form id="form-login-karyawan" onsubmit="loginKaryawan(event)" class="space-y-4">
                     <div>
                         <label class="block text-xs font-medium text-slate-400 mb-1.5">Nama Lengkap Sesuai Daftar</label>
                         <input type="text" id="login-nama" class="w-full glass-input px-3 py-3 rounded-xl text-sm" required placeholder="Contoh: Fikri Sudrajat">
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1.5">Password</label>
+                        <div class="flex justify-between items-center mb-1.5">
+                            <label class="block text-xs font-medium text-slate-400">Password</label>
+                            <button type="button" onclick="bukaModulResetKaryawan()" class="text-xs text-indigo-400 hover:underline cursor-pointer">Lupa Password?</button>
+                        </div>
                         <input type="password" id="login-pass-karyawan" class="w-full glass-input px-3 py-3 rounded-xl text-sm" required placeholder="••••••••">
                     </div>
                     <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-4 rounded-xl text-sm transition-all shadow-md cursor-pointer text-center">Masuk ke Dashboard</button>
                 </form>
+
+                <div id="box-reset-password" class="hidden p-4 bg-black/30 rounded-xl border border-white/5 space-y-3">
+                    <h3 class="text-sm font-bold text-amber-400">🔄 Form Pembaruan Password</h3>
+                    <div class="space-y-2">
+                        <label class="block text-[11px] text-slate-400">Masukkan Nama Anda kembali untuk validasi:</label>
+                        <input type="text" id="reset-nama-user" class="w-full glass-input px-3 py-2 rounded-lg text-xs" placeholder="Nama Lengkap">
+                    </div>
+                    <div id="form-input-pass-baru" class="hidden space-y-2">
+                        <label class="block text-[11px] text-emerald-400 font-semibold">Izin Diberikan! Masukkan Password Baru Anda:</label>
+                        <input type="password" id="reset-pass-baru" class="w-full glass-input px-3 py-2 rounded-lg text-xs" placeholder="Minimal 4 karakter">
+                        <button onclick="prosesSimpanPasswordBaru()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-2 rounded-lg cursor-pointer">Simpan Password Baru</button>
+                    </div>
+                    <div class="flex gap-2 pt-1">
+                        <button id="btn-cek-izin-reset" onclick="cekIzinResetKaryawan()" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold py-2 rounded-lg cursor-pointer">Cek Status Izin Reset</button>
+                        <button onclick="tutupModulResetKaryawan()" class="bg-slate-800 text-slate-400 text-xs px-3 py-2 rounded-lg hover:bg-slate-700">Batal</button>
+                    </div>
+                </div>
             </div>
 
             <div class="glass-card p-6 space-y-4">
                 <h2 class="text-xl font-bold text-cyan-400">📝 Registrasi Peserta Baru</h2>
-                <p class="text-xs text-slate-400">Belum terdaftar? Ambil Kode Otorisasi dari admin untuk mendaftarkan akun Anda.</p>
                 <form onsubmit="prosesPendaftaranAwal(event)" id="form-pendaftaran" class="space-y-4">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
@@ -100,6 +119,11 @@
                             <input type="password" id="reg-password" class="w-full glass-input px-3 py-3 rounded-xl text-sm" required placeholder="Minimal 4 Karakter">
                         </div>
                     </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1.5">Bulan Mulai Cicilan</label>
+                        <select id="reg-bulan-mulai" class="w-full glass-input px-3 py-3 rounded-xl text-sm h-[46px]">
+                            </select>
+                    </div>
                     <button type="submit" class="w-full bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-bold py-3.5 px-4 rounded-xl text-sm transition-all shadow-md cursor-pointer text-center">Daftar Buat Akun</button>
                 </form>
             </div>
@@ -107,7 +131,6 @@
 
         <div id="screen-auth-admin" class="hidden max-w-md mx-auto glass-card p-6 space-y-4">
             <h2 class="text-xl font-bold text-amber-400 text-center">🔒 Secure Admin Area</h2>
-            <p class="text-xs text-slate-400 text-center">Masukkan kunci sandi otorisasi panel manajemen.</p>
             <form onsubmit="loginAdmin(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-medium text-slate-400 mb-1.5">Password Testing</label>
@@ -132,8 +155,8 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="space-y-6 lg:col-span-1">
                     <div class="glass-card p-5 space-y-4">
-                        <h3 class="text-base font-bold text-indigo-400">➕ Tambah Keluarga (Bulan Berjalan)</h3>
-                        <p class="text-xs text-slate-400">Anggota baru otomatis dihitung biayanya ke sisa bulan angsuran Anda yang belum lunas terverifikasi.</p>
+                        <h3 class="text-base font-bold text-indigo-400">➕ Tambah Keluarga (Smart Amortisasi)</h3>
+                        <p class="text-xs text-slate-400">Jika ditambahkan di tengah periode, biaya bulan lalu yang terlewat otomatis dialokasikan ke sisa bulan depan.</p>
                         <form onsubmit="tambahKeluargaBerjalan(event)" class="space-y-3">
                             <div>
                                 <label class="block text-xs font-medium text-slate-400 mb-1">Nama Lengkap</label>
@@ -154,7 +177,7 @@
                                     <input type="number" id="add-fam-usia" class="w-full glass-input px-3 py-2.5 rounded-lg text-xs" required placeholder="Thn">
                                 </div>
                             </div>
-                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition-all shadow-md cursor-pointer mt-1">Submit & Kalkulasi Ulang Tagihan</button>
+                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition-all shadow-md cursor-pointer mt-1">Submit & Hitung Ulang</button>
                         </form>
                     </div>
 
@@ -166,13 +189,20 @@
 
                 <div class="lg:col-span-2 space-y-6">
                     <div class="glass-card p-5">
-                        <h3 class="text-base font-bold text-indigo-400 mb-3">🗓️ Detail Rekening Angsuran Bulanan Anda</h3>
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="text-base font-bold text-indigo-400">🗓️ Detail Pembayaran Berjalan Karyawan</h3>
+                            <div class="text-right">
+                                <span class="text-[10px] text-slate-400 block">GRAND TOTAL VALUE</span>
+                                <strong id="lbl-user-total-tagihan" class="text-sm text-cyan-400 font-mono">-</strong>
+                            </div>
+                        </div>
                         <div class="overflow-x-auto">
                             <table class="w-full text-left border-collapse text-xs">
                                 <thead>
                                     <tr class="border-b border-slate-700 text-slate-400 font-medium">
                                         <th class="pb-2">Bulan Tagihan</th>
-                                        <th class="pb-2">Harus Transfer (Cicilan + Ekor)</th>
+                                        <th class="pb-2">Rincian Komponen Skema</th>
+                                        <th class="pb-2">Total Harus Transfer (+Ekor)</th>
                                         <th class="pb-2 text-right">Status Verifikasi</th>
                                     </tr>
                                 </thead>
@@ -183,23 +213,17 @@
 
                     <div class="glass-card p-5 space-y-4">
                         <div>
-                            <h3 class="text-base font-bold text-cyan-400">💺 Plot & Mandiri Edit Kursi Bus (Susunan 3-2 Besar)</h3>
-                            <p id="user-kursi-msg" class="text-xs text-rose-400 mt-0.5">Akses ditutup oleh pihak administrasi.</p>
+                            <h3 class="text-base font-bold text-cyan-400">💺 Plot & Mandiri Edit Kursi Bus</h3>
+                            <p id="user-kursi-msg" class="text-xs text-rose-400 mt-0.5"></p>
                         </div>
                         <div id="user-wrapper-kursi" class="hidden space-y-4">
                             <div class="flex flex-col sm:flex-row gap-3 items-center bg-black/20 p-3 rounded-xl border border-white/5">
                                 <select id="user-sel-manifest" class="w-full sm:flex-1 glass-input px-3 py-2.5 rounded-xl text-xs h-[42px]"></select>
-                                <button onclick="simpanPlotKursiKaryawan()" class="w-full sm:w-auto bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold py-3 px-5 rounded-xl cursor-pointer shadow-md">Plot/Ubah Kursi Terpilih</button>
+                                <button onclick="simpanPlotKursiKaryawan()" class="w-full sm:w-auto bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold py-3 px-5 rounded-xl cursor-pointer shadow-md">Plot Kursi</button>
                             </div>
-                            
                             <div class="bg-black/40 p-4 rounded-xl max-w-md mx-auto border border-slate-800">
                                 <div class="w-full bg-slate-800 text-center py-1 text-[10px] text-slate-400 rounded-lg mb-5 font-bold tracking-widest">FRONT / DRIVER AREA</div>
                                 <div class="grid grid-cols-6 gap-1.5 text-center" id="bus-large-grid"></div>
-                                <div class="flex justify-center gap-3 mt-5 text-[9px] text-slate-400 bg-black/30 p-2 rounded-lg">
-                                    <div class="flex items-center gap-1"><span class="w-3 h-3 bg-slate-700 rounded-sm block"></span> Kosong</div>
-                                    <div class="flex items-center gap-1"><span class="w-3 h-3 bg-indigo-950 border border-indigo-700 rounded-sm block"></span> Orang Lain</div>
-                                    <div class="flex items-center gap-1"><span class="w-3 h-3 bg-emerald-600 rounded-sm block"></span> Rombongan Anda</div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -220,7 +244,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-slate-400 mb-1.5">Bulan Keberangkatan</label>
-                        <input type="month" id="adm-tgl-berangkat" class="w-full glass-input px-3 py-3 rounded-xl text-sm" onchange="updateInfoBulanAdmin()">
+                        <input type="month" id="adm-tgl-berangkat" class="w-full glass-input px-3 py-3 rounded-xl text-sm" onchange="saveAdminSettings()">
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-slate-400 mb-1.5">Akses Kursi Bus</label>
@@ -230,7 +254,7 @@
                         </select>
                     </div>
                     <div class="flex items-end">
-                        <button onclick="saveAdminSettings()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold py-3 px-4 rounded-xl transition-all shadow-md cursor-pointer">Simpan Perubahan Global</button>
+                        <button onclick="saveAdminSettings()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold py-3 px-4 rounded-xl transition-all shadow-md cursor-pointer">Simpan Parameter</button>
                     </div>
                 </div>
             </div>
@@ -242,11 +266,8 @@
                         <input type="text" id="adm-input-token" class="flex-1 glass-input px-3 py-3 rounded-xl text-sm font-mono tracking-wider" readonly placeholder="Klik Acak...">
                         <button onclick="generateToken()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm px-4 py-3 rounded-xl font-bold cursor-pointer">Acak</button>
                     </div>
-                    <button onclick="addTokenToList()" class="w-full bg-white/5 hover:bg-white/10 text-white text-xs py-2.5 rounded-xl border border-white/10 transition-all font-semibold cursor-pointer">Aktifkan Kode</button>
-                    <div class="space-y-1">
-                        <span class="text-[11px] text-slate-400 block font-medium">Token Aktif Tersedia:</span>
-                        <div id="adm-token-list" class="flex flex-wrap gap-1.5 p-2 bg-black/30 rounded-lg min-h-[36px] text-cyan-400 font-mono text-[10px]"></div>
-                    </div>
+                    <button onclick="addTokenToList()" class="w-full bg-white/5 hover:bg-white/10 text-white text-xs py-2.5 rounded-xl border border-white/10 font-semibold cursor-pointer">Aktifkan Kode</button>
+                    <div id="adm-token-list" class="flex flex-wrap gap-1.5 p-2 bg-black/30 rounded-lg min-h-[36px] text-cyan-400 font-mono text-[10px]"></div>
                 </div>
 
                 <div class="glass-card p-5 lg:col-span-2 space-y-4">
@@ -278,7 +299,7 @@
 
             <div class="glass-card p-5">
                 <h3 class="text-base font-bold text-amber-400 mb-3">📋 Database Master Finansial & Manifest Gathering Komplit</h3>
-                <div class="overflow-x-auto -mx-5 md:mx-0">
+                <div class="overflow-x-auto">
                     <table class="min-w-full text-left border-collapse text-xs">
                         <thead>
                             <tr class="border-b border-slate-700 bg-black/40 text-slate-400 font-semibold">
@@ -287,8 +308,8 @@
                                 <th class="p-3">Keluarga</th>
                                 <th class="p-3 text-center">Total Pax</th>
                                 <th class="p-3">Target Penuh</th>
-                                <th class="p-3">Status Angsuran</th>
-                                <th class="p-3">Plot Kursi Bus</th>
+                                <th class="p-3">Status Angsuran Bulanan</th>
+                                <th class="p-3">Aksi Sistem</th>
                             </tr>
                         </thead>
                         <tbody id="adm-tabel-peserta" class="divide-y divide-slate-800 bg-black/5"></tbody>
@@ -308,8 +329,8 @@
 
         let session = { role: null, userId: null }; 
 
-        if (localStorage.getItem("famGatheringDB_V6")) {
-            DB = JSON.parse(localStorage.getItem("famGatheringDB_V6"));
+        if (localStorage.getItem("famGatheringDB_V8")) {
+            DB = JSON.parse(localStorage.getItem("famGatheringDB_V8"));
         } else {
             saveDB();
         }
@@ -322,10 +343,11 @@
         document.addEventListener("DOMContentLoaded", () => {
             renderUIRoleState();
             initAppCoreData();
+            populateMulaiBulanDropdown();
         });
 
         function saveDB() {
-            localStorage.setItem("famGatheringDB_V6", JSON.stringify(DB));
+            localStorage.setItem("famGatheringDB_V8", JSON.stringify(DB));
         }
 
         function initAppCoreData() {
@@ -343,6 +365,15 @@
             }
         }
 
+        function populateMulaiBulanDropdown() {
+            const select = document.getElementById("reg-bulan-mulai");
+            select.innerHTML = "";
+            const totalBulan = hitungSisaBulan();
+            for(let i = 1; i <= totalBulan; i++) {
+                select.innerHTML += `<option value="${i}">Mulai dari Bulan Ke-${i}</option>`;
+            }
+        }
+
         function showToast(message, type = "success") {
             const t = document.getElementById("toast");
             t.className = `fixed top-5 right-5 z-50 px-5 py-3.5 rounded-xl shadow-2xl text-sm font-semibold transition-all duration-300 ${type === 'success' ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'} max-w-sm w-full`;
@@ -356,7 +387,6 @@
 
         function switchPortal(target) {
             if (session.role) return; 
-            
             const btnK = document.getElementById("nav-karyawan");
             const btnA = document.getElementById("nav-admin");
             const scrK = document.getElementById("screen-auth-karyawan");
@@ -384,18 +414,17 @@
             return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(num);
         }
 
-        // ================= SECURITY AUTH LOGIC =================
+        // ================= SECURITY AUTH & SMART RESET ENGINE =================
         function loginAdmin(e) {
             e.preventDefault();
-            const pass = document.getElementById("admin-pass").value;
-            if(pass === "1234") {
+            if(document.getElementById("admin-pass").value === "1234") {
                 session.role = "admin";
                 localStorage.setItem("gatherSessionRole", "admin");
                 showToast("Autentikasi Admin berhasil.");
                 renderUIRoleState();
                 initAppCoreData();
             } else {
-                showToast("Password salah! Akses ditolak.", "error");
+                showToast("Password salah!", "error");
             }
         }
 
@@ -403,8 +432,8 @@
             e.preventDefault();
             const nama = document.getElementById("login-nama").value.trim().toLowerCase();
             const pass = document.getElementById("login-pass-karyawan").value;
-
             const user = DB.karyawan.find(k => k.nama.toLowerCase() === nama && k.password === pass);
+            
             if(user) {
                 session.role = "karyawan";
                 session.userId = user.nama;
@@ -414,17 +443,72 @@
                 renderUIRoleState();
                 renderDashboardKaryawan();
             } else {
-                showToast("Nama atau password Anda salah!", "error");
+                showToast("Nama atau password salah!", "error");
+            }
+        }
+
+        // FUNGSI LUPA/RESET PASSWORD SISI KARYAWAN
+        function bukaModulResetKaryawan() {
+            document.getElementById("form-login-karyawan").classList.add("hidden");
+            document.getElementById("box-reset-password").classList.remove("hidden");
+            document.getElementById("form-input-pass-baru").classList.add("hidden");
+            document.getElementById("btn-cek-izin-reset").classList.remove("hidden");
+        }
+
+        function tutupModulResetKaryawan() {
+            document.getElementById("box-reset-password").classList.add("hidden");
+            document.getElementById("form-login-karyawan").classList.remove("hidden");
+            document.getElementById("reset-nama-user").value = "";
+            document.getElementById("reset-pass-baru").value = "";
+        }
+
+        function cekIzinResetKaryawan() {
+            const namaInput = document.getElementById("reset-nama-user").value.trim();
+            if(!namaInput) return showToast("Masukkan nama Anda terlebih dahulu!", "error");
+
+            const user = DB.karyawan.find(k => k.nama.toLowerCase() === namaInput.toLowerCase());
+            if(!user) return showToast("Nama karyawan tidak ditemukan di database!", "error");
+
+            if(user.statusReset === true) {
+                showToast("Izin diverifikasi! Silakan buat password baru.");
+                document.getElementById("form-input-pass-baru").classList.remove("hidden");
+                document.getElementById("btn-cek-izin-reset").classList.add("hidden");
+            } else {
+                alert("Peringatan: Silakan hubungi Admin terlebih dahulu untuk mengaktifkan izin reset password Anda!");
+                showToast("Izin ditolak. Hubungi Admin.", "error");
+            }
+        }
+
+        function prosesSimpanPasswordBaru() {
+            const namaInput = document.getElementById("reset-nama-user").value.trim();
+            const passBaru = document.getElementById("reset-pass-baru").value;
+
+            if(passBaru.length < 4) return showToast("Password minimal 4 karakter!", "error");
+
+            const idx = DB.karyawan.findIndex(k => k.nama.toLowerCase() === namaInput.toLowerCase());
+            if(idx !== -1) {
+                DB.karyawan[idx].password = passBaru;
+                DB.karyawan[idx].statusReset = false; // Kunci kembali izin reset setelah dipakai
+                saveDB();
+                showToast("Password berhasil diperbarui! Silakan login.");
+                tutupModulResetKaryawan();
+            }
+        }
+
+        // FUNGSI AKTIVASI IZIN RESET SISI ADMIN
+        function aktifkanIzinResetAdmin(namaKaryawan) {
+            const idx = DB.karyawan.findIndex(k => k.nama === namaKaryawan);
+            if(idx !== -1) {
+                DB.karyawan[idx].statusReset = true;
+                saveDB();
+                renderTabelAdmin();
+                showToast(`Izin reset password untuk ${namaKaryawan} berhasil dibuka.`);
             }
         }
 
         function logoutPortal() {
             session.role = null; session.userId = null;
             localStorage.removeItem("gatherSessionRole"); localStorage.removeItem("gatherSessionUserId");
-            document.getElementById("admin-pass").value = "";
-            document.getElementById("login-nama").value = "";
-            document.getElementById("login-pass-karyawan").value = "";
-            showToast("Berhasil keluar sesi.");
             renderUIRoleState();
             initAppCoreData();
         }
@@ -443,6 +527,7 @@
             if(!session.role) {
                 scrAuthK.classList.remove("hidden");
                 switchPortal('karyawan');
+                tutupModulResetKaryawan();
             } else if (session.role === 'admin') {
                 scrDashA.classList.remove("hidden");
                 mainNav.classList.add("opacity-40", "pointer-events-none");
@@ -452,50 +537,73 @@
             }
         }
 
-        // ================= KARYAWAN PORTAL MANAGEMENT =================
+        // ================= ENGINE SISTEM FINANSIAL PINTAR KARYAWAN =================
         function prosesPendaftaranAwal(e) {
             e.preventDefault();
             const tok = document.getElementById("reg-token").value.trim().toUpperCase();
             const nama = document.getElementById("reg-nama").value.trim();
             const hp = document.getElementById("reg-hp").value.trim();
             const password = document.getElementById("reg-password").value;
+            const bulanMulai = parseInt(document.getElementById("reg-bulan-mulai").value);
 
-            const tIdx = DB.tokens.indexOf(tok);
-            if(tIdx === -1) return showToast("Kode Otorisasi salah/kadaluwarsa!", "error");
-            if(password.length < 4) return showToast("Password minimal berukuran 4 karakter!", "error");
+            if(!DB.tokens.includes(tok)) return showToast("Kode Otorisasi salah!", "error");
+            if(DB.karyawan.some(k => k.nama.toLowerCase() === nama.toLowerCase())) return showToast("Nama sudah terdaftar!", "error");
 
-            if(DB.karyawan.some(k => k.nama.toLowerCase() === nama.toLowerCase())) {
-                return showToast("Nama pendaftar ini sudah ada di sistem!", "error");
-            }
+            let eCode = Math.floor(Math.random() * 100) + 1;
+            while(DB.karyawan.some(k => k.kodeUnik === eCode)) { eCode = Math.floor(Math.random() * 100) + 1; }
 
-            const dipake = DB.karyawan.map(k => k.kodeUnik);
-            let eCode = -1;
-            while(eCode === -1 || dipake.includes(eCode)){
-                eCode = Math.floor(Math.random() * 100) + 1;
-            }
-
-            const sisaBulan = hitungSisaBulan();
+            const totalPeriode = hitungSisaBulan();
             let bStatus = {};
-            for(let i=1; i<=sisaBulan; i++) bStatus[i] = "belum";
+            
+            for(let i = 1; i <= totalPeriode; i++) {
+                bStatus[i] = (i < bulanMulai) ? "terlewat" : "belum";
+            }
 
             const payload = {
                 nama: nama, hp: hp, password: password, kodeUnik: eCode,
-                manifestPeserta: [{ nama: nama + " (Diri Sendiri)", hubungan: "Karyawan", usia: "-" }],
+                bulanMasukSistem: bulanMulai, statusReset: false,
+                manifestPeserta: [{ nama: nama + " (Diri Sendiri)", hubungan: "Karyawan", usia: "-", bulanJoin: bulanMulai }],
                 targetBiayaTotal: DB.settings.targetBiaya,
                 pembayaranBulanan: bStatus
             };
 
             DB.karyawan.push(payload);
-            DB.tokens.splice(tIdx, 1); 
-
-            const pool = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; let replacement = "";
-            for (let i = 0; i < 6; i++) replacement += pool.charAt(Math.floor(Math.random() * pool.length));
-            DB.tokens.push(replacement);
-
+            DB.tokens.splice(DB.tokens.indexOf(tok), 1);
             saveDB(); 
             initAppCoreData();
             document.getElementById("form-pendaftaran").reset();
-            showToast(`Sukses terdaftar! Silakan login menggunakan Nama & Password Anda.`);
+            showToast(`Sukses! Silakan login.`);
+        }
+
+        function hitungSkemaSkalaBulanKaryawan(user) {
+            const totalPeriode = hitungSisaBulan();
+            let skemaPerBulan = {};
+            
+            for(let i = 1; i <= totalPeriode; i++) {
+                skemaPerBulan[i] = { murni: 0, tunggakanAmortisasi: 0, totalHarusBayar: 0 };
+            }
+
+            user.manifestPeserta.forEach(p => {
+                const bJoin = p.bulanJoin || 1;
+                const sisaBulanTersedia = totalPeriode - bJoin + 1;
+                const nominalBasePerBulan = Math.floor(DB.settings.targetBiaya / totalPeriode);
+                const akumulasiTerlewat = nominalBasePerBulan * (bJoin - 1);
+
+                for(let i = 1; i <= totalPeriode; i++) {
+                    if(i >= bJoin) {
+                        skemaPerBulan[i].murni += nominalBasePerBulan;
+                        if(akumulasiTerlewat > 0 && sisaBulanTersedia > 0) {
+                            skemaPerBulan[i].tunggakanAmortisasi += Math.floor(akumulasiTerlewat / sisaBulanTersedia);
+                        }
+                    }
+                }
+            });
+
+            for(let i = 1; i <= totalPeriode; i++) {
+                skemaPerBulan[i].totalHarusBayar = skemaPerBulan[i].murni + skemaPerBulan[i].tunggakanAmortisasi + user.kodeUnik;
+            }
+
+            return skemaPerBulan;
         }
 
         function renderDashboardKaryawan() {
@@ -504,31 +612,41 @@
 
             document.getElementById("lbl-user-logged").innerText = user.nama;
             document.getElementById("lbl-user-ekor").innerText = String(user.kodeUnik).padStart(3, '0');
+            document.getElementById("lbl-user-total-tagihan").innerText = formatRupiah(user.targetBiayaTotal);
 
             const listM = document.getElementById("user-manifest-list");
             listM.innerHTML = user.manifestPeserta.map(p => `
                 <li class="py-2 flex justify-between items-center text-slate-300">
                     <div>• <strong>${p.nama}</strong> <span class="text-[10px] bg-white/5 border px-1.5 py-0.5 rounded text-indigo-300">${p.hubungan}</span></div>
-                    <span class="text-xs text-slate-400">${p.usia} Thn</span>
+                    <span class="text-xs text-slate-400">Join B-${p.bulanJoin || 1}</span>
                 </li>
             `).join("");
 
             const tbody = document.getElementById("user-tabel-cicilan");
             tbody.innerHTML = "";
-            const sisaBulan = hitungSisaBulan();
-            const cicilanMurniPerBulan = Math.floor(user.targetBiayaTotal / sisaBulan);
+            
+            const skemaKeuangan = hitungSkemaSkalaBulanKaryawan(user);
+            const totalPeriode = hitungSisaBulan();
 
-            for(let i=1; i<=sisaBulan; i++) {
-                const tagihanBulanIni = cicilanMurniPerBulan + user.kodeUnik;
+            for(let i = 1; i <= totalPeriode; i++) {
+                const dataBulan = skemaKeuangan[i];
                 const status = user.pembayaranBulanan[i] || "belum";
-                let badge = `<span class="text-rose-400 bg-rose-950/40 border border-rose-900/30 px-2 py-1 rounded-lg text-[11px] font-medium">Belum Terbayar</span>`;
+                
+                let badge = `<span class="text-rose-400 bg-rose-950/40 border border-rose-900/30 px-2 py-1 rounded-lg text-[11px]">Belum Bayar</span>`;
                 if(status === 'lunas') badge = `<span class="text-emerald-400 bg-emerald-950/40 border border-emerald-900/30 px-2 py-1 rounded-lg text-[11px] font-bold">✓ Terverifikasi Lunas</span>`;
-                if(status === 'sebagian') badge = `<span class="text-amber-400 bg-amber-950/40 border border-amber-900/30 px-2 py-1 rounded-lg text-[11px] font-medium">Terbayar Sebagian</span>`;
+                if(status === 'sebagian') badge = `<span class="text-amber-400 bg-amber-950/40 border border-amber-900/30 px-2 py-1 rounded-lg text-[11px]">Terbayar Sebagian</span>`;
+                if(status === 'terlewat') badge = `<span class="text-slate-400 bg-slate-900 px-2 py-1 rounded-lg text-[11px]">Nol (Belum Join)</span>`;
+
+                let rincianText = `Pokok: ${formatRupiah(dataBulan.murni)}`;
+                if(dataBulan.tunggakanAmortisasi > 0) {
+                    rincianText += ` + Penyesuaian Terlewat: ${formatRupiah(dataBulan.tunggakanAmortisasi)}`;
+                }
 
                 tbody.innerHTML += `
                     <tr>
                         <td class="py-3 font-medium text-slate-300">Bulan Ke-${i}</td>
-                        <td class="py-3 font-mono text-amber-300 font-semibold">${formatRupiah(tagihanBulanIni)}</td>
+                        <td class="py-3 text-[11px] text-slate-400">${rincianText}</td>
+                        <td class="py-3 font-mono text-amber-300 font-semibold">${status === 'terlewat' ? formatRupiah(0) : formatRupiah(dataBulan.totalHarusBayar)}</td>
                         <td class="py-3 text-right">${badge}</td>
                     </tr>
                 `;
@@ -538,18 +656,13 @@
             const mKursi = document.getElementById("user-kursi-msg");
             if(DB.settings.statusKursi === 'buka') {
                 wKursi.classList.remove("hidden"); mKursi.className = "text-xs text-emerald-400 mt-0.5";
-                mKursi.innerText = "Akses Terbuka. Anda diizinkan melakukan plot & ubah susunan seat rombongan.";
-                
+                mKursi.innerText = "Akses Terbuka. Silakan lakukan plot kursi.";
                 const selM = document.getElementById("user-sel-manifest");
-                selM.innerHTML = user.manifestPeserta.map(p => {
-                    let curSeat = "";
-                    for(let seat in DB.kursi) { if(DB.kursi[seat] === p.nama) curSeat = ` [Seat ${seat}]`; }
-                    return `<option value="${p.nama}">${p.nama}${curSeat}</option>`;
-                }).join("");
-
+                selM.innerHTML = user.manifestPeserta.map(p => `<option value="${p.nama}">${p.nama}</option>`).join("");
                 generateLargeBusSeats();
             } else {
                 wKursi.classList.add("hidden"); mKursi.className = "text-xs text-rose-400 mt-0.5";
+                mKursi.innerText = "Akses ditutup oleh pihak administrasi.";
             }
         }
 
@@ -560,43 +673,38 @@
             const usia = document.getElementById("add-fam-usia").value;
 
             const user = DB.karyawan.find(k => k.nama === session.userId);
-            
             if(user.manifestPeserta.some(p => p.nama.toLowerCase() === nama.toLowerCase())) {
-                return showToast("Nama anggota ini sudah ada di manifest rombongan Anda!", "error");
+                return showToast("Nama anggota ini sudah ada!", "error");
             }
 
-            user.manifestPeserta.push({ nama: nama, hubungan: hub, usia: usia });
-
-            const sisaBulan = hitungSisaBulan();
-            let daftarBulanBelumLunas = [];
-            for(let i=1; i<=sisaBulan; i++) {
-                if(user.pembayaranBulanan[i] !== 'lunas') {
-                    daftarBulanBelumLunas.push(i);
+            let bulanBerjalanSekarang = 1;
+            const totalPeriode = hitungSisaBulan();
+            for(let i = 1; i <= totalPeriode; i++) {
+                if(user.pembayaranBulanan[i] === 'belum' || user.pembayaranBulanan[i] === 'sebagian') {
+                    bulanBerjalanSekarang = i;
+                    break;
                 }
             }
 
-            if(daftarBulanBelumLunas.length === 0) {
-                daftarBulanBelumLunas.push(sisaBulan);
-                user.pembayaranBulanan[sisaBulan] = "sebagian"; 
-            }
+            user.manifestPeserta.push({ 
+                nama: nama, hubungan: hub, usia: usia, 
+                bulanJoin: bulanBerjalanSekarang 
+            });
 
             user.targetBiayaTotal += DB.settings.targetBiaya;
 
             saveDB();
             renderDashboardKaryawan();
+            renderTabelAdmin();
             document.getElementById("add-fam-nama").value = "";
             document.getElementById("add-fam-usia").value = "";
-            showToast(`Berhasil menambahkan ${nama}. Biaya didistribusikan ke sisa ${daftarBulanBelumLunas.length} bulan tersisa.`);
+            showToast(`Sukses! ${nama} berhasil ditambahkan. Tunggakan bulan terlewat otomatis diamortisasi.`);
         }
 
-        let tempSelectedSeat = null;
+        // ================= BUS ENGINE GRID =================
         function generateLargeBusSeats() {
-            const grid = document.getElementById("bus-large-grid");
-            grid.innerHTML = "";
-            
-            const totalBaris = 11;
-            const susunanKolom = ["A", "B", "_", "C", "D", "E"];
-            
+            const grid = document.getElementById("bus-large-grid"); grid.innerHTML = "";
+            const totalBaris = 11; const susunanKolom = ["A", "B", "_", "C", "D", "E"];
             const user = DB.karyawan.find(k => k.nama === session.userId);
             const namaRombonganUser = user ? user.manifestPeserta.map(p => p.nama) : [];
 
@@ -605,84 +713,45 @@
                     if (k === "_") {
                         grid.innerHTML += `<div class="w-full flex items-center justify-center text-[9px] text-slate-600/40 font-bold font-mono">Gang</div>`;
                     } else {
-                        const seatId = k + i;
-                        const dipakeOleh = DB.kursi[seatId];
-                        
+                        const seatId = k + i; const dipakeOleh = DB.kursi[seatId];
                         let styleClass = "bg-slate-700 hover:bg-slate-600 text-white cursor-pointer";
-                        let titleText = "Kosong - Klik untuk pilih";
-
                         if(dipakeOleh) {
-                            if(namaRombonganUser.includes(dipakeOleh)) {
-                                styleClass = "bg-emerald-600 border border-emerald-400 font-bold text-white cursor-pointer";
-                                titleText = `Rombongan Anda: ${dipakeOleh} (Klik untuk edit/lepas)`;
-                            } else {
-                                styleClass = "bg-indigo-950 border border-indigo-900 text-indigo-500 cursor-not-allowed text-[9px]";
-                                titleText = `Terisi Orang Lain`;
-                            }
+                            styleClass = namaRombonganUser.includes(dipakeOleh) ? "bg-emerald-600 font-bold text-white cursor-pointer" : "bg-indigo-950 text-indigo-500 cursor-not-allowed text-[9px]";
                         }
-
-                        if(tempSelectedSeat === seatId) {
-                            styleClass = "bg-amber-500 text-black font-bold animate-pulse";
-                        }
-
-                        grid.innerHTML += `
-                            <button type="button" onclick="pilihKursiBusBesar('${seatId}')" title="${titleText}" class="${styleClass} text-[10px] p-2 min-h-[36px] rounded-lg transition-all font-mono">
-                                ${seatId}
-                            </button>
-                        `;
+                        grid.innerHTML += `<button type="button" onclick="pilihKursiBusBesar('${seatId}')" class="${styleClass} text-[10px] p-2 min-h-[36px] rounded-lg font-mono">${seatId}</button>`;
                     }
                 });
             }
         }
 
+        let tempSelectedSeat = null;
         function pilihKursiBusBesar(seatId) {
-            const user = DB.karyawan.find(k => k.nama === session.userId);
-            const namaRombonganUser = user.manifestPeserta.map(p => p.nama);
-            const dipakeOleh = DB.kursi[seatId];
-
-            if(dipakeOleh && namaRombonganUser.includes(dipakeOleh)) {
-                if(confirm(`Apakah Anda ingin mengosongkan kembali / menghapus plot data ${dipakeOleh} di Kursi ${seatId}?`)) {
-                    delete DB.kursi[seatId];
-                    saveDB();
-                    generateLargeBusSeats();
-                    renderDashboardKaryawan();
-                    showToast(`Plot kursi ${seatId} dikosongkan.`);
+            if (DB.kursi[seatId]) {
+                const user = DB.karyawan.find(k => k.nama === session.userId);
+                if(user.manifestPeserta.map(p => p.nama).includes(DB.kursi[seatId])) {
+                    if(confirm("Hapus plot kursi?")) { delete DB.kursi[seatId]; saveDB(); generateLargeBusSeats(); }
                 }
                 return;
             }
-
-            if (dipakeOleh) return showToast(`Gagal! Kursi ${seatId} sudah dikunci pihak orang lain.`, "error");
-
             tempSelectedSeat = seatId;
-            generateLargeBusSeats();
-            showToast(`Menandai Slot Bangku ${seatId}. Tentukan Personil Anda lalu klik 'Plot Kursi'.`);
+            showToast(`Bangku ${seatId} dipilih. Klik tombol 'Plot Kursi'.`);
         }
 
         function simpanPlotKursiKaryawan() {
             const targetNama = document.getElementById("user-sel-manifest").value;
-            if(!targetNama) return showToast("Pilih personil rombongan dahulu!", "error");
-            if(!tempSelectedSeat) return showToast("Sentuh nomor bangku bus kosong pada denah!", "error");
-
-            for (let s in DB.kursi) {
-                if (DB.kursi[s] === targetNama) delete DB.kursi[s];
-            }
-
-            DB.kursi[tempSelectedSeat] = targetNama;
-            tempSelectedSeat = null; 
-
-            saveDB();
-            renderDashboardKaryawan();
-            showToast(`Plot Sukses ditempatkan!`);
+            if(!tempSelectedSeat) return showToast("Pilih bangku pada denah!", "error");
+            for (let s in DB.kursi) { if (DB.kursi[s] === targetNama) delete DB.kursi[s]; }
+            DB.kursi[tempSelectedSeat] = targetNama; tempSelectedSeat = null;
+            saveDB(); generateLargeBusSeats(); showToast("Kursi berhasil di-plot!");
         }
 
-        // ================= PANEL PORTAL ADMIN KONTROL KENDALI =================
+        // ================= ADVANCED PANEL ADMIN MANAGEMENT =================
         function saveAdminSettings() {
             DB.settings.targetBiaya = parseInt(document.getElementById("adm-target-biaya").value) || 0;
             DB.settings.tglBerangkat = document.getElementById("adm-tgl-berangkat").value;
             DB.settings.statusKursi = document.getElementById("adm-status-kursi").value;
-            saveDB();
-            initAppCoreData();
-            showToast("Konfigurasi global parameter sistem diupdate.");
+            saveDB(); initAppCoreData();
+            showToast("Konfigurasi global diperbarui.");
         }
 
         function generateToken() {
@@ -693,44 +762,43 @@
 
         function addTokenToList() {
             const tok = document.getElementById("adm-input-token").value;
-            if (!tok) return showToast("Acak kode token terlebih dahulu", "error");
-            if (DB.tokens.includes(tok)) return showToast("Token sudah terdaftar", "error");
-            DB.tokens.push(tok); saveDB(); renderTokenList();
+            if (!tok) return; DB.tokens.push(tok); saveDB(); renderTokenList();
             document.getElementById("adm-input-token").value = "";
-            showToast("Token aktif baru dirilis.");
         }
 
         function renderTokenList() {
-            const container = document.getElementById("adm-token-list");
-            container.innerHTML = DB.tokens.length === 0 ? "Tidak ada token aktif." : DB.tokens.map(t => `<span class="bg-indigo-950/80 px-2 py-1 rounded border border-indigo-800/40 font-mono">${t}</span>`).join("");
+            document.getElementById("adm-token-list").innerHTML = DB.tokens.map(t => `<span class="bg-indigo-950/80 px-2 py-1 rounded border border-indigo-800/40 font-mono">${t}</span>`).join("");
         }
 
         function renderDropdownKaryawanAdmin() {
-            const select = document.getElementById("adm-pilih-karyawan");
-            const sisaBulan = hitungSisaBulan();
+            const selectK = document.getElementById("adm-pilih-karyawan");
+            const selectB = document.getElementById("adm-pilih-bulan");
             
-            const currentSelected = select.value;
-            select.innerHTML = DB.karyawan.length === 0 ? "<option value=''>Belum ada pendaftar</option>" : DB.karyawan.map(k => `<option value="${k.nama}">${k.nama}</option>`).join("");
-            if(currentSelected && DB.karyawan.some(k => k.nama === currentSelected)) select.value = currentSelected;
-            
-            const selectBulan = document.getElementById("adm-pilih-bulan");
-            const currentBulanSelected = selectBulan.value;
-            selectBulan.innerHTML = "";
-            for(let i=1; i<=sisaBulan; i++) selectBulan.innerHTML += `<option value="${i}">Bulan Ke-${i}</option>`;
-            if(currentBulanSelected && currentBulanSelected <= sisaBulan) selectBulan.value = currentBulanSelected;
+            const prevK = selectK.value;
+            selectK.innerHTML = DB.karyawan.map(k => `<option value="${k.nama}">${k.nama}</option>`).join("");
+            if(prevK) selectK.value = prevK;
+
+            const totalBulan = hitungSisaBulan();
+            const prevB = selectB.value;
+            selectB.innerHTML = "";
+            for(let i = 1; i <= totalBulan; i++) {
+                selectB.innerHTML += `<option value="${i}">Bulan Ke-${i}</option>`;
+            }
+            if(prevB && prevB <= totalBulan) selectB.value = prevB;
         }
 
         function updateInfoBulanAdmin() {
-            const nama = document.getElementById("adm-pilih-karyawan").value; if(!nama) return;
+            const nama = document.getElementById("adm-pilih-karyawan").value;
+            const bulan = document.getElementById("adm-pilih-bulan").value;
+            if(!nama || !bulan) return;
+
             const karyawan = DB.karyawan.find(k => k.nama === nama);
-            const sisaBulan = hitungSisaBulan();
+            const skema = hitungSkemaSkalaBulanKaryawan(karyawan);
             
-            const cicilanMurniPerBulan = Math.floor(karyawan.targetBiayaTotal / sisaBulan);
-            document.getElementById("adm-lbl-hitung-transfer").innerText = formatRupiah(cicilanMurniPerBulan + karyawan.kodeUnik);
+            document.getElementById("adm-lbl-hitung-transfer").innerText = formatRupiah(skema[bulan].totalHarusBayar);
             
-            const bDipilih = document.getElementById("adm-pilih-bulan").value;
-            if(karyawan.pembayaranBulanan && karyawan.pembayaranBulanan[bDipilih]) {
-                document.getElementById("adm-set-status").value = karyawan.pembayaranBulanan[bDipilih];
+            if(karyawan.pembayaranBulanan && karyawan.pembayaranBulanan[bulan]) {
+                document.getElementById("adm-set-status").value = karyawan.pembayaranBulanan[bulan];
             }
         }
 
@@ -739,51 +807,55 @@
             const bulan = document.getElementById("adm-pilih-bulan").value;
             const status = document.getElementById("adm-set-status").value;
 
-            if (!nama) return showToast("Pilih data karyawan terlebih dahulu", "error");
+            if (!nama || !bulan) return showToast("Data tidak lengkap!", "error");
 
             const idx = DB.karyawan.findIndex(k => k.nama === nama);
             if (idx !== -1) {
                 DB.karyawan[idx].pembayaranBulanan[bulan] = status;
                 saveDB(); 
-                renderTabelAdmin();
-                showToast(`Verifikasi sukses disimpan untuk ${nama} bulan ke-${bulan}.`);
+                renderTabelAdmin(); 
+                showToast(`Sukses mengubah status Bulan Ke-${bulan} untuk ${nama} menjadi [${status.toUpperCase()}].`);
             }
         }
 
         function renderTabelAdmin() {
             const tbody = document.getElementById("adm-tabel-peserta");
             if (DB.karyawan.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center p-6 text-slate-500 bg-black/10">Belum ada manifest masuk.</td></tr>`; return;
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center p-6 text-slate-500">Belum ada data manifest.</td></tr>`; return;
             }
 
-            const sisaBulan = hitungSisaBulan();
+            const totalPeriode = hitungSisaBulan();
             tbody.innerHTML = DB.karyawan.map(k => {
-                const listFam = k.manifestPeserta.map(p => `<li>• ${p.nama} <span class="text-slate-400">(${p.hubungan})</span></li>`).join("");
+                const listFam = k.manifestPeserta.map(p => `<li>• ${p.nama} <span class="text-slate-500 text-[10px]">(Join B-${p.bulanJoin || 1})</span></li>`).join("");
                 
-                let logBulan = '<div class="grid grid-cols-2 gap-1 font-mono text-[10px] min-w-[120px]">';
-                for(let i=1; i<=sisaBulan; i++) {
+                let logBulan = '<div class="grid grid-cols-2 gap-1 font-mono text-[10px] min-w-[140px]">';
+                for(let i = 1; i <= totalPeriode; i++) {
                     const st = k.pembayaranBulanan[i] || "belum";
-                    let badge = '<span class="text-rose-400">B'+i+': Belum</span>';
-                    if(st === "lunas") badge = '<span class="text-emerald-400 font-bold">B'+i+': Lunas</span>';
-                    if(st === "sebagian") badge = '<span class="text-amber-400">B'+i+': Cicil</span>';
+                    let badge = `<span class="text-rose-400">B${i}: Belum</span>`;
+                    if(st === "lunas") badge = `<span class="text-emerald-400 font-bold">B${i}: Lunas</span>`;
+                    if(st === "sebagian") badge = `<span class="text-amber-400">B${i}: Sebagian</span>`;
+                    if(st === "terlewat") badge = `<span class="text-slate-500">B${i}: Kosong</span>`;
                     logBulan += `<div>${badge}</div>`;
                 }
                 logBulan += '</div>';
 
-                const listKursiAllocated = [];
-                for (let seatId in DB.kursi) {
-                    if (k.manifestPeserta.map(p => p.nama).includes(DB.kursi[seatId])) listKursiAllocated.push(seatId);
-                }
+                // Indikator status izin reset di admin
+                const textBtnReset = k.statusReset ? "⏳ Menunggu User" : "🔓 Buka Izin Reset";
+                const classBtnReset = k.statusReset ? "bg-amber-950 text-amber-400 border border-amber-800/30" : "bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10";
 
                 return `
-                    <tr class="hover:bg-white/5 border-b border-slate-800 align-top">
-                        <td class="p-3 font-semibold text-indigo-300">${k.nama}<br><span class="text-[10px] text-emerald-400 font-normal">📞 ${k.hp}</span></td>
+                    <tr class="hover:bg-white/5 border-b border-slate-800 align-top text-[11px]">
+                        <td class="p-3 font-semibold text-indigo-300">${k.nama}<br><span class="text-[10px] text-slate-400">📞 ${k.hp}</span></td>
                         <td class="p-3 text-center text-amber-400 font-bold font-mono">${String(k.kodeUnik).padStart(3, '0')}</td>
                         <td class="p-3"><ul class="space-y-0.5 text-slate-300">${listFam}</ul></td>
                         <td class="p-3 text-center font-bold">${k.manifestPeserta.length}</td>
                         <td class="p-3 font-semibold text-white whitespace-nowrap">${formatRupiah(k.targetBiayaTotal)}</td>
                         <td class="p-3">${logBulan}</td>
-                        <td class="p-3 font-mono text-cyan-400 font-bold">${listKursiAllocated.join(", ") || "-"}</td>
+                        <td class="p-3">
+                            <button onclick="aktifkanIzinResetAdmin('${k.nama}')" class="px-2 py-1.5 rounded text-[10px] font-bold cursor-pointer transition-all ${classBtnReset}">
+                                ${textBtnReset}
+                            </button>
+                        </td>
                     </tr>
                 `;
             }).join("");
