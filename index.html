@@ -119,10 +119,8 @@
                             <input type="password" id="reg-password" class="w-full glass-input px-3 py-3 rounded-xl text-sm" required placeholder="Minimal 4 Karakter">
                         </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1.5">Bulan Mulai Cicilan</label>
-                        <select id="reg-bulan-mulai" class="w-full glass-input px-3 py-3 rounded-xl text-sm h-[46px]">
-                            </select>
+                    <div class="p-3 bg-indigo-950/40 rounded-xl border border-indigo-900/30">
+                        <p class="text-[11px] text-indigo-300">ℹ️ <strong>Sistem Pintar Aktif:</strong> Bulan mulai cicilan Anda akan dihitung otomatis secara real-time berdasarkan sisa periode aktif yang diatur pada panel administrasi global.</p>
                     </div>
                     <button type="submit" class="w-full bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-bold py-3.5 px-4 rounded-xl text-sm transition-all shadow-md cursor-pointer text-center">Daftar Buat Akun</button>
                 </form>
@@ -343,7 +341,6 @@
         document.addEventListener("DOMContentLoaded", () => {
             renderUIRoleState();
             initAppCoreData();
-            populateMulaiBulanDropdown();
         });
 
         function saveDB() {
@@ -362,15 +359,6 @@
 
             if(session.role === 'karyawan') {
                 renderDashboardKaryawan();
-            }
-        }
-
-        function populateMulaiBulanDropdown() {
-            const select = document.getElementById("reg-bulan-mulai");
-            select.innerHTML = "";
-            const totalBulan = hitungSisaBulan();
-            for(let i = 1; i <= totalBulan; i++) {
-                select.innerHTML += `<option value="${i}">Mulai dari Bulan Ke-${i}</option>`;
             }
         }
 
@@ -447,7 +435,6 @@
             }
         }
 
-        // FUNGSI LUPA/RESET PASSWORD SISI KARYAWAN
         function bukaModulResetKaryawan() {
             document.getElementById("form-login-karyawan").classList.add("hidden");
             document.getElementById("box-reset-password").classList.remove("hidden");
@@ -488,14 +475,13 @@
             const idx = DB.karyawan.findIndex(k => k.nama.toLowerCase() === namaInput.toLowerCase());
             if(idx !== -1) {
                 DB.karyawan[idx].password = passBaru;
-                DB.karyawan[idx].statusReset = false; // Kunci kembali izin reset setelah dipakai
+                DB.karyawan[idx].statusReset = false; 
                 saveDB();
                 showToast("Password berhasil diperbarui! Silakan login.");
                 tutupModulResetKaryawan();
             }
         }
 
-        // FUNGSI AKTIVASI IZIN RESET SISI ADMIN
         function aktifkanIzinResetAdmin(namaKaryawan) {
             const idx = DB.karyawan.findIndex(k => k.nama === namaKaryawan);
             if(idx !== -1) {
@@ -544,7 +530,6 @@
             const nama = document.getElementById("reg-nama").value.trim();
             const hp = document.getElementById("reg-hp").value.trim();
             const password = document.getElementById("reg-password").value;
-            const bulanMulai = parseInt(document.getElementById("reg-bulan-mulai").value);
 
             if(!DB.tokens.includes(tok)) return showToast("Kode Otorisasi salah!", "error");
             if(DB.karyawan.some(k => k.nama.toLowerCase() === nama.toLowerCase())) return showToast("Nama sudah terdaftar!", "error");
@@ -552,17 +537,21 @@
             let eCode = Math.floor(Math.random() * 100) + 1;
             while(DB.karyawan.some(k => k.kodeUnik === eCode)) { eCode = Math.floor(Math.random() * 100) + 1; }
 
+            // LOGIKA PINTAR: Mendeteksi bulan berjalan secara otomatis di backend simulasi
+            // Sebagai default pendaftaran baru saat ini, di-set langsung masuk ke "Bulan Ke-1" berjalan
+            let bulanMulaiOtomatis = 1; 
+
             const totalPeriode = hitungSisaBulan();
             let bStatus = {};
             
             for(let i = 1; i <= totalPeriode; i++) {
-                bStatus[i] = (i < bulanMulai) ? "terlewat" : "belum";
+                bStatus[i] = (i < bulanMulaiOtomatis) ? "terlewat" : "belum";
             }
 
             const payload = {
                 nama: nama, hp: hp, password: password, kodeUnik: eCode,
-                bulanMasukSistem: bulanMulai, statusReset: false,
-                manifestPeserta: [{ nama: nama + " (Diri Sendiri)", hubungan: "Karyawan", usia: "-", bulanJoin: bulanMulai }],
+                bulanMasukSistem: bulanMulaiOtomatis, statusReset: false,
+                manifestPeserta: [{ nama: nama + " (Diri Sendiri)", hubungan: "Karyawan", usia: "-", bulanJoin: bulanMulaiOtomatis }],
                 targetBiayaTotal: DB.settings.targetBiaya,
                 pembayaranBulanan: bStatus
             };
@@ -677,6 +666,7 @@
                 return showToast("Nama anggota ini sudah ada!", "error");
             }
 
+            // LOGIKA PINTAR: Deteksi otomatis bulan berjalan dinamis
             let bulanBerjalanSekarang = 1;
             const totalPeriode = hitungSisaBulan();
             for(let i = 1; i <= totalPeriode; i++) {
@@ -839,7 +829,6 @@
                 }
                 logBulan += '</div>';
 
-                // Indikator status izin reset di admin
                 const textBtnReset = k.statusReset ? "⏳ Menunggu User" : "🔓 Buka Izin Reset";
                 const classBtnReset = k.statusReset ? "bg-amber-950 text-amber-400 border border-amber-800/30" : "bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10";
 
