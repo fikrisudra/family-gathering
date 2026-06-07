@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Corporate Family Gathering 2027 - Premium Auth System</title>
+    <title>Corporate Family Gathering 2027 - Secure Auth System</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -38,7 +38,6 @@
         button:active {
             transform: scale(0.98);
         }
-        /* Custom scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
@@ -63,15 +62,15 @@
         <div id="screen-auth-karyawan" class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             <div class="glass-card p-6 space-y-4">
                 <h2 class="text-xl font-bold text-indigo-400">🔑 Masuk Akun Karyawan</h2>
-                <p class="text-xs text-slate-400">Sudah daftar? Masuk menggunakan nama lengkap dan kode unik ekor Anda.</p>
+                <p class="text-xs text-slate-400">Masuk menggunakan nama lengkap dan password yang Anda buat saat pendaftaran.</p>
                 <form onsubmit="loginKaryawan(event)" class="space-y-4">
                     <div>
                         <label class="block text-xs font-medium text-slate-400 mb-1.5">Nama Lengkap Sesuai Daftar</label>
                         <input type="text" id="login-nama" class="w-full glass-input px-3 py-3 rounded-xl text-sm" required placeholder="Contoh: Fikri Sudrajat">
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1.5">Kode Unik Ekor</label>
-                        <input type="number" id="login-kode" class="w-full glass-input px-3 py-3 rounded-xl text-sm font-mono" required placeholder="Contoh: 45">
+                        <label class="block text-xs font-medium text-slate-400 mb-1.5">Password</label>
+                        <input type="password" id="login-pass-karyawan" class="w-full glass-input px-3 py-3 rounded-xl text-sm" required placeholder="••••••••">
                     </div>
                     <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-4 rounded-xl text-sm transition-all shadow-md cursor-pointer text-center">Masuk ke Dashboard</button>
                 </form>
@@ -79,8 +78,8 @@
 
             <div class="glass-card p-6 space-y-4">
                 <h2 class="text-xl font-bold text-cyan-400">📝 Registrasi Peserta Baru</h2>
-                <p class="text-xs text-slate-400">Belum terdaftar? Ambil Kode Otorisasi dari admin untuk membuat akun awal.</p>
-                <form onsubmit="prosesPendaftaranAwal(event)" class="space-y-4">
+                <p class="text-xs text-slate-400">Belum terdaftar? Ambil Kode Otorisasi dari admin untuk mendaftarkan akun Anda.</p>
+                <form onsubmit="prosesPendaftaranAwal(event)" id="form-pendaftaran" class="space-y-4">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-medium text-slate-400 mb-1.5">Kode Otorisasi Admin</label>
@@ -88,14 +87,20 @@
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-slate-400 mb-1.5">Nama Lengkap Karyawan</label>
-                            <input type="text" id="reg-nama" class="w-full glass-input px-3 py-3 rounded-xl text-sm" required placeholder="Nama Anda">
+                            <input type="text" id="reg-nama" class="w-full glass-input px-3 py-3 rounded-xl text-sm" required placeholder="Nama Lengkap">
                         </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1.5">Nomor WhatsApp Aktif</label>
-                        <input type="tel" id="reg-hp" class="w-full glass-input px-3 py-3 rounded-xl text-sm" required placeholder="08xxxxxxxxxx">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1.5">Nomor WhatsApp Aktif</label>
+                            <input type="tel" id="reg-hp" class="w-full glass-input px-3 py-3 rounded-xl text-sm" required placeholder="08xxxxxxxxxx">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1.5">Buat Password Akun</label>
+                            <input type="password" id="reg-password" class="w-full glass-input px-3 py-3 rounded-xl text-sm" required placeholder="Minimal 4 Karakter">
+                        </div>
                     </div>
-                    <button type="submit" class="w-full bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-bold py-3.5 px-4 rounded-xl text-sm transition-all shadow-md cursor-pointer text-center">Daftar Akun & Dapatkan Kode Ekor</button>
+                    <button type="submit" class="w-full bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-bold py-3.5 px-4 rounded-xl text-sm transition-all shadow-md cursor-pointer text-center">Daftar Buat Akun</button>
                 </form>
             </div>
         </div>
@@ -215,7 +220,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-slate-400 mb-1.5">Bulan Keberangkatan</label>
-                        <input type="month" id="adm-tgl-berangkat" class="w-full glass-input px-3 py-3 rounded-xl text-sm">
+                        <input type="month" id="adm-tgl-berangkat" class="w-full glass-input px-3 py-3 rounded-xl text-sm" onchange="updateInfoBulanAdmin()">
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-slate-400 mb-1.5">Akses Kursi Bus</label>
@@ -298,18 +303,17 @@
             settings: { targetBiaya: 800000, tglBerangkat: "2027-10", statusKursi: "tutup" },
             tokens: ["GATH27", "COMP2027"],
             karyawan: [],
-            kursi: {} // Mapping: 'seatId' -> 'Nama Peserta'
+            kursi: {} 
         };
 
-        let session = { role: null, userId: null }; // State login saat ini
+        let session = { role: null, userId: null }; 
 
-        if (localStorage.getItem("famGatheringDB_V5")) {
-            DB = JSON.parse(localStorage.getItem("famGatheringDB_V5"));
+        if (localStorage.getItem("famGatheringDB_V6")) {
+            DB = JSON.parse(localStorage.getItem("famGatheringDB_V6"));
         } else {
             saveDB();
         }
 
-        // Cek Auto-Login Sesi via LocalStorage jika ada
         if(localStorage.getItem("gatherSessionRole")) {
             session.role = localStorage.getItem("gatherSessionRole");
             session.userId = localStorage.getItem("gatherSessionUserId");
@@ -321,11 +325,10 @@
         });
 
         function saveDB() {
-            localStorage.setItem("famGatheringDB_V5", JSON.stringify(DB));
+            localStorage.setItem("famGatheringDB_V6", JSON.stringify(DB));
         }
 
         function initAppCoreData() {
-            // Render settings admin input
             document.getElementById("adm-target-biaya").value = DB.settings.targetBiaya;
             document.getElementById("adm-tgl-berangkat").value = DB.settings.tglBerangkat;
             document.getElementById("adm-status-kursi").value = DB.settings.statusKursi;
@@ -352,7 +355,7 @@
         }
 
         function switchPortal(target) {
-            if (session.role) return; // Kunci tab nav jika ada sesi login aktif
+            if (session.role) return; 
             
             const btnK = document.getElementById("nav-karyawan");
             const btnA = document.getElementById("nav-admin");
@@ -399,9 +402,9 @@
         function loginKaryawan(e) {
             e.preventDefault();
             const nama = document.getElementById("login-nama").value.trim().toLowerCase();
-            const kode = parseInt(document.getElementById("login-kode").value);
+            const pass = document.getElementById("login-pass-karyawan").value;
 
-            const user = DB.karyawan.find(k => k.nama.toLowerCase() === nama && k.kodeUnik === kode);
+            const user = DB.karyawan.find(k => k.nama.toLowerCase() === nama && k.password === pass);
             if(user) {
                 session.role = "karyawan";
                 session.userId = user.nama;
@@ -411,7 +414,7 @@
                 renderUIRoleState();
                 renderDashboardKaryawan();
             } else {
-                showToast("Data akun tidak cocok/tidak ditemukan!", "error");
+                showToast("Nama atau password Anda salah!", "error");
             }
         }
 
@@ -420,9 +423,10 @@
             localStorage.removeItem("gatherSessionRole"); localStorage.removeItem("gatherSessionUserId");
             document.getElementById("admin-pass").value = "";
             document.getElementById("login-nama").value = "";
-            document.getElementById("login-kode").value = "";
+            document.getElementById("login-pass-karyawan").value = "";
             showToast("Berhasil keluar sesi.");
             renderUIRoleState();
+            initAppCoreData();
         }
 
         function renderUIRoleState() {
@@ -432,7 +436,6 @@
             const scrDashA = document.getElementById("screen-dashboard-admin");
             const mainNav = document.getElementById("main-nav");
 
-            // Reset view hidden
             scrAuthK.classList.add("hidden"); scrAuthA.classList.add("hidden");
             scrDashK.classList.add("hidden"); scrDashA.classList.add("hidden");
             mainNav.classList.remove("opacity-40", "pointer-events-none");
@@ -455,15 +458,16 @@
             const tok = document.getElementById("reg-token").value.trim().toUpperCase();
             const nama = document.getElementById("reg-nama").value.trim();
             const hp = document.getElementById("reg-hp").value.trim();
+            const password = document.getElementById("reg-password").value;
 
             const tIdx = DB.tokens.indexOf(tok);
             if(tIdx === -1) return showToast("Kode Otorisasi salah/kadaluwarsa!", "error");
+            if(password.length < 4) return showToast("Password minimal berukuran 4 karakter!", "error");
 
             if(DB.karyawan.some(k => k.nama.toLowerCase() === nama.toLowerCase())) {
                 return showToast("Nama pendaftar ini sudah ada di sistem!", "error");
             }
 
-            // Kode ekor acak 1-100 unik
             const dipake = DB.karyawan.map(k => k.kodeUnik);
             let eCode = -1;
             while(eCode === -1 || dipake.includes(eCode)){
@@ -475,23 +479,23 @@
             for(let i=1; i<=sisaBulan; i++) bStatus[i] = "belum";
 
             const payload = {
-                nama: nama, hp: hp, kodeUnik: eCode,
+                nama: nama, hp: hp, password: password, kodeUnik: eCode,
                 manifestPeserta: [{ nama: nama + " (Diri Sendiri)", hubungan: "Karyawan", usia: "-" }],
                 targetBiayaTotal: DB.settings.targetBiaya,
                 pembayaranBulanan: bStatus
             };
 
             DB.karyawan.push(payload);
-            DB.tokens.splice(tIdx, 1); // Buang token terpakai
+            DB.tokens.splice(tIdx, 1); 
 
-            // Auto buat 1 pengganti token acak
             const pool = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; let replacement = "";
             for (let i = 0; i < 6; i++) replacement += pool.charAt(Math.floor(Math.random() * pool.length));
             DB.tokens.push(replacement);
 
-            saveDB(); initAppCoreData();
+            saveDB(); 
+            initAppCoreData();
             document.getElementById("form-pendaftaran").reset();
-            showToast(`Sukses terdaftar! Ingat Kode Ekor Anda: ${eCode}. Silakan login.`);
+            showToast(`Sukses terdaftar! Silakan login menggunakan Nama & Password Anda.`);
         }
 
         function renderDashboardKaryawan() {
@@ -501,7 +505,6 @@
             document.getElementById("lbl-user-logged").innerText = user.nama;
             document.getElementById("lbl-user-ekor").innerText = String(user.kodeUnik).padStart(3, '0');
 
-            // List Manifest Rombongan
             const listM = document.getElementById("user-manifest-list");
             listM.innerHTML = user.manifestPeserta.map(p => `
                 <li class="py-2 flex justify-between items-center text-slate-300">
@@ -510,7 +513,6 @@
                 </li>
             `).join("");
 
-            // Render Riwayat Angsuran & Tagihan Proporsional Bulanan
             const tbody = document.getElementById("user-tabel-cicilan");
             tbody.innerHTML = "";
             const sisaBulan = hitungSisaBulan();
@@ -532,14 +534,12 @@
                 `;
             }
 
-            // Akses denah kursi
             const wKursi = document.getElementById("user-wrapper-kursi");
             const mKursi = document.getElementById("user-kursi-msg");
             if(DB.settings.statusKursi === 'buka') {
                 wKursi.classList.remove("hidden"); mKursi.className = "text-xs text-emerald-400 mt-0.5";
                 mKursi.innerText = "Akses Terbuka. Anda diizinkan melakukan plot & ubah susunan seat rombongan.";
                 
-                // Dropdown manifest rombongan user
                 const selM = document.getElementById("user-sel-manifest");
                 selM.innerHTML = user.manifestPeserta.map(p => {
                     let curSeat = "";
@@ -561,15 +561,12 @@
 
             const user = DB.karyawan.find(k => k.nama === session.userId);
             
-            // Cek nama kembar global di manifest internal user
             if(user.manifestPeserta.some(p => p.nama.toLowerCase() === nama.toLowerCase())) {
                 return showToast("Nama anggota ini sudah ada di manifest rombongan Anda!", "error");
             }
 
-            // Tambahkan anggota keluarga ke manifest
             user.manifestPeserta.push({ nama: nama, hubungan: hub, usia: usia });
 
-            // HITUNG OTOMATIS: Tambahan Biaya Masuk ke Sisa Bulan yang BELUM lunas
             const sisaBulan = hitungSisaBulan();
             let daftarBulanBelumLunas = [];
             for(let i=1; i<=sisaBulan; i++) {
@@ -578,25 +575,20 @@
                 }
             }
 
-            // Jika semua bulan ternyata sudah terlanjur diset lunas, otomatis bebankan paksa di bulan terakhir
             if(daftarBulanBelumLunas.length === 0) {
                 daftarBulanBelumLunas.push(sisaBulan);
-                user.pembayaranBulanan[sisaBulan] = "sebagian"; // Reset kembali statusnya
+                user.pembayaranBulanan[sisaBulan] = "sebagian"; 
             }
 
-            // Hitung pertambahan target total biaya rombongan
             user.targetBiayaTotal += DB.settings.targetBiaya;
 
             saveDB();
             renderDashboardKaryawan();
-            renderTabelAdmin();
             document.getElementById("add-fam-nama").value = "";
             document.getElementById("add-fam-usia").value = "";
             showToast(`Berhasil menambahkan ${nama}. Biaya didistribusikan ke sisa ${daftarBulanBelumLunas.length} bulan tersisa.`);
         }
 
-        // DESIGN GRAPHIC BUS BESAR INDONESIA (3 KANAN - 2 KIRI)
-        // Susunan Kolom: Kiri (A, B) | GANG ( _ ) | Kanan (C, D, E)
         let tempSelectedSeat = null;
         function generateLargeBusSeats() {
             const grid = document.getElementById("bus-large-grid");
@@ -611,7 +603,6 @@
             for (let i = 1; i <= totalBaris; i++) {
                 susunanKolom.forEach(k => {
                     if (k === "_") {
-                        // Jalur Lorong Gang Tengah Bus
                         grid.innerHTML += `<div class="w-full flex items-center justify-center text-[9px] text-slate-600/40 font-bold font-mono">Gang</div>`;
                     } else {
                         const seatId = k + i;
@@ -649,14 +640,12 @@
             const namaRombonganUser = user.manifestPeserta.map(p => p.nama);
             const dipakeOleh = DB.kursi[seatId];
 
-            // EDIT INDEPENDEN JIKA KURSI DIKLIK ADALAH MILIK ROMBONGANNYA SENDIRI (HAPUS PLOT)
             if(dipakeOleh && namaRombonganUser.includes(dipakeOleh)) {
                 if(confirm(`Apakah Anda ingin mengosongkan kembali / menghapus plot data ${dipakeOleh} di Kursi ${seatId}?`)) {
                     delete DB.kursi[seatId];
                     saveDB();
                     generateLargeBusSeats();
                     renderDashboardKaryawan();
-                    renderTabelAdmin();
                     showToast(`Plot kursi ${seatId} dikosongkan.`);
                 }
                 return;
@@ -674,17 +663,15 @@
             if(!targetNama) return showToast("Pilih personil rombongan dahulu!", "error");
             if(!tempSelectedSeat) return showToast("Sentuh nomor bangku bus kosong pada denah!", "error");
 
-            // Bersihkan sisa sangkut plot nama ini jika ada di nomor bangku lain (sistem auto-pindah)
             for (let s in DB.kursi) {
                 if (DB.kursi[s] === targetNama) delete DB.kursi[s];
             }
 
             DB.kursi[tempSelectedSeat] = targetNama;
-            tempSelectedSeat = null; // reset slot selection cache
+            tempSelectedSeat = null; 
 
             saveDB();
             renderDashboardKaryawan();
-            renderTabelAdmin();
             showToast(`Plot Sukses ditempatkan!`);
         }
 
@@ -722,10 +709,15 @@
             const select = document.getElementById("adm-pilih-karyawan");
             const sisaBulan = hitungSisaBulan();
             
+            const currentSelected = select.value;
             select.innerHTML = DB.karyawan.length === 0 ? "<option value=''>Belum ada pendaftar</option>" : DB.karyawan.map(k => `<option value="${k.nama}">${k.nama}</option>`).join("");
+            if(currentSelected && DB.karyawan.some(k => k.nama === currentSelected)) select.value = currentSelected;
             
-            const selectBulan = document.getElementById("adm-pilih-bulan"); selectBulan.innerHTML = "";
+            const selectBulan = document.getElementById("adm-pilih-bulan");
+            const currentBulanSelected = selectBulan.value;
+            selectBulan.innerHTML = "";
             for(let i=1; i<=sisaBulan; i++) selectBulan.innerHTML += `<option value="${i}">Bulan Ke-${i}</option>`;
+            if(currentBulanSelected && currentBulanSelected <= sisaBulan) selectBulan.value = currentBulanSelected;
         }
 
         function updateInfoBulanAdmin() {
@@ -752,7 +744,8 @@
             const idx = DB.karyawan.findIndex(k => k.nama === nama);
             if (idx !== -1) {
                 DB.karyawan[idx].pembayaranBulanan[bulan] = status;
-                saveDB(); renderTabelAdmin();
+                saveDB(); 
+                renderTabelAdmin();
                 showToast(`Verifikasi sukses disimpan untuk ${nama} bulan ke-${bulan}.`);
             }
         }
@@ -765,7 +758,6 @@
 
             const sisaBulan = hitungSisaBulan();
             tbody.innerHTML = DB.karyawan.map(k => {
-                const cicilanMurniPerBulan = Math.floor(k.targetBiayaTotal / sisaBulan);
                 const listFam = k.manifestPeserta.map(p => `<li>• ${p.nama} <span class="text-slate-400">(${p.hubungan})</span></li>`).join("");
                 
                 let logBulan = '<div class="grid grid-cols-2 gap-1 font-mono text-[10px] min-w-[120px]">';
