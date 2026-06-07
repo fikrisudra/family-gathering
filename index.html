@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Corporate Family Gathering 2027 - Admin Verified</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,6 +14,7 @@
             background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
             min-height: 100vh;
             color: #f8fafc;
+            -webkit-tap-highlight-color: transparent;
         }
         .glass-card {
             background: rgba(255, 255, 255, 0.03);
@@ -34,194 +35,208 @@
             outline: none;
             box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
         }
+        /* Touch target feedback helper */
+        button:active, select:active {
+            transform: scale(0.98);
+        }
     </style>
 </head>
 <body class="p-4 md:p-8">
 
     <div class="max-w-7xl mx-auto">
-        <header class="mb-8 text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-4">
+        <header class="mb-8 text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-5">
             <div>
-                <h1 class="text-3xl font-bold tracking-tight bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">Family Gathering 2027</h1>
-                <p class="text-slate-400 text-sm mt-1">Sistem Perencanaan & Verifikasi Finansial Multi-Bulan</p>
+                <h1 class="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">Family Gathering 2027</h1>
+                <p class="text-slate-400 text-xs mt-1">Sistem Perencanaan & Verifikasi Finansial Multi-Bulan</p>
             </div>
-            <div class="flex gap-2">
-                <button onclick="switchView('karyawan')" id="btn-nav-karyawan" class="px-4 py-2 rounded-lg font-medium text-sm transition-all bg-indigo-600 text-white">Menu Karyawan</button>
-                <button onclick="switchView('admin')" id="btn-nav-admin" class="px-4 py-2 rounded-lg font-medium text-sm transition-all glass-card text-slate-300 hover:bg-white/5">Panel Admin</button>
+            <div class="flex w-full md:w-auto gap-2 p-1 bg-black/20 rounded-xl border border-white/5">
+                <button onclick="switchView('karyawan')" id="btn-nav-karyawan" class="flex-1 md:flex-none text-center px-5 py-3 rounded-lg font-semibold text-sm transition-all bg-indigo-600 text-white shadow-md cursor-pointer">Menu Karyawan</button>
+                <button onclick="switchView('admin')" id="btn-nav-admin" class="flex-1 md:flex-none text-center px-5 py-3 rounded-lg font-semibold text-sm transition-all text-slate-300 hover:bg-white/5 cursor-pointer">Panel Admin</button>
             </div>
         </header>
 
-        <div id="toast" class="hidden fixed top-5 right-5 z-50 px-4 py-3 rounded-xl shadow-lg text-sm transition-all duration-300 transform translate-y-[-20px] opacity-0"></div>
+        <div id="toast" class="hidden fixed top-5 right-5 z-50 px-5 py-3.5 rounded-xl shadow-2xl text-sm transition-all duration-300 transform translate-y-[-20px] opacity-0 max-w-sm w-full"></div>
 
         <main id="panel-admin" class="hidden space-y-6">
-            <div class="glass-card p-6">
-                <h2 class="text-xl font-semibold mb-4 text-indigo-400">⚙️ Pengaturan Gathering & Target Keuangan</h2>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="glass-card p-5 md:p-6">
+                <h2 class="text-lg font-semibold mb-4 text-indigo-400 flex items-center gap-2">⚙️ Pengaturan Target Global</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Target Biaya / Orang</label>
-                        <input type="number" id="adm-target-biaya" class="w-full glass-input px-3 py-2 rounded-lg text-sm">
+                        <label class="block text-xs font-medium text-slate-400 mb-1.5">Target Biaya / Orang</label>
+                        <input type="number" id="adm-target-biaya" class="w-full glass-input px-3 py-3 rounded-xl text-sm">
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Bulan Keberangkatan</label>
-                        <input type="month" id="adm-tgl-berangkat" class="w-full glass-input px-3 py-2 rounded-lg text-sm">
+                        <label class="block text-xs font-medium text-slate-400 mb-1.5">Bulan Keberangkatan</label>
+                        <input type="month" id="adm-tgl-berangkat" class="w-full glass-input px-3 py-3 rounded-xl text-sm">
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Buka Pemilihan Kursi?</label>
-                        <select id="adm-status-kursi" class="w-full glass-input px-3 py-2 rounded-lg text-sm">
+                        <label class="block text-xs font-medium text-slate-400 mb-1.5">Buka Pemilihan Kursi?</label>
+                        <select id="adm-status-kursi" class="w-full glass-input px-3 py-3 rounded-xl text-sm h-[46px]">
                             <option value="tutup">Tutup</option>
                             <option value="buka">Buka Akses</option>
                         </select>
                     </div>
                     <div class="flex items-end">
-                        <button onclick="saveAdminSettings()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition-all shadow-md">Simpan & Update Sistem</button>
+                        <button onclick="saveAdminSettings()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold py-3 px-4 rounded-xl transition-all shadow-md cursor-pointer">Simpan & Update Sistem</button>
                     </div>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="glass-card p-6 h-fit">
-                    <h2 class="text-lg font-semibold mb-2 text-indigo-400">🔑 Token Akses Registrasi</h2>
-                    <p class="text-xs text-slate-400 mb-4">Sistem akan otomatis me-regenerate kode baru setelah digunakan untuk pendaftaran.</p>
-                    <div class="flex gap-2 mb-4">
-                        <input type="text" id="adm-input-token" class="flex-1 glass-input px-3 py-2 rounded-lg text-sm font-mono tracking-wider" placeholder="Klik Acak..." readonly>
-                        <button onclick="generateToken()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm px-3 py-2 rounded-lg font-medium">Acak</button>
+                <div class="glass-card p-5 md:p-6 h-fit space-y-4">
+                    <div>
+                        <h2 class="text-lg font-semibold text-indigo-400">🔑 Token Akses Registrasi</h2>
+                        <p class="text-xs text-slate-400 mt-0.5">Kode baru di-generate otomatis pasca registrasi sukses.</p>
                     </div>
-                    <button onclick="addTokenToList()" class="w-full glass-card hover:bg-white/5 text-white text-sm py-2 px-4 rounded-lg font-medium transition-all">Aktifkan Manual Token</button>
+                    <div class="flex gap-2">
+                        <input type="text" id="adm-input-token" class="flex-1 glass-input px-3 py-3 rounded-xl text-sm font-mono tracking-wider" placeholder="Klik Acak..." readonly>
+                        <button onclick="generateToken()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm px-4 py-3 rounded-xl font-bold cursor-pointer transition-all">Acak</button>
+                    </div>
+                    <button onclick="addTokenToList()" class="w-full bg-white/5 hover:bg-white/10 text-white text-sm py-3 px-4 rounded-xl font-medium border border-white/10 transition-all cursor-pointer">Aktifkan Manual Token</button>
                     
-                    <div class="mt-4">
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Daftar Token Aktif Saat Ini:</label>
-                        <div id="adm-token-list" class="flex flex-wrap gap-2 max-h-32 overflow-y-auto p-2 bg-black/20 rounded-lg font-mono text-xs text-cyan-400"></div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1.5">Daftar Token Aktif Saat Ini:</label>
+                        <div id="adm-token-list" class="flex flex-wrap gap-2 p-3 bg-black/20 rounded-xl font-mono text-xs text-cyan-400 min-h-[44px]"></div>
                     </div>
                 </div>
 
-                <div class="glass-card p-6 lg:col-span-2">
-                    <h2 class="text-lg font-semibold mb-1 text-indigo-400">📅 Verifikasi Pembayaran Bulanan Terarah</h2>
-                    <p class="text-xs text-slate-400 mb-4">Pilih karyawan dan tentukan bulan cicilan yang ingin diubah status konfirmasinya berdasarkan kecocokan mutasi bank.</p>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div class="glass-card p-5 md:p-6 lg:col-span-2 space-y-4">
+                    <div>
+                        <h2 class="text-lg font-semibold text-indigo-400">📅 Verifikasi Pembayaran Bulanan Terarah</h2>
+                        <p class="text-xs text-slate-400 mt-0.5">Ubah status cicilan spesifik bulanan berdasarkan validasi mutasi mutakhir.</p>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div>
-                            <label class="block text-xs font-medium text-slate-400 mb-1">Pilih Karyawan</label>
-                            <select id="adm-pilih-karyawan" class="w-full glass-input px-3 py-2 rounded-lg text-sm" onchange="updateInfoBulanAdmin()"></select>
+                            <label class="block text-xs font-medium text-slate-400 mb-1.5">Pilih Karyawan</label>
+                            <select id="adm-pilih-karyawan" class="w-full glass-input px-3 py-3 rounded-xl text-sm h-[46px]" onchange="updateInfoBulanAdmin()"></select>
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-400 mb-1">Pilih Bulan Pembayaran</label>
-                            <select id="adm-pilih-bulan" class="w-full glass-input px-3 py-2 rounded-lg text-sm" onchange="updateInfoBulanAdmin()"></select>
+                            <label class="block text-xs font-medium text-slate-400 mb-1.5">Pilih Bulan</label>
+                            <select id="adm-pilih-bulan" class="w-full glass-input px-3 py-3 rounded-xl text-sm h-[46px]" onchange="updateInfoBulanAdmin()"></select>
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-400 mb-1">Set Status Verifikasi</label>
-                            <select id="adm-set-status" class="w-full glass-input px-3 py-2 rounded-lg text-sm">
+                            <label class="block text-xs font-medium text-slate-400 mb-1.5">Set Status</label>
+                            <select id="adm-set-status" class="w-full glass-input px-3 py-3 rounded-xl text-sm h-[46px]">
                                 <option value="lunas">✓ Lunas Terverifikasi</option>
                                 <option value="sebagian">Terbayar Sebagian</option>
                                 <option value="belum">Belum Terbayar</option>
                             </select>
                         </div>
                     </div>
-                    <div class="bg-indigo-950/40 p-3 rounded-lg border border-indigo-900/40 text-xs mb-4 flex justify-between items-center">
+                    <div class="bg-indigo-950/40 p-4 rounded-xl border border-indigo-900/40 text-xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                         <div>
-                            <span class="text-slate-400">Target Rekening (Cicilan + Kode Unik):</span>
-                            <strong id="adm-lbl-hitung-transfer" class="text-sm text-amber-400 ml-2">Rp 0</strong>
+                            <span class="text-slate-400">Target Rekening (Cicilan + Unik):</span>
+                            <strong id="adm-lbl-hitung-transfer" class="text-base text-amber-400 block sm:inline sm:ml-2 font-mono">Rp 0</strong>
                         </div>
-                        <button onclick="verifikasiBulanKaryawan()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium py-2 px-4 rounded-lg transition-all">Simpan Status Bulan</button>
+                        <button onclick="verifikasiBulanKaryawan()" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-3 px-5 rounded-xl transition-all cursor-pointer shadow-md text-center">Simpan Status Bulan</button>
                     </div>
                 </div>
             </div>
 
-            <div class="glass-card p-6 overflow-x-auto">
+            <div class="glass-card p-5 md:p-6">
                 <h2 class="text-lg font-semibold mb-4 text-indigo-400">📋 Database Utama Manifest Karyawan & Pelacakan Finansial</h2>
-                <table class="w-full text-left border-collapse text-xs">
-                    <thead>
-                        <tr class="border-b border-slate-700 text-slate-400 bg-black/20">
-                            <th class="p-3">Karyawan & Kontak WA</th>
-                            <th class="p-3">Kode Unik</th>
-                            <th class="p-3">Manifest Anggota Keluarga</th>
-                            <th class="p-3">Total Peserta</th>
-                            <th class="p-3">Total Target Biaya</th>
-                            <th class="p-3">Estimasi Bulanan + Kode Unik</th>
-                            <th class="p-3">Status Konfirmasi Per Bulan</th>
-                            <th class="p-3">Kursi Bus</th>
-                        </tr>
-                    </thead>
-                    <tbody id="adm-tabel-peserta" class="divide-y divide-slate-800"></tbody>
-                </table>
+                <div class="overflow-x-auto -mx-5 md:mx-0">
+                    <div class="inline-block min-w-full align-middle p-5 md:p-0">
+                        <table class="min-w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="border-b border-slate-700 text-slate-400 bg-black/30 font-semibold">
+                                    <th class="p-3.5 whitespace-nowrap">Karyawan & Kontak WA</th>
+                                    <th class="p-3.5 text-center whitespace-nowrap">Kode Unik</th>
+                                    <th class="p-3.5 whitespace-nowrap">Manifest Anggota Keluarga</th>
+                                    <th class="p-3.5 text-center whitespace-nowrap">Total Peserta</th>
+                                    <th class="p-3.5 whitespace-nowrap">Total Target Biaya</th>
+                                    <th class="p-3.5 whitespace-nowrap">Estimasi Bulanan + Kode</th>
+                                    <th class="p-3.5 whitespace-nowrap">Status Per Bulan</th>
+                                    <th class="p-3.5 whitespace-nowrap">Kursi Bus</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adm-tabel-peserta" class="divide-y divide-slate-800 bg-black/5"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </main>
 
         <main id="panel-karyawan" class="space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="glass-card p-6 h-fit">
-                    <h2 class="text-xl font-semibold mb-1 text-indigo-400">📝 Pendaftaran Peserta</h2>
-                    <p class="text-xs text-slate-400 mb-4">Gunakan kode otorisasi pendaftaran aktif yang diberikan oleh pihak Admin.</p>
+                <div class="glass-card p-5 md:p-6 h-fit space-y-4">
+                    <div>
+                        <h2 class="text-xl font-semibold text-indigo-400">📝 Pendaftaran Peserta</h2>
+                        <p class="text-xs text-slate-400 mt-0.5">Gunakan kode otorisasi pendaftaran aktif dari Admin.</p>
+                    </div>
                     
                     <form id="form-pendaftaran" onsubmit="prosesPendaftaran(event)" class="space-y-4">
                         <div>
-                            <label class="block text-xs font-medium text-slate-400 mb-1">Kode Otorisasi Admin</label>
-                            <input type="text" id="reg-token" class="w-full glass-input px-3 py-2 rounded-lg text-sm font-mono uppercase tracking-wider" required placeholder="Contoh: GATH27">
+                            <label class="block text-xs font-medium text-slate-400 mb-1.5">Kode Otorisasi Admin</label>
+                            <input type="text" id="reg-token" class="w-full glass-input px-3 py-3 rounded-xl text-sm font-mono uppercase tracking-wider" required placeholder="Contoh: GATH27">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-400 mb-1">Nama Lengkap Karyawan</label>
-                            <input type="text" id="reg-nama" class="w-full glass-input px-3 py-2 rounded-lg text-sm" required placeholder="Nama Anda">
+                            <label class="block text-xs font-medium text-slate-400 mb-1.5">Nama Lengkap Karyawan</label>
+                            <input type="text" id="reg-nama" class="w-full glass-input px-3 py-3 rounded-xl text-sm" required placeholder="Nama Anda">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-400 mb-1">Nomor WhatsApp Aktif</label>
-                            <input type="tel" id="reg-hp" class="w-full glass-input px-3 py-2 rounded-lg text-sm" required placeholder="08xxxxxxxxxx">
+                            <label class="block text-xs font-medium text-slate-400 mb-1.5">Nomor WhatsApp Aktif</label>
+                            <input type="tel" id="reg-hp" class="w-full glass-input px-3 py-3 rounded-xl text-sm" required placeholder="08xxxxxxxxxx">
                         </div>
 
                         <hr class="border-slate-800 my-2">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-semibold text-indigo-300">Daftar Anggota Keluarga</span>
-                            <button type="button" onclick="tambahBarisKeluarga()" class="text-xs bg-indigo-600/30 hover:bg-indigo-600 text-indigo-300 hover:text-white px-2 py-1 rounded transition-all">+ Tambah Anggota</button>
+                        <div class="flex justify-between items-center py-1">
+                            <span class="text-xs font-bold text-indigo-300">Daftar Anggota Keluarga</span>
+                            <button type="button" onclick="tambahBarisKeluarga()" class="text-xs bg-indigo-600/20 hover:bg-indigo-600 text-indigo-300 hover:text-white px-3 py-2 rounded-lg font-semibold transition-all cursor-pointer">+ Tambah</button>
                         </div>
 
-                        <div id="container-keluarga" class="space-y-3 max-h-60 overflow-y-auto pr-1">
-                            <div class="p-3 bg-white/5 rounded-lg border border-white/5 text-xs">
+                        <div id="container-keluarga" class="space-y-3 max-h-64 overflow-y-auto pr-1">
+                            <div class="p-3 bg-white/5 rounded-xl border border-white/5 text-xs">
                                 <span class="font-medium text-indigo-400">Peserta Utama:</span> Diri Sendiri (Karyawan)
                             </div>
                         </div>
 
-                        <button type="submit" class="w-full bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-medium py-2.5 px-4 rounded-lg text-sm transition-all shadow-md mt-2">Daftar & Dapatkan Kode Unik</button>
+                        <button type="submit" class="w-full bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-bold py-3.5 px-4 rounded-xl text-sm transition-all shadow-md mt-2 cursor-pointer text-center">Daftar & Dapatkan Kode Unik</button>
                     </form>
                 </div>
 
                 <div class="lg:col-span-2 space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div class="glass-card p-5 flex items-center gap-4">
-                            <div class="p-3 bg-indigo-500/10 rounded-xl text-indigo-400 text-xl">💰</div>
+                            <div class="p-3.5 bg-indigo-500/10 rounded-xl text-indigo-400 text-xl">💰</div>
                             <div>
                                 <p class="text-xs text-slate-400">Target Biaya Master</p>
                                 <p id="lbl-target-master" class="text-lg font-bold text-white">Rp 0</p>
-                                <p id="lbl-info-bulan" class="text-[10px] text-slate-400 mt-0.5">Sisa: - bulan</p>
+                                <p id="lbl-info-bulan" class="text-[11px] text-slate-400 mt-0.5">Sisa: - bulan</p>
                             </div>
                         </div>
                         <div class="glass-card p-5 flex items-center gap-4">
-                            <div class="p-3 bg-cyan-500/10 rounded-xl text-cyan-400 text-xl">🚌</div>
+                            <div class="p-3.5 bg-cyan-500/10 rounded-xl text-cyan-400 text-xl">🚌</div>
                             <div>
                                 <p class="text-xs text-slate-400">Jadwal Keberangkatan</p>
                                 <p id="lbl-jadwal-master" class="text-lg font-bold text-white">-</p>
-                                <p class="text-[10px] text-emerald-400 mt-0.5">Verifikasi dilakukan oleh admin berdasarkan pilihan bulan berkala</p>
+                                <p class="text-[11px] text-emerald-400 mt-0.5">Verifikasi bulanan berkala oleh admin</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="glass-card p-6">
+                    <div class="glass-card p-5 md:p-6">
                         <h2 class="text-lg font-semibold mb-4 text-indigo-400">🔍 Cek Progres Pembayaran & Kode Unik Anda</h2>
-                        <div class="flex gap-2 mb-6">
-                            <input type="text" id="cari-nama-karyawan" class="flex-1 glass-input px-3 py-2 rounded-lg text-sm" placeholder="Masukkan Nama Lengkap Anda saat mendaftar...">
-                            <button onclick="cariDataKaryawan()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-all">Cari Data</button>
+                        <div class="flex flex-col sm:flex-row gap-2 mb-6">
+                            <input type="text" id="cari-nama-karyawan" class="flex-1 glass-input px-3 py-3 rounded-xl text-sm" placeholder="Masukkan Nama Lengkap Anda saat mendaftar...">
+                            <button onclick="cariDataKaryawan()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-5 py-3 rounded-xl transition-all cursor-pointer shadow-md text-center">Cari Data</button>
                         </div>
 
                         <div id="hasil-pencarian" class="hidden space-y-4">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                                <div class="bg-black/20 p-3 rounded-lg"><span class="text-slate-400 block">Kode Unik Ekor Anda:</span><strong id="res-kode-unik" class="text-lg text-amber-400 font-mono">-</strong></div>
-                                <div class="bg-black/20 p-3 rounded-lg"><span class="text-slate-400 block">Total Keseluruhan Target Biaya Rombongan:</span><strong id="res-target-total" class="text-lg text-white">-</strong></div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                                <div class="bg-black/20 p-4 rounded-xl"><span class="text-slate-400 block mb-0.5">Kode Unik Ekor Anda:</span><strong id="res-kode-unik" class="text-xl text-amber-400 font-mono">-</strong></div>
+                                <div class="bg-black/20 p-4 rounded-xl"><span class="text-slate-400 block mb-0.5">Total Target Rombongan:</span><strong id="res-target-total" class="text-xl text-white font-mono">-</strong></div>
                             </div>
                             
                             <div class="bg-white/5 p-4 rounded-xl border border-white/5">
-                                <h3 class="text-xs font-semibold text-indigo-300 mb-2">🗓️ Struktur Riwayat Angsuran Bulanan</h3>
+                                <h3 class="text-xs font-semibold text-indigo-300 mb-3">🗓️ Struktur Riwayat Angsuran Bulanan</h3>
                                 <div class="overflow-x-auto">
                                     <table class="w-full text-left border-collapse text-xs">
                                         <thead>
-                                            <tr class="border-b border-slate-700 text-slate-400">
-                                                <th class="pb-2">Bulan Ke-</th>
-                                                <th class="pb-2">Jumlah Transfer Valid (Cicilan + Kode Unik)</th>
-                                                <th class="pb-2">Status Konfirmasi Admin</th>
+                                            <tr class="border-b border-slate-700 text-slate-400 font-medium">
+                                                <th class="pb-2.5">Bulan Ke-</th>
+                                                <th class="pb-2.5">Jumlah Transfer (Cicilan + Kode)</th>
+                                                <th class="pb-2.5">Status Konfirmasi Admin</th>
                                             </tr>
                                         </thead>
                                         <tbody id="res-tabel-cicilan" class="divide-y divide-slate-800"></tbody>
@@ -231,23 +246,23 @@
                         </div>
                     </div>
 
-                    <div id="section-kursi-bus" class="glass-card p-6">
+                    <div id="section-kursi-bus" class="glass-card p-5 md:p-6">
                         <h2 class="text-lg font-semibold mb-2 text-indigo-400">💺 Denah Pemilihan Kursi Bus</h2>
                         <p id="kursi-status-msg" class="text-xs text-rose-400 mb-4">Menu pemilihan belum dibuka oleh Admin.</p>
                         
-                        <div id="wrapper-kursi" class="hidden opacity-50 pointer-events-none transition-all">
-                            <div class="flex flex-col md:flex-row gap-4 items-center mb-4">
-                                <select id="sel-karyawan-kursi" class="glass-input px-3 py-1.5 rounded-lg text-xs w-full md:w-64" onchange="loadOpsiManifestKursi()"></select>
-                                <select id="sel-manifest-kursi" class="glass-input px-3 py-1.5 rounded-lg text-xs w-full md:w-64"><option>Pilih Anggota...</option></select>
-                                <button onclick="pesanKursiTerpilih()" class="w-full md:w-auto bg-cyan-600 hover:bg-cyan-700 text-white text-xs px-4 py-2 rounded-lg font-medium">Plot Kursi</button>
+                        <div id="wrapper-kursi" class="hidden opacity-50 pointer-events-none transition-all space-y-4">
+                            <div class="flex flex-col md:flex-row gap-3 items-center">
+                                <select id="sel-karyawan-kursi" class="glass-input px-3 py-3 rounded-xl text-xs w-full md:w-64 h-[44px]" onchange="loadOpsiManifestKursi()"></select>
+                                <select id="sel-manifest-kursi" class="glass-input px-3 py-3 rounded-xl text-xs w-full md:w-64 h-[44px]"><option>Pilih Anggota...</option></select>
+                                <button onclick="pesanKursiTerpilled()" class="w-full md:w-auto bg-cyan-600 hover:bg-cyan-700 text-white text-xs px-5 py-3 rounded-xl font-bold cursor-pointer text-center">Plot Kursi</button>
                             </div>
-                            <div class="bg-black/30 p-4 rounded-xl max-w-md mx-auto">
-                                <div class="w-full bg-slate-700 text-center py-1 text-[10px] text-slate-300 rounded mb-6 tracking-widest font-bold">KEMUDI SOPIR</div>
+                            <div class="bg-black/30 p-4 rounded-xl max-w-sm mx-auto">
+                                <div class="w-full bg-slate-700 text-center py-1.5 text-[10px] text-slate-300 rounded mb-6 tracking-widest font-bold">KEMUDI SOPIR</div>
                                 <div class="grid grid-cols-5 gap-2 text-center" id="grid-bus-seats"></div>
-                                <div class="flex justify-center gap-4 mt-4 text-[10px]">
+                                <div class="flex justify-center gap-4 mt-5 text-[10px]">
                                     <div class="flex items-center gap-1"><span class="w-3 h-3 bg-slate-700 rounded block"></span> Tersedia</div>
                                     <div class="flex items-center gap-1"><span class="w-3 h-3 bg-indigo-600 rounded block"></span> Terisi</div>
-                                    <div class="flex items-center gap-1"><span class="w-3 h-3 bg-emerald-600 rounded block"></span> Kursi Anda</div>
+                                    <div class="flex items-center gap-1"><span class="w-3 h-3 bg-emerald-600 rounded block"></span> Anda</div>
                                 </div>
                             </div>
                         </div>
@@ -294,7 +309,7 @@
 
         function showToast(message, type = "success") {
             const t = document.getElementById("toast");
-            t.className = `fixed top-5 right-5 z-50 px-4 py-3 rounded-xl shadow-lg text-sm font-medium transition-all duration-300 ${type === 'success' ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'}`;
+            t.className = `fixed top-5 right-5 z-50 px-5 py-3.5 rounded-xl shadow-2xl text-sm font-semibold transition-all duration-300 ${type === 'success' ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'} max-w-sm w-full`;
             t.innerText = message;
             t.classList.remove("hidden");
             setTimeout(() => { t.style.opacity = "1"; t.style.transform = "translateY(0)"; }, 50);
@@ -312,12 +327,12 @@
 
             if (view === 'admin') {
                 pAdmin.classList.remove("hidden"); pKaryawan.classList.add("hidden");
-                navAdmin.className = "px-4 py-2 rounded-lg font-medium text-sm transition-all bg-indigo-600 text-white";
-                navKaryawan.className = "px-4 py-2 rounded-lg font-medium text-sm transition-all glass-card text-slate-300 hover:bg-white/5";
+                navAdmin.className = "flex-1 md:flex-none text-center px-5 py-3 rounded-lg font-semibold text-sm transition-all bg-indigo-600 text-white shadow-md cursor-pointer";
+                navKaryawan.className = "flex-1 md:flex-none text-center px-5 py-3 rounded-lg font-semibold text-sm transition-all text-slate-300 hover:bg-white/5 cursor-pointer";
             } else {
                 pKaryawan.classList.remove("hidden"); pAdmin.classList.add("hidden");
-                navKaryawan.className = "px-4 py-2 rounded-lg font-medium text-sm transition-all bg-indigo-600 text-white";
-                navAdmin.className = "px-4 py-2 rounded-lg font-medium text-sm transition-all glass-card text-slate-300 hover:bg-white/5";
+                navKaryawan.className = "flex-1 md:flex-none text-center px-5 py-3 rounded-lg font-semibold text-sm transition-all bg-indigo-600 text-white shadow-md cursor-pointer";
+                navAdmin.className = "flex-1 md:flex-none text-center px-5 py-3 rounded-lg font-semibold text-sm transition-all text-slate-300 hover:bg-white/5 cursor-pointer";
             }
         }
 
@@ -383,7 +398,7 @@
 
         function renderTokenList() {
             const container = document.getElementById("adm-token-list");
-            container.innerHTML = DB.tokens.length === 0 ? "Tidak ada token aktif." : DB.tokens.map(t => `<span class="bg-indigo-950/80 px-2 py-1 rounded border border-indigo-800/40">${t}</span>`).join("");
+            container.innerHTML = DB.tokens.length === 0 ? "Tidak ada token aktif." : DB.tokens.map(t => `<span class="bg-indigo-950/80 px-2.5 py-1.5 rounded-lg border border-indigo-800/40 text-[11px] font-medium">${t}</span>`).join("");
         }
 
         function tambahBarisKeluarga() {
@@ -391,13 +406,13 @@
             const idIdan = "fam-" + Date.now();
             const div = document.createElement("div");
             div.id = idIdan;
-            div.className = "grid grid-cols-12 gap-2 p-3 bg-white/5 rounded-lg border border-white/5 items-center";
+            div.className = "grid grid-cols-12 gap-2 p-3 bg-white/5 rounded-xl border border-white/5 items-center";
             div.innerHTML = `
                 <div class="col-span-5">
-                    <input type="text" placeholder="Nama Lengkap" class="w-full glass-input px-2 py-1 rounded text-xs fam-nama" required>
+                    <input type="text" placeholder="Nama" class="w-full glass-input px-2 py-2.5 rounded-lg text-xs fam-nama" required>
                 </div>
                 <div class="col-span-4">
-                    <select class="w-full glass-input px-1 py-1 rounded text-xs fam-hubungan">
+                    <select class="w-full glass-input px-1 py-2.5 rounded-lg text-xs fam-hubungan h-[37px]">
                         <option value="Suami">Suami</option>
                         <option value="Istri">Istri</option>
                         <option value="Anak">Anak</option>
@@ -406,10 +421,10 @@
                     </select>
                 </div>
                 <div class="col-span-2">
-                    <input type="number" placeholder="Usia" class="w-full glass-input px-2 py-1 rounded text-xs fam-usia" required>
+                    <input type="number" placeholder="Usia" class="w-full glass-input px-1 py-2.5 rounded-lg text-xs fam-usia" required>
                 </div>
                 <div class="col-span-1 text-center">
-                    <button type="button" onclick="hapusBarisKeluarga('${idIdan}')" class="text-rose-400 font-bold hover:text-rose-300 text-xs">X</button>
+                    <button type="button" onclick="hapusBarisKeluarga('${idIdan}')" class="text-rose-400 font-bold hover:text-rose-300 text-sm p-1 block w-full cursor-pointer">×</button>
                 </div>
             `;
             container.appendChild(div);
@@ -450,10 +465,9 @@
             const totalAnggota = manifestKeluarga.length;
             const sisaBulan = hitungSisaBulan();
             
-            // Generate Objek Pembayaran Bulanan Terstruktur Dinamis
             let statusBulanAwal = {};
             for(let m=1; m<=sisaBulan; m++) {
-                statusBulanAwal[m] = "belum"; // default: belum terbayar
+                statusBulanAwal[m] = "belum"; 
             }
 
             const dataKaryawanBaru = {
@@ -470,7 +484,6 @@
             DB.karyawan.push(dataKaryawanBaru);
             DB.tokens.splice(tokenIdx, 1); 
 
-            // LOGIKA GENERATE OTOMATIS: Tambahkan token pengganti acak secara otomatis untuk pendaftar selanjutnya
             const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
             let autoToken = "";
             for (let i = 0; i < 6; i++) autoToken += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -481,7 +494,7 @@
 
             document.getElementById("form-pendaftaran").reset();
             document.getElementById("container-keluarga").innerHTML = `
-                <div class="p-3 bg-white/5 rounded-lg border border-white/5 text-xs"><span class="font-medium text-indigo-400">Peserta Utama:</span> Diri Sendiri (Karyawan)</div>
+                <div class="p-3 bg-white/5 rounded-xl border border-white/5 text-xs"><span class="font-medium text-indigo-400">Peserta Utama:</span> Diri Sendiri (Karyawan)</div>
             `;
 
             showToast(`Pendaftaran Sukses! Token pendaftaran baru telah digenerate otomatis.`);
@@ -491,7 +504,7 @@
 
         function renderDropdownKaryawanAdmin() {
             const select = document.getElementById("adm-pilih-karyawan");
-            const sisaBulan = hitungS Bulan();
+            const sisaBulan = hitungSisaBulan();
             
             select.innerHTML = DB.karyawan.length === 0 ? "<option value=''>Belum ada pendaftar</option>" : DB.karyawan.map(k => `<option value="${k.nama}">${k.nama} (Ekor: ${k.kodeUnik})</option>`).join("");
             
@@ -544,7 +557,7 @@
         function renderTabelAdmin() {
             const tbody = document.getElementById("adm-tabel-peserta");
             if (DB.karyawan.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="text-center p-4 text-slate-500">Belum ada data pendaftaran masuk.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center p-6 text-slate-500 bg-black/10">Belum ada data pendaftaran masuk.</td></tr>`;
                 return;
             }
 
@@ -554,16 +567,14 @@
                 const cicilanMurniPerBulan = Math.floor(k.targetBiayaTotal / sisaBulan);
                 const totalTransferBulanan = cicilanMurniPerBulan + k.kodeUnik;
 
-                // Tampilkan Data Anggota Keluarga
-                const listKeluarga = k.manifestPeserta.map(p => `<li>• ${p.nama} (${p.hubungan} - ${p.usia} Thn)</li>`).join("");
+                const listKeluarga = k.manifestPeserta.map(p => `<li>• ${p.nama} <span class="text-slate-400">(${p.hubungan})</span></li>`).join("");
                 
-                // Tampilkan Log Status Pembayaran Per Bulan
-                let logStatusBulan = '<div class="grid grid-cols-2 gap-1 font-mono text-[10px]">';
+                let logStatusBulan = '<div class="grid grid-cols-2 gap-1.5 font-mono text-[10px] min-w-[120px]">';
                 for(let i=1; i<=sisaBulan; i++) {
                     const st = (k.pembayaranBulanan && k.pembayaranBulanan[i]) ? k.pembayaranBulanan[i] : "belum";
-                    let badge = '<span class="text-rose-400">B'+i+': Belum</span>';
-                    if(st === "lunas") badge = '<span class="text-emerald-400 font-bold">B'+i+': Lunas</span>';
-                    if(st === "sebagian") badge = '<span class="text-amber-400">B'+i+': Cicil</span>';
+                    let badge = '<span class="text-rose-400 bg-rose-950/40 border border-rose-900/40 px-1 py-0.5 rounded">B'+i+': Belum</span>';
+                    if(st === "lunas") badge = '<span class="text-emerald-400 bg-emerald-950/40 border border-emerald-900/40 px-1 py-0.5 rounded font-bold">B'+i+': Lunas</span>';
+                    if(st === "sebagian") badge = '<span class="text-amber-400 bg-amber-950/40 border border-amber-900/40 px-1 py-0.5 rounded">B'+i+': Cicil</span>';
                     logStatusBulan += `<div>${badge}</div>`;
                 }
                 logStatusBulan += '</div>';
@@ -576,20 +587,20 @@
                 }
 
                 return `
-                    <tr class="hover:bg-white/5 border-b border-slate-800 align-top text-xs">
-                        <td class="p-3">
+                    <tr class="hover:bg-white/5 border-b border-slate-800 align-top">
+                        <td class="p-4">
                             <strong class="text-indigo-300 block text-sm">${k.nama}</strong>
-                            <span class="text-emerald-400 font-medium block mt-1">📞 WA: ${k.hp}</span>
+                            <span class="text-emerald-400 font-medium block mt-1">📞 ${k.hp}</span>
                         </td>
-                        <td class="p-3 font-mono text-amber-400 font-bold text-center text-sm">${String(k.kodeUnik).padStart(3, '0')}</td>
-                        <td class="p-3">
-                            <ul class="text-slate-300 space-y-0.5">${listKeluarga}</ul>
+                        <td class="p-4 font-mono text-amber-400 font-bold text-center text-sm">${String(k.kodeUnik).padStart(3, '0')}</td>
+                        <td class="p-4">
+                            <ul class="text-slate-300 space-y-1">${listKeluarga}</ul>
                         </td>
-                        <td class="p-3 text-center">${k.totalPeserta} Orang</td>
-                        <td class="p-3 font-semibold">${formatRupiah(k.targetBiayaTotal)}</td>
-                        <td class="p-3 text-amber-300 font-mono font-medium">${formatRupiah(totalTransferBulanan)}</td>
-                        <td class="p-3">${logStatusBulan}</td>
-                        <td class="p-3 font-mono text-cyan-400">${kursiKaryawan.join(", ") || "-"}</td>
+                        <td class="p-4 text-center font-medium">${k.totalPeserta} Orang</td>
+                        <td class="p-4 font-semibold whitespace-nowrap">${formatRupiah(k.targetBiayaTotal)}</td>
+                        <td class="p-4 text-amber-300 font-mono font-medium whitespace-nowrap">${formatRupiah(totalTransferBulanan)}</td>
+                        <td class="p-4">${logStatusBulan}</td>
+                        <td class="p-4 font-mono text-cyan-400 font-bold">${kursiKaryawan.join(", ") || "-"}</td>
                     </tr>
                 `;
             }).join("");
@@ -618,15 +629,15 @@
                 const tagihanBulanIni = cicilanMurniPerBulan + karyawan.kodeUnik;
                 const st = (karyawan.pembayaranBulanan && karyawan.pembayaranBulanan[i]) ? karyawan.pembayaranBulanan[i] : "belum";
                 
-                let statusBadge = `<span class="text-rose-400 font-medium">Belum Terbayar</span>`;
-                if(st === "lunas") statusBadge = `<span class="text-emerald-400 font-bold">✓ Lunas Terverifikasi Admin</span>`;
-                if(st === "sebagian") statusBadge = `<span class="text-amber-400 font-medium">Terbayar Sebagian</span>`;
+                let statusBadge = `<span class="text-rose-400 bg-rose-950/40 border border-rose-900/30 px-2 py-1 rounded-lg text-[11px] font-medium">Belum Terbayar</span>`;
+                if(st === "lunas") statusBadge = `<span class="text-emerald-400 bg-emerald-950/40 border border-emerald-900/30 px-2 py-1 rounded-lg text-[11px] font-bold">✓ Lunas Terverifikasi</span>`;
+                if(st === "sebagian") statusBadge = `<span class="text-amber-400 bg-amber-950/40 border border-amber-900/30 px-2 py-1 rounded-lg text-[11px] font-medium">Terbayar Sebagian</span>`;
 
                 tBody.innerHTML += `
-                    <tr class="border-b border-slate-800 text-xs">
-                        <td class="py-2.5 text-slate-300">Bulan ${i}</td>
-                        <td class="py-2.5 font-mono text-amber-300">${formatRupiah(tagihanBulanIni)}</td>
-                        <td class="py-2.5">${statusBadge}</td>
+                    <tr class="border-b border-slate-800">
+                        <td class="py-3 text-slate-300 font-medium">Bulan ${i}</td>
+                        <td class="py-3 font-mono text-amber-300 font-semibold">${formatRupiah(tagihanBulanIni)}</td>
+                        <td class="py-3">${statusBadge}</td>
                     </tr>
                 `;
             }
@@ -681,7 +692,7 @@
                         }
 
                         grid.innerHTML += `
-                            <button type="button" onclick="pilihNomorBangku('${seatId}')" title="${terisiOleh ? 'Terisi: ' + terisiOleh : 'Kosong'}" class="${bgClass} text-[10px] p-2 rounded transition-all font-mono">
+                            <button type="button" onclick="pilihNomorBangku('${seatId}')" title="${terisiOleh ? 'Terisi: ' + terisiOleh : 'Kosong'}" class="${bgClass} text-[10px] p-2.5 min-h-[38px] rounded-lg transition-all font-mono">
                                 ${seatId}
                             </button>
                         `;
@@ -694,10 +705,10 @@
         function pilihNomorBangku(seatId) {
             if (DB.kursi[seatId]) return showToast(`Kursi ${seatId} sudah terisi`, "error");
             tempSelectedSeat = seatId;
-            showToast(`Kursi ${seatId} dipilih. Klik 'Plot Kursi' untuk mengalokasikan.`);
+            showToast(`Kursi ${seatId} dipilih. Klik 'Plot Kursi' untuk mengonfirmasi.`);
         }
 
-        function pesanKursiTerpilih() {
+        function pesanKursiTerpilled() {
             const namaPeserta = document.getElementById("sel-manifest-kursi").value;
             if (!namaPeserta || namaPeserta.startsWith("Pilih")) return showToast("Pilih anggota keluarga dahulu!", "error");
             if (!tempSelectedSeat) return showToast("Pilih nomor bangku pada denah bus!", "error");
