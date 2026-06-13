@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Family Gathering Dashboard v2</title>
+    <title>Family Gathering Dashboard v2.1</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); }
@@ -13,7 +13,7 @@
 
     <nav class="bg-white shadow-sm border-b border-slate-200 px-6 py-4 flex justify-between items-center sticky top-0 z-50">
         <h1 class="text-xl font-bold text-indigo-600 flex items-center gap-2">
-            🎉 FamGather <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-normal">Smart Engine v2</span>
+            🎉 FamGather <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-normal">Smart Engine v2.1</span>
         </h1>
         <div id="navAuth" class="flex items-center gap-4"></div>
     </nav>
@@ -39,7 +39,7 @@
                         <input type="text" id="authNama" class="w-full px-3 py-2 border rounded-xl outline-none focus:ring-2 focus:ring-indigo-500">
                     </div>
                     <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100 text-xs text-indigo-800">
-                        ℹ️ <strong>Sistem Otomatis:</strong> Sisa bulan iuran akan dihitung otomatis oleh sistem sejak hari ini hingga bulan pelaksanaan kegiatan yang diatur Admin.
+                        ℹ️ <strong>Sistem Otomatis:</strong> Sisa bulan iuran akan langsung dihitung secara otomatis oleh sistem berdasarkan target bulan pelaksanaan kegiatan yang dikelola Admin.
                     </div>
                 </div>
 
@@ -155,8 +155,8 @@
                     <label class="text-sm font-bold text-slate-700">🗓️ Bulan Pelaksanaan Event:</label>
                     <input type="month" id="admEventMonth" onchange="updateEventMonthGlobal()" class="border px-3 py-1 rounded-xl text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
-                <button onclick="clearAllDataLog()" class="text-xs bg-rose-50 text-rose-600 hover:bg-rose-100 px-3 py-1.5 rounded-xl font-semibold transition-all">
-                    🚨 Reset Semua Data LocalStorage
+                <button onclick="clearAllDataLog()" class="text-xs bg-rose-50 text-rose-600 hover:bg-rose-100 px-3 py-1.5 rounded-xl font-bold transition-all">
+                    🚨 Reset Semua Data (Karyawan & Pembayaran)
                 </button>
             </div>
 
@@ -234,7 +234,7 @@
                 </select>
             </div>
             <div class="bg-amber-50 text-amber-800 text-xs p-3 rounded-xl">
-                ⚠️ Menambahkan keluarga di tengah jalan akan menambah tagihan Rp 1.000.000, lalu langsung dibagi rata ke sisa bulan pembayaran yang tersisa.
+                ⚠️ Menambahkan keluarga di tengah jalan akan menambah tagihan Rp 1.000.000, lalu langsung dibagi rata ke sisa bulan pembayaran yang tersisa secara otomatis.
             </div>
             <div class="flex justify-end gap-2 text-sm pt-2">
                 <button onclick="tutupModalKeluarga()" class="px-4 py-2 border rounded-xl">Batal</button>
@@ -247,7 +247,6 @@
         // --- 1. SINKRONISASI DATABASE LOCALSTORAGE ---
         function initDatabase() {
             if (!localStorage.getItem('fam_global_config')) {
-                // Default target bulan pelaksanaan: Desember tahun berjalan
                 const currentYear = new Date().getFullYear();
                 localStorage.setItem('fam_global_config', JSON.stringify({
                     aksesKursi: false,
@@ -272,16 +271,15 @@
             
             const hariIni = new Date();
             const tahunSekarang = hariIni.getFullYear();
-            const bulanSekarang = hariIni.getMonth() + 1; // getMonth dimulai dari 0
+            const bulanSekarang = hariIni.getMonth() + 1;
 
             const parts = targetStr.split('-');
             const tahunTarget = parseInt(parts[0]);
             const bulanTarget = parseInt(parts[1]);
 
-            // Selisih total bulan
             let selisihBulan = ((tahunTarget - tahunSekarang) * 12) + (bulanTarget - bulanSekarang);
             
-            // Jika hari ini berada di bulan yang sama atau melewati bulan target, minimal 1 bulan
+            // Jika hari ini berada di bulan yang sama atau melewati bulan target, minimal terhitung 1 bulan
             return selisihBulan <= 0 ? 1 : selisihBulan;
         }
 
@@ -325,7 +323,7 @@
             if(!u || !p) return alert('Username & Password wajib diisi');
 
             if (isRegisterState) {
-                if(users[u]) return alert('Username NIK sudah ada!');
+                if(users[u]) return alert('Username/NIK sudah terdaftar!');
                 const nama = document.getElementById('authNama').value.trim();
                 
                 let code;
@@ -361,7 +359,7 @@
             updateNavbarUI();
         }
 
-        // --- 4. LOGIKA PINTAR TAGIHAN BULANAN ---
+        // --- 4. LOGIKA PINTAR TAGIHAN DAN KAS KELOMPOK ---
         function hitungKeuanganKaryawan(user) {
             const baseTargetPerOrang = 1000000;
             const jumlahAnggota = 1 + (user.keluarga ? user.keluarga.length : 0); 
@@ -373,14 +371,12 @@
                 .reduce((sum, p) => sum + p.nominal, 0);
 
             const sisaTagihan = Math.max(0, totalTargetPlusUnik - totalSudahBayar);
-            
-            // Hitung sisa bulan dinamis dari data admin global
             const sisaBulanDinamis = hitungSisaBulanOtomatis();
             
-            // Iuran Ideal Bulanan Pintar
+            // Perhitungan cicilan bulanan rata
             const iuranPerBulanSisa = Math.ceil(sisaTagihan / sisaBulanDinamis);
 
-            // Cek target bulanan berdasarkan akumulasi (Bulan berjalan aman atau belum)
+            // Perhitungan status kelayakan pembayaran bulan berjalan
             const targetSeharusnyaSudahBayar = (targetMurni / sisaBulanDinamis);
             const statusBulanIni = totalSudahBayar >= targetSeharusnyaSudahBayar ? "🟢 Lunas (Bulan Ini Aman)" : "🟡 Belum Lunas Bulan Ini";
 
@@ -395,7 +391,7 @@
             };
         }
 
-        // --- 5. RENDER SYSTEM ---
+        // --- 5. RENDER UTAMA INTERFACE DASHBOARD ---
         function renderDashboard() {
             if (!currentSession) return;
             const users = JSON.parse(localStorage.getItem('fam_users'));
@@ -417,7 +413,7 @@
             document.getElementById('userTotalBayar').innerText = formatIDR(keu.totalSudahBayar);
             document.getElementById('userSisaTagihan').innerText = formatIDR(keu.sisaTagihan);
             
-            // Render Elemen Pintar Bulanan
+            // Mengisi data planner pintar
             document.getElementById('userSisaBulanBadge').innerText = `${keu.sisaBulanDinamis} Bulan Menuju Event`;
             document.getElementById('userIuranPerBulan').innerText = formatIDR(keu.iuranPerBulanSisa);
             document.getElementById('userStatusBulanIni').innerText = keu.statusBulanIni;
@@ -508,33 +504,35 @@
 
             document.getElementById('admTotalKas').innerText = formatIDR(totalKas);
             document.getElementById('admPendingCount').innerText = pendingCount;
-            document.getElementById('admTotalPeserta').innerText = totalPeserta;
+            document.getElementById('admTotalPeserta').innerText = totalPeserta + ' Jiwa';
         }
 
-        // --- 6. SETTING ADMIN ACTION ---
+        // --- 6. SETTING DAN TOMBOL RESET TOTAL (ADMIN) ---
         function updateEventMonthGlobal() {
             const val = document.getElementById('admEventMonth').value;
             if(!val) return;
             const config = JSON.parse(localStorage.getItem('fam_global_config'));
             config.targetEventMonth = val;
             localStorage.setItem('fam_global_config', JSON.stringify(config));
-            alert(`Bulan target diupdate ke: ${val}. Sisa bulan cicilan semua karyawan otomatis disesuaikan!`);
+            alert(`Target pelaksanaan diperbarui ke: ${val}. Sisa bulan cicilan terhitung otomatis!`);
             renderDashboard();
         }
 
         function clearAllDataLog() {
-            if(confirm("Apakah Anda yakin ingin menghapus seluruh database localStorage proyek ini?")) {
-                localStorage.clear();
-                alert("Data dibersihkan! Memuat ulang halaman...");
+            if (confirm("🚨 PERINGATAN Kritis:\nApakah Anda yakin ingin menghapus seluruh data karyawan terdaftar dan riwayat pembayaran? Tindakan ini tidak bisa dibatalkan.")) {
+                localStorage.removeItem('fam_users');
+                localStorage.removeItem('fam_global_config');
+                initDatabase();
+                alert("🔄 Seluruh database berhasil dibersihkan ke kondisi awal!");
                 window.location.reload();
             }
         }
 
-        // --- 7. TRANSAKSI & KELUARGA ENGINE ---
+        // --- 7. LOGIKA INPUT PEMBAYARAN + PEMBULATAN ANGKAN UNIK ---
         function kirimPembayaran() {
             const rawNominal = parseInt(document.getElementById('payNominal').value);
             const bukti = document.getElementById('payBukti').value.trim();
-            if (!rawNominal || !bukti) return alert('Isi nominal & data bukti!');
+            if (!rawNominal || !bukti) return alert('Isi nominal & data bukti transfer mock Anda!');
 
             const uniqueInt = parseInt(currentSession.uniqueCode);
             let nominalFinal = rawNominal;
@@ -543,7 +541,7 @@
                 const baseRibuan = Math.floor(nominalFinal / 1000) * 1000;
                 nominalFinal = baseRibuan + uniqueInt;
                 if (nominalFinal < rawNominal) nominalFinal += 1000;
-                alert(`Pembulatan pintar diaktifkan: ${formatIDR(nominalFinal)}`);
+                alert(`Nominal disesuaikan otomatis ke pembulatan depan agar angka unik tercapai: ${formatIDR(nominalFinal)}`);
             }
 
             const users = JSON.parse(localStorage.getItem('fam_users'));
@@ -552,7 +550,7 @@
                 tanggal: new Date().toLocaleDateString('id-ID')
             });
             localStorage.setItem('fam_users', JSON.stringify(users));
-            alert('Bukti terkirim ke admin.');
+            alert('Bukti terkirim ke admin. Menunggu konfirmasi manual.');
             document.getElementById('payNominal').value = '';
             document.getElementById('payBukti').value = '';
             renderDashboard();
@@ -562,6 +560,7 @@
             const users = JSON.parse(localStorage.getItem('fam_users'));
             users[username].payments[paymentIndex].status = 'Approved';
             localStorage.setItem('fam_users', JSON.stringify(users));
+            alert('Pembayaran terkonfirmasi sukses!');
             renderDashboard();
         }
 
@@ -587,10 +586,11 @@
             localStorage.setItem('fam_users', JSON.stringify(users));
             tutupModalKeluarga();
             document.getElementById('kelNama').value = '';
+            alert('Anggota keluarga berhasil ditambah! Target keuangan kelompok Anda disesuaikan otomatis.');
             renderDashboard();
         }
 
-        // --- 8. BUS SEAT ENGINE ---
+        // --- 8. BUS SEAT ALLOCATION ENGINE ---
         function renderBusMap() {
             const config = JSON.parse(localStorage.getItem('fam_global_config'));
             const statusBox = document.getElementById('statusKursiUser');
@@ -620,7 +620,7 @@
                 const isOccupied = occupiedSeats[seatId];
                 const isMine = isOccupied === currentSession.username;
 
-                let btnClass = "p-2 rounded-lg text-xs font-bold text-center ";
+                let btnClass = "p-2 rounded-lg text-xs font-bold text-center transition-all ";
                 if (isMine) btnClass += "bg-indigo-600 text-white shadow-md";
                 else if (isOccupied) btnClass += "bg-slate-300 text-slate-500 cursor-not-allowed";
                 else btnClass += "bg-emerald-100 text-emerald-800 hover:bg-emerald-200";
@@ -636,18 +636,22 @@
 
             if (isMine) {
                 mySeats = mySeats.filter(s => s !== seatId);
+                alert(`Kursi ${seatId} dilepas.`);
             } else {
-                if (jumlahKursi >= kuotaMaks) return alert(`Batas kursi sesuai jumlah jiwa kelompok Anda (${kuotaMaks} kursi).`);
+                if (jumlahKursi >= kuotaMaks) return alert(`Kuota kursi maksimal kelompok Anda adalah ${kuotaMaks} kursi sesuai dengan jumlah anggota kelompok terdaftar.`);
                 mySeats.push(seatId);
+                alert(`Berhasil memilih Kursi ${seatId}`);
             }
             users[currentSession.username].kursi = mySeats;
             localStorage.setItem('fam_users', JSON.stringify(users));
             renderDashboard();
         }
 
+        // --- 9. TRIGGERS ON LOAD ---
         document.getElementById('btnPrimaryAuth').onclick = handleAuthSubmit;
         document.getElementById('btnToggleAuth').onclick = toggleAuthMode;
-        toggleAuthMode();
+        
+        toggleAuthMode(); // Set awal ke mode login
         document.getElementById('viewAuth').classList.remove('hidden');
         updateNavbarUI();
     </script>
