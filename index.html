@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Family Gathering Dashboard v2.7</title>
+    <title>Family Gathering Dashboard v2.8</title>
+    <!-- Tailwind CSS untuk UI yang rapi, modern, dan responsive -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); }
@@ -15,15 +16,17 @@
 </head>
 <body class="bg-slate-100 font-sans min-h-screen text-slate-800">
 
+    <!-- Top Navigation Bar -->
     <nav class="bg-white shadow-sm border-b border-slate-200 px-6 py-4 flex justify-between items-center sticky top-0 z-50">
         <h1 class="text-xl font-bold text-indigo-600 flex items-center gap-2">
-            🎉 FamGather <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-normal">Smart Engine v2.7</span>
+            🎉 FamGather <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-normal">Smart Engine v2.8</span>
         </h1>
         <div id="navAuth" class="flex items-center gap-4"></div>
     </nav>
 
     <main class="max-w-7xl mx-auto p-4 md:p-6 space-y-6">
 
+        <!-- ================= 1. Halaman Login / Registrasi ================= -->
         <section id="viewAuth" class="max-w-md mx-auto bg-white rounded-2xl shadow-xl p-6 mt-10 hidden">
             <h2 class="text-2xl font-bold text-center mb-6" id="authTitle">Masuk Aplikasi</h2>
             
@@ -56,8 +59,10 @@
             </div>
         </section>
 
+        <!-- ================= 2. DASHBOARD KARYAWAN ================= -->
         <section id="viewKaryawan" class="grid grid-cols-1 md:grid-cols-3 gap-6 hidden">
             <div class="md:col-span-2 space-y-6">
+                <!-- Ringkasan Finansial Kelompok -->
                 <div class="bg-gradient-to-br from-indigo-600 to-violet-700 rounded-2xl shadow-xl p-6 text-white relative overflow-hidden">
                     <div class="relative z-10">
                         <div class="flex justify-between items-start">
@@ -79,6 +84,7 @@
                     </div>
                 </div>
 
+                <!-- Rencana Iuran Pintar -->
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-4">
                     <div class="flex justify-between items-center border-b border-slate-100 pb-3">
                         <h4 class="text-lg font-bold text-slate-800 flex items-center gap-2">📊 Rencana Iuran Pintar</h4>
@@ -97,10 +103,11 @@
                     </div>
                 </div>
 
+                <!-- Manajemen Anggota Keluarga -->
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
                     <div class="flex justify-between items-center mb-4">
                         <h4 class="text-lg font-bold">Anggota Keluarga Terdaftar</h4>
-                        <button onclick="bukaModalKeluarga()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm px-3 py-1.5 rounded-xl transition-all flex items-center gap-1">
+                        <button onclick="bukaModalKeluarga()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm px-3 py-1.5 rounded-xl transition-all flex items-center gap-1 cursor-pointer">
                             ➕ Tambah Keluarga
                         </button>
                     </div>
@@ -118,15 +125,18 @@
                     </div>
                 </div>
 
+                <!-- Pemilihan Kursi Bus Karyawan -->
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
                     <h4 class="text-lg font-bold mb-2">Pilih Kursi Bus (Tipe Big Bus 2-3)</h4>
                     <div id="statusKursiUser" class="mb-4 text-sm font-semibold text-amber-600 bg-amber-50 p-3 rounded-xl hidden"></div>
                     <div id="busMapContainer" class="hidden space-y-6">
+                        <!-- Kontrol Pindah Bus jika multi-bus aktif -->
                         <div class="flex items-center gap-2" id="userBusSelectorContainer">
                             <label class="text-xs font-bold text-slate-600">Pilih Unit Bus:</label>
                             <select id="userBusSelect" onchange="renderBusMap()" class="text-xs border border-slate-200 px-3 py-1.5 rounded-xl bg-slate-50 font-bold outline-none"></select>
                         </div>
                         <div class="max-w-md mx-auto p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                            <!-- Label Petunjuk Arah Depan Bus -->
                             <div class="w-full bg-slate-300 text-slate-700 text-[10px] font-bold text-center py-1 rounded-lg mb-4 tracking-widest uppercase">🚌 Bagian Depan / Kemudi</div>
                             <div class="grid grid-cols-6 gap-y-3 gap-x-1" id="busGrid"></div>
                         </div>
@@ -134,6 +144,7 @@
                 </div>
             </div>
 
+            <!-- Panel Pembayaran Samping Karyawan -->
             <div class="space-y-6">
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 text-center">
                     <h4 class="text-lg font-bold mb-2 text-left">Kirim Bukti Transfer</h4>
@@ -147,7 +158,7 @@
                                 <p class="text-xs font-semibold text-indigo-600" id="txtPhotoStatus">➕ Tambah Foto Bukti</p>
                             </div>
                         </div>
-                        <button onclick="kirimPembayaranSederhana()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl font-bold transition-all shadow-md shadow-indigo-100">
+                        <button onclick="kirimPembayaranSederhana()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl font-bold transition-all shadow-md shadow-indigo-100 cursor-pointer">
                             Konfirmasi Sudah Bayar
                         </button>
                     </div>
@@ -160,9 +171,12 @@
             </div>
         </section>
 
+        <!-- ================= 3. DASHBOARD SUPER ADMIN ================= -->
         <section id="viewAdmin" class="space-y-6 hidden">
             
+            <!-- PANEL KONTROL GLOBAL -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Panel Konfigurasi Utama -->
                 <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4 lg:col-span-1 flex flex-col justify-between">
                     <div>
                         <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-1.5">
@@ -192,6 +206,7 @@
                     </div>
                 </div>
 
+                <!-- Blok Informasi & Statistik Ringkas -->
                 <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-center">
                         <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Total Kas Masuk</p>
@@ -216,9 +231,12 @@
                 </div>
             </div>
 
+            <!-- MONITORING DENAH KURS BUS REALTIME (PANEL ADMIN) -->
             <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2 border-b border-slate-100 pb-3">
-                    <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider">🚌 Live Monitoring Denah Kursi Bus (Tipe 2-3)</h3>
+                    <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
+                        🚌 Live Monitoring Denah Kursi Bus (Tipe 2-3)
+                    </h3>
                     <div class="flex items-center gap-2">
                         <label class="text-xs font-bold text-slate-500">Lihat Monitor Bus:</label>
                         <select id="admBusMonitorSelect" onchange="renderAdminBusMonitor()" class="text-xs border border-slate-200 px-3 py-1.5 rounded-xl bg-slate-50 font-bold outline-none"></select>
@@ -230,24 +248,39 @@
                 </div>
             </div>
 
+            <!-- AREA DATA KARTU TERPADU (JUDUL DI DALAM BACKGROUND KARTU) -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                <div class="space-y-3 lg:col-span-5">
-                    <h3 class="text-sm font-bold text-amber-600 uppercase tracking-wider flex items-center gap-1.5 px-1">
-                        ⏳ Antrean Validasi Bukti (<span id="badgePendingCount">0</span>)
-                    </h3>
-                    <div class="max-h-[500px] overflow-y-auto space-y-3 pr-1" id="admListVerifikasiCards"></div>
+                
+                <!-- KARTU UTAMA 1: ANTREAN VERIFIKASI -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden lg:col-span-5">
+                    <!-- Header di dalam kartu -->
+                    <div class="bg-amber-50 border-b border-slate-100 px-4 py-3.5 flex justify-between items-center">
+                        <h3 class="text-sm font-bold text-amber-800 uppercase tracking-wider flex items-center gap-1.5">
+                            ⏳ Antrean Validasi Bukti
+                        </h3>
+                        <span id="badgePendingCount" class="bg-amber-200 text-amber-900 text-xs font-bold px-2.5 py-0.5 rounded-full">0</span>
+                    </div>
+                    <!-- Konten di dalam kartu -->
+                    <div class="p-4 max-h-[500px] overflow-y-auto space-y-3" id="admListVerifikasiCards"></div>
                 </div>
 
-                <div class="space-y-3 lg:col-span-7">
-                    <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider px-1">
-                        👥 Realtime Ledger Keuangan Karyawan
-                    </h3>
-                    <div class="max-h-[500px] overflow-y-auto space-y-3 pr-1" id="admListKaryawanCards"></div>
+                <!-- KARTU UTAMA 2: MONITORING FINANSIAL REALTIME -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden lg:col-span-7">
+                    <!-- Header di dalam kartu -->
+                    <div class="bg-slate-50 border-b border-slate-100 px-4 py-3.5">
+                        <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider">
+                            👥 Realtime Ledger Keuangan Karyawan
+                        </h3>
+                    </div>
+                    <!-- Konten di dalam kartu -->
+                    <div class="p-4 max-h-[500px] overflow-y-auto space-y-3" id="admListKaryawanCards"></div>
                 </div>
+
             </div>
         </section>
     </main>
 
+    <!-- Modal Tambah Anggota Keluarga -->
     <div id="modalKeluarga" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-2xl p-6 w-full max-w-sm space-y-4">
             <h3 class="text-lg font-bold">Tambah Anggota Keluarga</h3>
@@ -274,12 +307,13 @@
                 ⚠️ Menambahkan keluarga akan menambah tagihan sesuai target biaya per orang, lalu otomatis dibagi rata ke sisa bulan pembayaran.
             </div>
             <div class="flex justify-end gap-2 text-sm pt-2">
-                <button onclick="tutupModalKeluarga()" class="px-4 py-2 border rounded-xl">Batal</button>
-                <button onclick="simpanKeluarga()" class="px-4 py-2 bg-indigo-600 text-white rounded-xl font-medium">Tambah & Hitung</button>
+                <button onclick="tutupModalKeluarga()" class="px-4 py-2 border rounded-xl cursor-pointer">Batal</button>
+                <button onclick="simpanKeluarga()" class="px-4 py-2 bg-indigo-600 text-white rounded-xl font-medium cursor-pointer">Tambah & Hitung</button>
             </div>
         </div>
     </div>
 
+    <!-- ================= JAVASCRIPT ENGINE LOGIC ================= -->
     <script>
         let fotoTerpilihBase64 = null;
         const KURSI_PER_BUS = 50; // Kapasitas 1 unit Big Bus (10 baris x 5 kursi)
@@ -336,7 +370,7 @@
                         <p class="font-bold">${currentSession.nama}</p>
                         <p class="text-xs text-slate-400">${currentSession.isAdmin ? 'Administrator' : 'Karyawan'}</p>
                     </div>
-                    <button onclick="logout()" class="bg-rose-50 text-rose-600 hover:bg-rose-100 text-sm font-semibold px-4 py-2 rounded-xl transition-all">Keluar</button>
+                    <button onclick="logout()" class="bg-rose-50 text-rose-600 hover:bg-rose-100 text-sm font-semibold px-4 py-2 rounded-xl transition-all cursor-pointer">Keluar</button>
                 `;
             } else {
                 navAuth.innerHTML = `<span class="text-xs text-slate-400">Silahkan login dahulu</span>`;
@@ -462,7 +496,6 @@
             Object.values(users).forEach(u => {
                 if(u.kursi) {
                     u.kursi.forEach(keyStr => {
-                        // keyStr format: "BusX-SeatY"
                         const match = keyStr.match(/Bus(\d+)-/);
                         if(match) {
                             const bNum = parseInt(match[1]);
@@ -577,7 +610,7 @@
                 totalDewasaGlobal += keu.dewasaCount;
                 totalAnakGlobal += keu.anakCount;
 
-                // 1. ANTREAN VALIDASI (DESAIN KARTU PUTIH SERAGAM + APPROVE & REJECT)
+                // 1. ANTREAN VALIDASI
                 u.payments.forEach((p, idx) => {
                     if (p.status === 'Pending') {
                         pendingCount++;
@@ -613,10 +646,9 @@
                     }
                 });
 
-                // 2. REALTIME LEDGER KARYAWAN (DESAIN KARTU PUTIH SERAGAM)
+                // 2. REALTIME LEDGER KARYAWAN
                 let textKursi = '-';
                 if(u.kursi && u.kursi.length > 0) {
-                    // Tampilkan info bus yang lebih komunikatif
                     textKursi = u.kursi.map(kStr => kStr.replace("Bus", "Bus ").replace("-Seat", " Kursi ")).join(', ');
                 }
 
@@ -658,7 +690,7 @@
 
             if(pendingCount === 0) {
                 cardVerifikasiContainer.innerHTML = `
-                    <div class="p-8 text-center text-slate-400 border border-dashed border-slate-200 rounded-xl bg-white italic font-medium">
+                    <div class="p-8 text-center text-slate-400 border border-dashed border-slate-200 rounded-xl bg-white italic font-medium w-full">
                         🎉 Antrean bersih. Belum ada pembayaran masuk.
                     </div>`;
             }
@@ -668,7 +700,7 @@
             const totalBusSkrg = dapatkanTotalBusSistem();
             const nilaiLama = admBusSelect.value;
             admBusSelect.innerHTML = '';
-            for(let i=1; i<=totalBusSkrg + 1; i++) { // Sediakan +1 untuk ekspansi manual jika ingin melihat bus berikutnya
+            for(let i=1; i<=totalBusSkrg + 1; i++) {
                 admBusSelect.innerHTML += `<option value="${i}">Bus ${i}</option>`;
             }
             admBusSelect.value = nilaiLama && parseInt(nilaiLama) <= (totalBusSkrg+1) ? nilaiLama : "1";
@@ -729,7 +761,7 @@
             }
         }
 
-        // --- 9. GLOBAL ADMIN CONFIG ACTIONS (DENGAN SECURITY CONFIRMATION + TOMBOL SET) ---
+        // --- 9. GLOBAL ADMIN CONFIG ACTIONS ---
         function updateTargetCostGlobal() {
             const inputVal = parseInt(document.getElementById('admTargetCost').value);
             if (!inputVal || inputVal <= 0) return alert('Target iuran tidak valid!');
@@ -801,16 +833,14 @@
         }
 
         // --- 10. MULTI-BUS & SEAT LAYOUT MAP ENGINE (BIG BUS TIPE KIRI 2 - KANAN 3) ---
-        // Penjelasan Grid 6 Kolom: Kolom 1-2 (Kiri), Kolom 3 (Lorong Jalan kosong), Kolom 4-6 (Kanan)
         function buatStrukturBigBus23(targetBusNo, occupiedSeats, periksaAksiKlik, contextUser) {
             let htmlStr = '';
             let seatCounter = 1;
+            const databaseKaryawan = JSON.parse(localStorage.getItem('fam_users'));
 
-            // Baris 1 sampai 10 (Total 50 Kursi)
             for (let baris = 1; baris <= 10; baris++) {
                 for (let kolom = 1; kolom <= 6; kolom++) {
                     if (kolom === 3) {
-                        // Kolom Ke-3 adalah Lorong Jalan (Aisle) Bus
                         htmlStr += `<div class="h-8 flex items-center justify-center text-[9px] text-slate-300 font-bold uppercase">Lrg</div>`;
                     } else {
                         const currentSeatIndex = seatCounter;
@@ -823,26 +853,26 @@
 
                         if (isOccupiedBy) {
                             if (contextUser && isOccupiedBy === contextUser.username) {
-                                // Milik User saat ini
                                 btnClass += "bg-indigo-600 border-indigo-700 text-white shadow-xs";
                                 labelKursi = `Milik Anda`;
                             } else {
-                                // Terisi Orang lain
-                                btnClass += "bg-slate-200 border-slate-300 text-slate-400 cursor-not-allowed";
-                                labelKursi = `Terisi`;
+                                // Pada sisi Admin, tampilkan inisial/nama pemesan jika diinginkan, di sini kita buat "Terisi" / nama pemilik
+                                const infoPemesan = databaseKaryawan[isOccupiedBy] ? databaseKaryawan[isOccupiedBy].nama : "Terisi";
+                                btnClass += "bg-slate-200 border-slate-300 text-slate-400 cursor-not-allowed text-[9px] truncate px-0.5";
+                                labelKursi = periksaAksiKlik ? `Terisi` : infoPemesan;
                             }
                         } else {
-                            // Kosong
                             btnClass += "bg-emerald-50 border-emerald-200 text-emerald-800 hover:bg-emerald-100 cursor-pointer";
                         }
 
-                        // Jika fungsi klik diaktifkan (Untuk User memilih kursi)
                         if (periksaAksiKlik) {
                             const isMine = (isOccupiedBy === contextUser.username);
                             onClickAttr = `onclick="pilihKursiSmartEngine('${seatKeyString}', ${isOccupiedBy ? 'true' : 'false'}, ${isMine}, ${targetBusNo})"`;
                         }
 
-                        htmlStr += `<button ${onClickAttr} class="${btnClass}" title="Nomor Kursi: ${currentSeatIndex}">${labelKursi}</button>`;
+                        // Sisi admin bisa melihat detail saat hover kursor
+                        const namaHover = databaseKaryawan[isOccupiedBy] ? databaseKaryawan[isOccupiedBy].nama : "Kosong";
+                        htmlStr += `<button ${onClickAttr} class="${btnClass}" title="Bus ${targetBusNo} - Kursi ${currentSeatIndex} (${namaHover})">${labelKursi}</button>`;
                         seatCounter++;
                     }
                 }
@@ -887,19 +917,34 @@
             gridAdmin.innerHTML = buatStrukturBigBus23(targetBusSelected, occupiedSeats, false, null);
         }
 
-        // Logika Eksekusi Klik Pemilihan Kursi
+        // Logika Eksekusi Klik Pemilihan Kursi (DENGAN CONCURRENCY LOCK - ANTI DOUBLE BOOKING)
         function pilihKursiSmartEngine(seatKeyString, isOccupied, isMine, targetBusNo) {
+            // 1. Ambil data paling fresh langsung dari localStorage untuk validasi concurrency
+            const usersGlobal = JSON.parse(localStorage.getItem('fam_users'));
+            
+            // Re-check apakah kursi ini mendadak sudah diambil orang lain saat halaman belum di-refresh
+            let namaPemesanTerbaru = null;
+            Object.values(usersGlobal).forEach(u => {
+                if (u.username !== currentSession.username && u.kursi && u.kursi.includes(seatKeyString)) {
+                    namaPemesanTerbaru = u.nama;
+                }
+            });
+
+            if (namaPemesanTerbaru) {
+                alert(`🚨 CONCURRENCY LOCK ERROR:\n\nMaaf, kursi ini baru saja dipesan oleh "${namaPemesanTerbaru}".\nSistem membatalkan aksi Anda untuk mencegah data ganda. Halaman akan diperbarui otomatis.`);
+                renderDashboard();
+                return;
+            }
+
             if (isOccupied && !isMine) return alert('Kursi tersebut sudah dipesan oleh karyawan lain!');
             
-            const users = JSON.parse(localStorage.getItem('fam_users'));
-            let mySeats = users[currentSession.username].kursi || [];
+            let mySeats = usersGlobal[currentSession.username].kursi || [];
             const keu = hitungKeuanganKaryawan(currentSession);
             
             if (isMine) {
                 mySeats = mySeats.filter(s => s !== seatKeyString);
                 alert(`Anda melepas pesanan ${seatKeyString.replace("Bus", "Bus ").replace("-Seat", " Kursi ")}`);
             } else {
-                // Periksa kuota iuran berdasarkan jumlah anggota keluarga
                 if (mySeats.length >= keu.jumlahAnggota) {
                     return alert(`Batas kuota maksimal kelompok Anda adalah ${keu.jumlahAnggota} kursi sesuai jumlah jiwa pendaftaran.`);
                 }
@@ -907,7 +952,7 @@
                 // VALIDASI OTOMATIS ANTAR BUS (Mencegah loncat ke Bus 2 jika Bus 1 belum penuh)
                 if (targetBusNo > 1) {
                     let totalTerisiBusSebelumnya = 0;
-                    Object.values(users).forEach(u => {
+                    Object.values(usersGlobal).forEach(u => {
                         if(u.kursi) {
                             u.kursi.forEach(sStr => {
                                 if(sStr.startsWith(`Bus${targetBusNo - 1}-`)) totalTerisiBusSebelumnya++;
@@ -924,8 +969,8 @@
                 alert(`Berhasil memesan ${seatKeyString.replace("Bus", "Bus ").replace("-Seat", " Kursi ")}`);
             }
 
-            users[currentSession.username].kursi = mySeats;
-            localStorage.setItem('fam_users', JSON.stringify(users));
+            usersGlobal[currentSession.username].kursi = mySeats;
+            localStorage.setItem('fam_users', JSON.stringify(usersGlobal));
             renderDashboard();
         }
 
