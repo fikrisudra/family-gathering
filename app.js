@@ -1,5 +1,6 @@
 // ====== CONFIGURATION & STORAGE KEY ======
-const STORAGE_KEY = "fam_gathering_premium_v5";
+const STORAGE_KEY = "fam_gathering_clean_mobile_v6";
+const WHATSAPP_NUMBER = "6285966191000"; // Menggunakan nomor WhatsApp target Anda
 
 // ====== 1. SYSTEM INITIALIZATION ======
 function initDatabase() {
@@ -10,7 +11,7 @@ function initDatabase() {
                 sisa_bulan_berjalan: 5,
                 total_biaya_per_orang: 1500000,
                 akses_kursi: "buka",
-                token_pendaftaran: "GATH-9A3X"
+                token_pendaftaran: "GATH-7W2P"
             },
             users: [
                 { id: "ADMIN", nama: "Super Admin", pass: "admin123", role: "admin" }
@@ -35,7 +36,7 @@ function generateRandomToken() {
 
 function prepareWALink() {
     const msg = encodeURIComponent("Halo Admin, saya meminta token pendaftaran resmi Family Gathering.");
-    document.getElementById('wa-link').href = "https://wa.me/628123456789?text=" + msg;
+    document.getElementById('wa-link').href = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + msg;
 }
 
 // ====== 2. AUTH LOGIC ======
@@ -119,7 +120,7 @@ function showCorrectDashboard() {
     
     document.getElementById('avatar-letter').innerText = currentSession.nama.charAt(0).toUpperCase();
     document.getElementById('session-name').innerText = currentSession.nama;
-    document.getElementById('session-role').innerText = currentSession.role === 'admin' ? "SUPER ADMIN" : "KARYAWAN";
+    document.getElementById('session-role').innerText = currentSession.role === 'admin' ? "Super Admin" : "Karyawan";
 
     if (currentSession.role === 'admin') {
         document.getElementById('admin-page').classList.remove('hidden');
@@ -182,8 +183,8 @@ function loadUserDashboard() {
         tbody.innerHTML += `
             <tr>
                 <td><strong>${member.nama_peserta}</strong></td>
-                <td><span style="color:#2481cc; font-weight:500;">${member.no_kursi}</span></td>
-                <td style="color:#8e8e93; font-size:13px;">Ke-${totalBulanProgram - member.bulan_bergabung + 1}</td>
+                <td><span style="color:var(--primary); font-weight:500;">${member.no_kursi}</span></td>
+                <td style="color:var(--text-muted);">Ke-${totalBulanProgram - member.bulan_bergabung + 1}</td>
                 <td>${statusBadge}</td>
             </tr>
         `;
@@ -250,21 +251,21 @@ function loadAdminPanel() {
     tbody.innerHTML = "";
 
     if (db.members.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#8e8e93; padding:20px;">Belum ada data pendaftar.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:20px;">Belum ada data pendaftar.</td></tr>`;
     }
 
     db.members.forEach(m => {
         let isLunas = m.status_bayar === "LUNAS";
         let statusBadge = isLunas ? '<span class="badge-lunas">Lunas</span>' : '<span class="badge-belum">Pending</span>';
         let aksiButton = isLunas 
-            ? `<button class="ios-btn-secondary" style="color:var(--tg-danger)" onclick="togglePaymentStatus('${m.id_member}', false)">Batalkan</button>`
-            : `<button class="ios-btn-secondary" style="color:var(--tg-success)" onclick="togglePaymentStatus('${m.id_member}', true)">Konfirmasi</button>`;
+            ? `<button class="btn-secondary" style="color:var(--danger-color)" onclick="togglePaymentStatus('${m.id_member}', false)">Batalkan</button>`
+            : `<button class="btn-secondary" style="color:var(--success-color)" onclick="togglePaymentStatus('${m.id_member}', true)">Konfirmasi</button>`;
             
         tbody.innerHTML += `
             <tr>
-                <td><small style="color:#8e8e93;">${m.id_karyawan}</small></td>
+                <td><small style="color:var(--text-muted);">${m.id_karyawan}</small></td>
                 <td><strong>${m.nama_peserta}</strong></td>
-                <td><span style="color:var(--tg-primary)">${m.no_kursi}</span></td>
+                <td><span style="color:var(--primary)">${m.no_kursi}</span></td>
                 <td>${statusBadge}</td>
                 <td style="text-align: right;">${aksiButton}</td>
             </tr>

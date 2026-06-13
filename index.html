@@ -2,210 +2,219 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Gathering Hub</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="statusbar-spacer"></div>
-
-    <div class="app-container">
+    <div class="mobile-app">
         
-        <header class="ios-header">
-            <div class="header-main">
-                <h2>Gathering Hub</h2>
-                <div id="user-info" class="hidden">
-                    <div class="user-avatar-meta">
-                        <div class="tg-avatar" id="avatar-letter">U</div>
-                        <div class="user-text-details">
-                            <span id="session-name" class="profile-name">Nama</span>
-                            <span id="session-role" class="profile-role">Karyawan</span>
+        <header class="app-header">
+            <div class="header-wrap">
+                <h1 class="brand-title">Gathering Hub</h1>
+                <div id="user-info" class="user-profile hidden">
+                    <div class="profile-meta">
+                        <div class="avatar-circle" id="avatar-letter">U</div>
+                        <div class="profile-text">
+                            <span id="session-name" class="user-name">Nama</span>
+                            <span id="session-role" class="user-role">Karyawan</span>
                         </div>
                     </div>
-                    <button onclick="logout()" class="ios-btn-link">Keluar</button>
+                    <button onclick="logout()" class="btn-logout-link">Keluar</button>
                 </div>
             </div>
         </header>
 
-        <div id="auth-page" class="page">
-            <div class="tg-tabs">
-                <button id="tab-login-btn" class="tab-btn active" onclick="switchTab('login')">Masuk</button>
-                <button id="tab-register-btn" class="tab-btn" onclick="switchTab('register')">Daftar Baru</button>
-            </div>
+        <main class="app-content">
+            <div id="auth-page" class="view-pane">
+                <div class="auth-tabs">
+                    <button id="tab-login-btn" class="tab-item active" onclick="switchTab('login')">Masuk</button>
+                    <button id="tab-register-btn" class="tab-item" onclick="switchTab('register')">Daftar</button>
+                </div>
 
-            <div id="login-form" class="form-container">
-                <div class="ios-input-group">
-                    <input type="text" id="login-id" placeholder="ID Karyawan (cth: KRY005)">
-                    <input type="password" id="login-pass" placeholder="Kata Sandi">
-                </div>
-                <button onclick="login()" class="tg-btn-primary">Masuk</button>
-            </div>
-
-            <div id="register-form" class="form-container hidden">
-                <div class="ios-input-group">
-                    <input type="text" id="reg-id" placeholder="ID Karyawan (Akhiran 3 angka, cth: KRY125)">
-                    <input type="text" id="reg-nama" placeholder="Nama Lengkap">
-                    <input type="password" id="reg-pass" placeholder="Kata Sandi Baru">
-                </div>
-                <div class="wa-verification-row">
-                    <input type="text" id="reg-token" placeholder="Token Pendaftaran WA">
-                    <a href="#" id="wa-link" target="_blank" class="tg-btn-wa" onclick="prepareWALink()">Minta Token</a>
-                </div>
-                <button onclick="register()" class="tg-btn-primary">Daftar Akun</button>
-            </div>
-        </div>
-
-        <div id="user-page" class="page hidden">
-            <div class="ios-card billing-card">
-                <div class="card-header-icon">
-                    <span class="icon-label">[Laporan]</span>
-                    <h3>Rincian Iuran Pintar</h3>
-                </div>
-                <div class="billing-list">
-                    <div class="billing-item"><span>Durasi Program</span><strong id="bill-total-months">0 mth</strong></div>
-                    <div class="billing-item"><span>Sisa Tenor</span><strong id="bill-months">0 mth</strong></div>
-                    <div class="billing-item"><span>3 Digit Kode Unik</span><strong id="bill-code" class="tg-text-link">000</strong></div>
-                    <div class="billing-divider"></div>
-                    <div class="billing-item total-row">
-                        <span>Total Tagihan Anda</span>
-                        <span id="bill-total" class="price-tag">Rp 0</span>
+                <div id="login-form" class="form-wrapper">
+                    <div class="input-stack">
+                        <input type="text" id="login-id" placeholder="ID Karyawan (cth: KRY005)">
+                        <input type="password" id="login-pass" placeholder="Kata Sandi">
                     </div>
+                    <button onclick="login()" class="btn-primary">Masuk</button>
                 </div>
-                <button onclick="openQrisModal()" class="tg-btn-qris">Bayar Cepat via QRIS</button>
+
+                <div id="register-form" class="form-wrapper hidden">
+                    <div class="input-stack">
+                        <input type="text" id="reg-id" placeholder="ID Karyawan (Akhiran 3 angka, cth: KRY125)">
+                        <input type="text" id="reg-nama" placeholder="Nama Lengkap">
+                        <input type="password" id="reg-pass" placeholder="Kata Sandi Baru">
+                    </div>
+                    <div class="wa-row">
+                        <input type="text" id="reg-token" placeholder="Token Pendaftaran">
+                        <a href="#" id="wa-link" target="_blank" class="btn-wa-action" onclick="prepareWALink()">Minta Token</a>
+                    </div>
+                    <button onclick="register()" class="btn-primary">Daftar Akun</button>
+                </div>
             </div>
 
-            <div class="ios-card">
-                <div class="card-header-icon">
-                    <span class="icon-label">[Bus]</span>
-                    <h3>Manifes Keluarga & Kursi</h3>
-                </div>
-                
-                <div id="seat-closed-alert" class="ios-notice-danger hidden">
-                    Akses modifikasi kursi bus ditutup oleh Super Admin.
+            <div id="user-page" class="view-pane hidden">
+                <div class="clean-card billing-box">
+                    <div class="card-head">
+                        <h3>Rincian Iuran Pintar</h3>
+                    </div>
+                    <div class="billing-rows">
+                        <div class="row-meta"><span>Durasi Program</span><span id="bill-total-months" class="val-bold">0 mth</span></div>
+                        <div class="row-meta"><span>Sisa Tenor</span><span id="bill-months" class="val-bold">0 mth</span></div>
+                        <div class="row-meta"><span>3 Digit Kode Unik</span><span id="bill-code" class="val-bold code-highlight">000</span></div>
+                        <div class="row-divider"></div>
+                        <div class="row-meta total-highlight">
+                            <span>Total Tagihan Anda</span>
+                            <span id="bill-total" class="final-price">Rp 0</span>
+                        </div>
+                    </div>
+                    <button onclick="openQrisModal()" class="btn-qris-trigger">Bayar via QRIS</button>
                 </div>
 
-                <div id="family-input-form" class="family-flex-form">
-                    <input type="text" id="member-nama" placeholder="Nama Anggota Keluarga">
-                    <select id="member-seat">
-                        <option value="">Pilih Kursi</option>
-                    </select>
-                    <button onclick="addFamilyMember()" class="ios-btn-add">+</button>
-                </div>
+                <div class="clean-card">
+                    <div class="card-head">
+                        <h3>Manifes Keluarga & Kursi</h3>
+                    </div>
+                    
+                    <div id="seat-closed-alert" class="notice-box danger hidden">
+                        Akses modifikasi kursi bus ditutup oleh Super Admin.
+                    </div>
 
-                <div class="table-wrapper">
-                    <table class="ios-table">
-                        <thead>
-                            <tr>
-                                <th>Nama Peserta</th>
-                                <th>Kursi</th>
-                                <th>Gabung</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="family-list-table"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <div id="admin-page" class="page hidden">
-            <div class="ios-card admin-card">
-                <div class="card-header-icon">
-                    <span class="icon-label">[Sistem]</span>
-                    <h3>Panel Kontrol Super Admin</h3>
-                </div>
-                <div class="ios-form-grid">
-                    <div class="form-field">
-                        <label>Total Durasi (Bulan)</label>
-                        <input type="number" id="set-total-months" min="1">
-                    </div>
-                    <div class="form-field">
-                        <label>Sisa Bulan Berjalan</label>
-                        <input type="number" id="set-months" min="1">
-                    </div>
-                    <div class="form-field">
-                        <label>Biaya Per Orang (Rp)</label>
-                        <input type="number" id="set-price" step="50000">
-                    </div>
-                    <div class="form-field">
-                        <label>Akses Kursi Bus</label>
-                        <select id="set-seat-status">
-                            <option value="buka">Buka Akses</option>
-                            <option value="tutup">Tutup Akses</option>
+                    <div id="family-input-form" class="form-inline-flex">
+                        <input type="text" id="member-nama" placeholder="Nama Anggota Keluarga">
+                        <select id="member-seat">
+                            <option value="">Kursi</option>
                         </select>
+                        <button onclick="addFamilyMember()" class="btn-icon-add">+</button>
                     </div>
-                </div>
-                <button onclick="saveAdminSettings()" class="tg-btn-primary" style="margin-top: 15px;">Simpan Perubahan Global</button>
-                
-                <div class="tg-token-box">
-                    <div class="token-meta">
-                        <span class="token-label">Token Registrasi WA Aktif</span>
-                        <div class="token-badge" id="admin-active-token">GEN-0000</div>
-                    </div>
-                    <div class="token-actions">
-                        <button onclick="generateNewTokenManual()" class="ios-btn-secondary">Acak Baru</button>
-                        <button onclick="copyTokenText()" class="tg-btn-text">Salin Balasan Chat</button>
+
+                    <div class="scroll-table">
+                        <table class="clean-table">
+                            <thead>
+                                <tr>
+                                    <th>Nama Peserta</th>
+                                    <th>Kursi</th>
+                                    <th>Gabung</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="family-list-table"></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
 
-            <div class="ios-card">
-                <div class="card-header-icon">
-                    <span class="icon-label">[Keuangan]</span>
-                    <h3>Verifikasi Manual Pembayaran</h3>
+            <div id="admin-page" class="view-pane hidden">
+                <div class="clean-card">
+                    <div class="card-head">
+                        <h3>Panel Kontrol Super Admin</h3>
+                    </div>
+                    <div class="grid-fields">
+                        <div class="field-item">
+                            <label>Total Durasi (Bulan)</label>
+                            <input type="number" id="set-total-months" min="1">
+                        </div>
+                        <div class="field-item">
+                            <label>Sisa Bulan Berjalan</label>
+                            <input type="number" id="set-months" min="1">
+                        </div>
+                        <div class="field-item">
+                            <label>Biaya Per Orang (Rp)</label>
+                            <input type="number" id="set-price" step="50000">
+                        </div>
+                        <div class="field-item">
+                            <label>Akses Kursi Bus</label>
+                            <select id="set-seat-status">
+                                <option value="buka">Buka Akses</option>
+                                <option value="tutup">Tutup Akses</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button onclick="saveAdminSettings()" class="btn-primary" style="margin-top: 16px;">Simpan Perubahan</button>
+                    
+                    <div class="token-management-box">
+                        <div class="token-header-row">
+                            <span class="label-muted">Token Registrasi Aktif</span>
+                            <span class="badge-token" id="admin-active-token">GEN-0000</span>
+                        </div>
+                        <div class="token-buttons-row">
+                            <button onclick="generateNewTokenManual()" class="btn-secondary">Acak Token</button>
+                            <button onclick="copyTokenText()" class="btn-text-only">Salin Template Balasan</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="table-wrapper">
-                    <table class="ios-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nama Peserta</th>
-                                <th>Kursi</th>
-                                <th>Status</th>
-                                <th style="text-align: right;">Aksi Tindakan</th>
-                            </tr>
-                        </thead>
-                        <tbody id="admin-payment-table"></tbody>
-                    </table>
+
+                <div class="clean-card">
+                    <div class="card-head">
+                        <h3>Verifikasi Manual Pembayaran</h3>
+                    </div>
+                    <div class="scroll-table">
+                        <table class="clean-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nama Peserta</th>
+                                    <th>Kursi</th>
+                                    <th>Status</th>
+                                    <th style="text-align: right;">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-payment-table"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>
+        </main>
 
     </div>
 
-    <div id="qris-modal" class="ios-modal-overlay hidden">
-        <div class="ios-modal-sheet">
-            <div class="modal-indicator"></div>
-            <div class="modal-header">
-                <h3>Pembayaran QRIS Interaktif</h3>
-                <button onclick="closeQrisModal()" class="close-modal-btn">X</button>
+    <div id="qris-modal" class="modal-backdrop hidden">
+        <div class="modal-sheet">
+            <div class="modal-pull-bar"></div>
+            <div class="modal-head-wrap">
+                <h3>Pembayaran QRIS</h3>
+                <button onclick="closeQrisModal()" class="btn-close-modal">✕</button>
             </div>
-            <div class="modal-body">
-                <p class="qris-instruction">Silakan pindai QRIS di bawah menggunakan e-Wallet atau m-Banking Anda.</p>
+            <div class="modal-inner">
+                <p class="modal-desc">Pindai atau simpan kode QRIS resmi di bawah ini melalui aplikasi e-Wallet atau m-Banking Anda.</p>
                 
-                <div class="qris-box-wrapper">
-                    <div class="qris-brand">QRIS</div>
-                    <div class="qris-qrcode-graphic">
-                        <div class="qr-matrix-mock">
-                            <div class="qr-corner top-left"></div>
-                            <div class="qr-corner top-right"></div>
-                            <div class="qr-corner bottom-left"></div>
-                            <div class="qr-center-logo">GATH</div>
-                        </div>
+                <div class="qris-container">
+                    <div class="qris-header-label">QRIS</div>
+                    <div class="qris-graphic-wrapper">
+                        <svg class="real-qris-svg" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="0" y="0" width="100" height="100" fill="#ffffff"/>
+                            <path d="M4,4 h16 v16 h-16 z M8,8 h8 v8 h-8 z" fill="#000000"/>
+                            <path d="M80,4 h16 v16 h-16 z M84,8 h8 v8 h-8 z" fill="#000000"/>
+                            <path d="M4,80 h16 v16 h-16 z M8,84 h8 v8 h-8 z" fill="#000000"/>
+                            <path d="M26,4 h4 v4 h-4 z M34,4 h12 v4 h-12 z M50,4 h8 v4 h-8 z M62,4 h4 v4 h-4 z M70,4 h6 v4 h-6 z
+                                     M26,10 h8 v4 h-8 z M38,10 h4 v4 h-4 z M46,10 h16 v4 h-16 z M66,10 h10 v4 h-10 z
+                                     M4,24 h12 v4 h-12 z M20,24 h8 v4 h-8 z M32,24 h16 v4 h-16 z M52,24 h20 v4 h-20 z M76,24 h20 v4 h-20 z
+                                     M4,30 h4 v12 h-4 z M12,30 h16 v4 h-16 z M32,30 h4 v4 h-4 z M40,30 h8 v4 h-8 z M52,30 h12 v4 h-12 z M70,30 h26 v4 h-26 z
+                                     M12,38 h8 v4 h-8 z M24,38 h12 v4 h-12 z M40,38 h16 v4 h-16 z M60,38 h8 v4 h-8 z M72,38 h4 v4 h-4 z M80,38 h16 v4 h-16 z
+                                     M4,46 h8 v4 h-8 z M16,46 h4 v4 h-4 z M24,46 h12 v4 h-12 z M40,46 h4 v4 h-4 z M48,46 h8 v4 h-8 z M60,46 h16 v4 h-16 z M80,46 h4 v4 h-4 z M88,46 h8 v4 h-8 z
+                                     M4,54 h16 v4 h-16 z M24,54 h4 v4 h-4 z M32,54 h8 v4 h-8 z M44,54 h12 v4 h-12 z M60,54 h4 v4 h-4 z M68,54 h16 v4 h-16 z M88,54 h8 v4 h-8 z
+                                     M4,62 h6 v4 h-6 z M14,62 h14 v4 h-14 z M32,62 h8 v4 h-8 z M44,62 h4 v4 h-4 z M52,62 h16 v4 h-16 z M72,62 h8 v4 h-8 z M84,62 h12 v4 h-12 z
+                                     M4,70 h8 v4 h-8 z M16,70 h12 v4 h-12 z M32,70 h20 v4 h-20 z M56,70 h8 v4 h-8 z M68,70 h4 v4 h-4 z M76,70 h20 v4 h-20 z
+                                     M24,78 h12 v4 h-12 z M40,78 h4 v4 h-4 z M48,78 h16 v4 h-16 z M68,78 h24 v4 h-24 z
+                                     M24,84 h4 v12 h-4 z M32,84 h12 v4 h-12 z M48,84 h4 v4 h-4 z M56,84 h16 v4 h-16 z M76,84 h8 v4 h-8 z M88,84 h8 v4 h-8 z
+                                     M32,92 h16 v4 h-16 z M52,92 h8 v4 h-8 z M64,92 h20 v4 h-20 z M88,92 h8 v4 h-8 z" fill="#000000"/>
+                            <path d="M78,78 h6 v6 h-6 z M80,80 h2 v2 h-2 z" fill="#000000"/>
+                        </svg>
                     </div>
-                    <div class="qris-footer-text">NMIID: ID102648291073</div>
+                    <div class="qris-footer-meta">NMIID: ID102648291073</div>
                 </div>
 
-                <div class="qris-invoice-details">
-                    <div class="inv-row"><span>Nominal Transfer</span><strong id="qris-modal-amount">Rp 0</strong></div>
-                    <div class="inv-row"><span>Status Validasi</span><span class="badge-pending">Menunggu Konfirmasi Admin</span></div>
+                <div class="modal-invoice-card">
+                    <div class="invoice-item"><span>Nominal Transfer</span><strong id="qris-modal-amount">Rp 0</strong></div>
+                    <div class="invoice-item"><span>Status Konfirmasi</span><span class="status-pending-txt">Menunggu Verifikasi</span></div>
                 </div>
                 
-                <div class="ios-notice-info">
-                    Info: Kode unik ID Anda sudah otomatis ditambahkan ke dalam digit terakhir nominal QRIS di atas untuk mempercepat verifikasi manual oleh Super Admin.
+                <div class="notice-box info">
+                    Info: 3 digit terakhir dari total biaya di atas diambil dari nomor identitas karyawan unik Anda untuk mempermudah deteksi pencatatan oleh Super Admin.
                 </div>
-                <button onclick="closeQrisModal()" class="tg-btn-primary" style="margin-top: 15px;">Saya Sudah Transfer</button>
+                <button onclick="closeQrisModal()" class="btn-primary" style="margin-top: 16px;">Saya Sudah Mentransfer</button>
             </div>
         </div>
     </div>
