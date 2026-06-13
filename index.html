@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Family Gathering Dashboard v2.9</title>
+    <title>Family Gathering Dashboard v2.9.1</title>
     <!-- Tailwind CSS untuk UI yang rapi, modern, dan responsive -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
@@ -19,7 +19,7 @@
     <!-- Top Navigation Bar -->
     <nav class="bg-white shadow-sm border-b border-slate-200 px-6 py-4 flex justify-between items-center sticky top-0 z-50">
         <h1 class="text-xl font-bold text-indigo-600 flex items-center gap-2">
-            🎉 FamGather <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-normal">Smart Engine v2.9</span>
+            🎉 FamGather <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-normal">Smart Engine v2.9.1</span>
         </h1>
         <div id="navAuth" class="flex items-center gap-4"></div>
     </nav>
@@ -248,31 +248,27 @@
                 </div>
             </div>
 
-            <!-- AREA DATA KARTU TERPADU (JUDUL DI DALAM BACKGROUND KARTU) -->
+            <!-- AREA DATA KARTU TERPADU -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 
                 <!-- KARTU UTAMA 1: ANTREAN VERIFIKASI -->
                 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden lg:col-span-5">
-                    <!-- Header di dalam kartu -->
                     <div class="bg-amber-50 border-b border-slate-100 px-4 py-3.5 flex justify-between items-center">
                         <h3 class="text-sm font-bold text-amber-800 uppercase tracking-wider flex items-center gap-1.5">
                             ⏳ Antrean Validasi Bukti
                         </h3>
                         <span id="badgePendingCount" class="bg-amber-200 text-amber-900 text-xs font-bold px-2.5 py-0.5 rounded-full">0</span>
                     </div>
-                    <!-- Konten di dalam kartu -->
                     <div class="p-4 max-h-[500px] overflow-y-auto space-y-3" id="admListVerifikasiCards"></div>
                 </div>
 
                 <!-- KARTU UTAMA 2: MONITORING FINANSIAL REALTIME -->
                 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden lg:col-span-7">
-                    <!-- Header di dalam kartu -->
                     <div class="bg-slate-50 border-b border-slate-100 px-4 py-3.5">
                         <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider">
                             👥 Realtime Ledger Keuangan Karyawan
                         </h3>
                     </div>
-                    <!-- Konten di dalam kartu -->
                     <div class="p-4 max-h-[500px] overflow-y-auto space-y-3" id="admListKaryawanCards"></div>
                 </div>
 
@@ -316,7 +312,7 @@
     <!-- ================= JAVASCRIPT ENGINE LOGIC ================= -->
     <script>
         let fotoTerpilihBase64 = null;
-        const KURSI_PER_BUS = 50; // Kapasitas 1 unit Big Bus (10 baris x 5 kursi)
+        const KURSI_PER_BUS = 50; 
 
         // --- 1. SINKRONISASI DATABASE LOCALSTORAGE ---
         function initDatabase() {
@@ -445,7 +441,8 @@
                 });
             }
 
-            const jumlahAnggota = dewasaCount + abolition = jumlahAnggota = dewasaCount + anakCount; 
+            // Perbaikan core typo agar dashboard tidak blank / kosong lagi
+            const jumlahAnggota = dewasaCount + anakCount; 
             const targetMurni = jumlahAnggota * baseTargetPerOrang;
             const totalTargetPlusUnik = targetMurni + parseInt(user.uniqueCode);
 
@@ -489,7 +486,7 @@
             };
         }
 
-        // --- 5. DETEKSI TOTAL BUS YANG DIBUTUHKAN SISTEM (Dinamis) ---
+        // --- 5. DETEKSI TOTAL BUS YANG DIBUTUHKAN SISTEM ---
         function dapatkanTotalBusSistem() {
             const users = JSON.parse(localStorage.getItem('fam_users'));
             let tertinggi = 1;
@@ -568,7 +565,6 @@
                 `;
             });
 
-            // Perbarui selector bus user
             const uSelect = document.getElementById('userBusSelect');
             const totalBusSkrg = dapatkanTotalBusSistem();
             uSelect.innerHTML = '';
@@ -610,7 +606,6 @@
                 totalDewasaGlobal += keu.dewasaCount;
                 totalAnakGlobal += keu.anakCount;
 
-                // 1. ANTREAN VALIDASI
                 u.payments.forEach((p, idx) => {
                     if (p.status === 'Pending') {
                         pendingCount++;
@@ -646,7 +641,6 @@
                     }
                 });
 
-                // 2. REALTIME LEDGER KARYAWAN
                 let textKursi = '-';
                 if(u.kursi && u.kursi.length > 0) {
                     textKursi = u.kursi.map(kStr => kStr.replace("Bus", "Bus ").replace("-Seat", " Kursi ")).join(', ');
@@ -695,7 +689,6 @@
                     </div>`;
             }
 
-            // Atur Selector Monitor Bus Admin
             const admBusSelect = document.getElementById('admBusMonitorSelect');
             const totalBusSkrg = dapatkanTotalBusSistem();
             const nilaiLama = admBusSelect.value;
@@ -853,17 +846,14 @@
                         let namaHover = "Kosong";
 
                         if (isOccupiedBy) {
-                            // Cari tahu urutan boking untuk akun pemilik kursi ini
                             const pemilik = databaseKaryawan[isOccupiedBy];
                             let namaSpesifikPenumpang = pemilik ? pemilik.nama : "Terisi";
                             
                             if (pemilik && pemilik.kursi) {
                                 const indexBokingan = pemilik.kursi.indexOf(seatKeyString);
                                 if (indexBokingan === 0) {
-                                    // Kursi pertama yang dibooking oleh akun tersebut diisi karyawan itu sendiri
                                     namaSpesifikPenumpang = contextUser && isOccupiedBy === contextUser.username ? `S${currentSeatIndex} (Anda)` : pemilik.nama;
                                 } else if (indexBokingan > 0 && pemilik.keluarga && pemilik.keluarga[indexBokingan - 1]) {
-                                    // Kursi kedua dan seterusnya diisi oleh list nama keluarga terdaftarnya
                                     const namaKeluarga = pemilik.keluarga[indexBokingan - 1].nama;
                                     namaSpesifikPenumpang = contextUser && isOccupiedBy === contextUser.username ? `S${currentSeatIndex} (${namaKeluarga})` : namaKeluarga;
                                 } else {
@@ -875,10 +865,10 @@
 
                             if (contextUser && isOccupiedBy === contextUser.username) {
                                 btnClass += "bg-indigo-600 border-indigo-700 text-white shadow-xs text-[9px] font-semibold truncate";
-                                labelKursi = namaSpesifikPenumpang; // Menampilkan S1 (Anda) atau S2 (Nama Keluarga)
+                                labelKursi = namaSpesifikPenumpang; 
                             } else {
                                 btnClass += "bg-slate-200 border-slate-300 text-slate-600 cursor-not-allowed text-[9px] truncate font-medium";
-                                labelKursi = namaSpesifikPenumpang; // Menampilkan langsung nama karyawan lain atau keluarga mereka
+                                labelKursi = namaSpesifikPenumpang; 
                             }
                         } else {
                             btnClass += "bg-emerald-50 border-emerald-200 text-emerald-800 hover:bg-emerald-100 cursor-pointer";
@@ -897,7 +887,6 @@
             return htmlStr;
         }
 
-        // Render untuk sisi Karyawan
         function renderBusMap() {
             const config = JSON.parse(localStorage.getItem('fam_global_config'));
             const statusBox = document.getElementById('statusKursiUser');
@@ -921,7 +910,6 @@
             grid.innerHTML = buatStrukturBigBus23(targetBusSelected, occupiedSeats, true, currentSession);
         }
 
-        // Render live monitor di sisi Admin
         function renderAdminBusMonitor() {
             const users = JSON.parse(localStorage.getItem('fam_users'));
             let occupiedSeats = {};
@@ -934,12 +922,9 @@
             gridAdmin.innerHTML = buatStrukturBigBus23(targetBusSelected, occupiedSeats, false, null);
         }
 
-        // Logika Eksekusi Klik Pemilihan Kursi (DENGAN CONCURRENCY LOCK - ANTI DOUBLE BOOKING)
         function pilihKursiSmartEngine(seatKeyString, isOccupied, isMine, targetBusNo) {
-            // 1. Ambil data paling fresh langsung dari localStorage untuk validasi concurrency
             const usersGlobal = JSON.parse(localStorage.getItem('fam_users'));
             
-            // Re-check apakah kursi ini mendadak sudah diambil orang lain saat halaman belum di-refresh
             let namaPemesanTerbaru = null;
             Object.values(usersGlobal).forEach(u => {
                 if (u.username !== currentSession.username && u.kursi && u.kursi.includes(seatKeyString)) {
@@ -966,7 +951,6 @@
                     return alert(`Batas kuota maksimal kelompok Anda adalah ${keu.jumlahAnggota} kursi sesuai jumlah jiwa pendaftaran.`);
                 }
 
-                // VALIDASI OTOMATIS ANTAR BUS (Mencegah loncat ke Bus 2 jika Bus 1 belum penuh)
                 if (targetBusNo > 1) {
                     let totalTerisiBusSebelumnya = 0;
                     Object.values(usersGlobal).forEach(u => {
