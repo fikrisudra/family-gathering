@@ -827,67 +827,52 @@
 
         // --- 10. MULTI-BUS & SEAT LAYOUT MAP ENGINE (BIG BUS TIPE KIRI 2 - KANAN 3) ---
         function buatStrukturBigBus23(targetBusNo, occupiedSeats, periksaAksiKlik, contextUser) {
-            let htmlStr = '';
-            let seatCounter = 1;
-            const databaseKaryawan = JSON.parse(localStorage.getItem('fam_users'));
+    let htmlStr = '';
+    let seatCounter = 1;
+    const databaseKaryawan = JSON.parse(localStorage.getItem('fam_users'));
 
-            for (let baris = 1; baris <= 10; baris++) {
-                for (let kolom = 1; kolom <= 6; font-sans) {
-                    if (kolom === 3) {
-                        htmlStr += `<div class="h-8 flex items-center justify-center text-[9px] text-slate-300 font-bold uppercase"><i class="fa-solid fa-arrows-left-right text-[8px] mr-0.5"></i>Lrg</div>`;
-                        kolom++;
-                    } 
-                    
-                    const currentSeatIndex = seatCounter;
-                    const seatKeyString = `Bus${targetBusNo}-Seat${currentSeatIndex}`;
-                    const isOccupiedBy = occupiedSeats[seatKeyString];
-                    
-                    let btnClass = "h-8 rounded-md text-[10px] font-bold text-center transition-all flex items-center justify-center border px-0.5 ";
-                    let labelKursi = `S${currentSeatIndex}`;
-                    let onClickAttr = '';
-                    let namaHover = "Kosong";
+    for (let baris = 1; baris <= 10; baris++) {
+        for (let kolom = 1; kolom <= 6; kolom++) { // PERBAIKAN: font-sans diganti kolom++
+            
+            // Logika lorong di kolom ke-3
+            if (kolom === 3) {
+                htmlStr += `<div class="h-8 flex items-center justify-center text-[9px] text-slate-300 font-bold uppercase"><i class="fa-solid fa-arrows-left-right text-[8px] mr-0.5"></i>Lrg</div>`;
+                continue; // Lanjut ke iterasi berikutnya untuk kolom ke-4
+            } 
+            
+            const currentSeatIndex = seatCounter;
+            const seatKeyString = `Bus${targetBusNo}-Seat${currentSeatIndex}`;
+            const isOccupiedBy = occupiedSeats[seatKeyString];
+            
+            let btnClass = "h-8 rounded-md text-[10px] font-bold text-center transition-all flex items-center justify-center border px-0.5 ";
+            let onClickAttr = '';
+            let namaHover = "Kosong";
 
-                    if (isOccupiedBy) {
-                        const pemilik = databaseKaryawan[isOccupiedBy];
-                        let namaSpesifikPenumpang = pemilik ? pemilik.nama : "Terisi";
-                        
-                        if (pemilik && pemilik.kursi) {
-                            const indexBokingan = pemilik.kursi.indexOf(seatKeyString);
-                            if (indexBokingan === 0) {
-                                namaSpesifikPenumpang = contextUser && isOccupiedBy === contextUser.username ? `S${currentSeatIndex} (Anda)` : pemilik.nama;
-                            } else if (indexBokingan > 0 && pemilik.keluarga && pemilik.keluarga[indexBokingan - 1]) {
-                                const namaKeluarga = pemilik.keluarga[indexBokingan - 1].nama;
-                                namaSpesifikPenumpang = contextUser && isOccupiedBy === contextUser.username ? `S${currentSeatIndex} (${namaKeluarga})` : namaKeluarga;
-                            } else {
-                                namaSpesifikPenumpang = contextUser && isOccupiedBy === contextUser.username ? `S${currentSeatIndex} (Kel)` : `${pemilik.nama} (Kel)`;
-                            }
-                        }
+            if (isOccupiedBy) {
+                const pemilik = databaseKaryawan[isOccupiedBy];
+                namaHover = pemilik ? pemilik.nama : "Terisi";
 
-                        namaHover = pemilik ? `${pemilik.nama} (${namaSpesifikPenumpang})` : "Terisi";
-
-                        if (contextUser && isOccupiedBy === contextUser.username) {
-                            btnClass += "bg-indigo-600 border-indigo-700 text-white shadow-xs text-[9px] font-semibold truncate";
-                            labelKursi = labelKursi; 
-                        } else {
-                            btnClass += "bg-slate-200 border-slate-300 text-slate-600 cursor-not-allowed text-[9px] truncate font-medium";
-                            labelKursi = labelKursi; 
-                        }
-                    } else {
-                        btnClass += "bg-emerald-50 border-emerald-200 text-emerald-800 hover:bg-emerald-100 cursor-pointer";
-                    }
-
-                    if (periksaAksiKlik) {
-                        const isMine = (isOccupiedBy && contextUser && isOccupiedBy === contextUser.username);
-                        onClickAttr = `onclick="pilihKursiSmartEngine('${seatKeyString}', ${isOccupiedBy ? 'true' : 'false'}, ${isMine ? 'true' : 'false'}, ${targetBusNo})"`;
-                    }
-
-                    htmlStr += `<button ${onClickAttr} class="${btnClass}" title="Bus ${targetBusNo} - Kursi ${currentSeatIndex} | Penumpang: ${namaHover}">${labelKursi}</button>`;
-                    seatCounter++;
-                    kolom++;
+                if (contextUser && isOccupiedBy === contextUser.username) {
+                    btnClass += "bg-indigo-600 border-indigo-700 text-white shadow-xs";
+                } else {
+                    btnClass += "bg-slate-200 border-slate-300 text-slate-600 cursor-not-allowed";
                 }
+            } else {
+                btnClass += "bg-emerald-50 border-emerald-200 text-emerald-800 hover:bg-emerald-100 cursor-pointer";
             }
-            return htmlStr;
+
+            if (periksaAksiKlik) {
+                const isMine = (isOccupiedBy && contextUser && isOccupiedBy === contextUser.username);
+                onClickAttr = `onclick="pilihKursiSmartEngine('${seatKeyString}', ${isOccupiedBy ? 'true' : 'false'}, ${isMine ? 'true' : 'false'}, ${targetBusNo})"`;
+            }
+
+            htmlStr += `<button ${onClickAttr} class="${btnClass}" title="Bus ${targetBusNo} - Kursi ${currentSeatIndex}">${currentSeatIndex}</button>`;
+            seatCounter++;
         }
+    }
+    return htmlStr;
+}
+
 
         function renderBusMap() {
             const config = JSON.parse(localStorage.getItem('fam_global_config'));
