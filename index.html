@@ -3,1018 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Manajemen Bus & Komunitas</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-    </style>
+    <title>Gathering Hub</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+<body>
 
-    <nav class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center gap-2">
-                    <div class="bg-indigo-600 text-white p-2 rounded-xl shadow-md shadow-indigo-100">
-                        <i class="fa-solid fa-bus text-lg"></i>
+    <div class="statusbar-spacer"></div>
+
+    <div class="app-container">
+        
+        <header class="ios-header">
+            <div class="header-main">
+                <h2>Gathering Hub</h2>
+                <div id="user-info" class="hidden">
+                    <div class="user-avatar-meta">
+                        <div class="tg-avatar" id="avatar-letter">U</div>
+                        <div class="user-text-details">
+                            <span id="session-name" class="profile-name">Nama</span>
+                            <span id="session-role" class="profile-role">Karyawan</span>
+                        </div>
                     </div>
-                    <div>
-                        <span class="font-extrabold text-slate-900 tracking-tight block text-sm sm:text-base">FAMILY GATHERING</span>
-                        <span class="text-[10px] text-slate-400 font-medium block -mt-1">Portal Reservasi & Finansial</span>
-                    </div>
+                    <button onclick="logout()" class="ios-btn-link">Keluar</button>
                 </div>
-                <div class="flex items-center gap-4" id="navAuth">
-                    </div>
+            </div>
+        </header>
+
+        <div id="auth-page" class="page">
+            <div class="tg-tabs">
+                <button id="tab-login-btn" class="tab-btn active" onclick="switchTab('login')">Masuk</button>
+                <button id="tab-register-btn" class="tab-btn" onclick="switchTab('register')">Daftar Baru</button>
+            </div>
+
+            <div id="login-form" class="form-container">
+                <div class="ios-input-group">
+                    <input type="text" id="login-id" placeholder="ID Karyawan (cth: KRY005)">
+                    <input type="password" id="login-pass" placeholder="Kata Sandi">
+                </div>
+                <button onclick="login()" class="tg-btn-primary">Masuk</button>
+            </div>
+
+            <div id="register-form" class="form-container hidden">
+                <div class="ios-input-group">
+                    <input type="text" id="reg-id" placeholder="ID Karyawan (Akhiran 3 angka, cth: KRY125)">
+                    <input type="text" id="reg-nama" placeholder="Nama Lengkap">
+                    <input type="password" id="reg-pass" placeholder="Kata Sandi Baru">
+                </div>
+                <div class="wa-verification-row">
+                    <input type="text" id="reg-token" placeholder="Token Pendaftaran WA">
+                    <a href="#" id="wa-link" target="_blank" class="tg-btn-wa" onclick="prepareWALink()">Minta Token</a>
+                </div>
+                <button onclick="register()" class="tg-btn-primary">Daftar Akun</button>
             </div>
         </div>
-    </nav>
 
-    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
-
-        <section id="viewAuth" class="hidden max-w-md mx-auto my-8 sm:my-12">
-            <div class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-xl space-y-6">
-                <div class="text-center space-y-2">
-                    <h2 class="text-xl font-extrabold text-slate-900 tracking-tight" id="authTitle">
-                        <i class="fa-solid fa-right-to-bracket mr-2"></i>Masuk Aplikasi
-                    </h2>
-                    <p class="text-xs text-slate-400">Silahkan isi kredensial akun Anda dengan benar.</p>
+        <div id="user-page" class="page hidden">
+            <div class="ios-card billing-card">
+                <div class="card-header-icon">
+                    <span class="icon-label">[Laporan]</span>
+                    <h3>Rincian Iuran Pintar</h3>
                 </div>
-
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Username / NIK</label>
-                        <div class="relative">
-                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 text-xs"><i class="fa-solid fa-user"></i></span>
-                            <input type="text" id="authUsername" placeholder="Contoh: admin atau nik123" class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 font-medium transition-all">
-                        </div>
-                    </div>
-
-                    <div id="registerFields" class="hidden space-y-4">
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Nama Lengkap Anda</label>
-                            <div class="relative">
-                                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 text-xs"><i class="fa-solid fa-id-card"></i></span>
-                                <input type="text" id="authNama" placeholder="Nama lengkap sesuai KTP" class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 font-medium transition-all">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Password</label>
-                        <div class="relative">
-                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 text-xs"><i class="fa-solid fa-lock"></i></span>
-                            <input type="password" id="authPassword" placeholder="••••••••" class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 font-medium transition-all">
-                        </div>
-                    </div>
-
-                    <button id="btnPrimaryAuth" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition-all shadow-md shadow-indigo-100 text-sm cursor-pointer mt-2">
-                        Masuk
-                    </button>
-                </div>
-
-                <div class="text-center pt-2 border-t border-slate-100">
-                    <span class="text-xs text-slate-400 mr-1" id="authToggleText">Belum punya akun?</span>
-                    <button id="btnToggleAuth" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 transition-all cursor-pointer underline">Daftar Sekarang</button>
-                </div>
-            </div>
-        </section>
-
-        <section id="viewKaryawan" class="hidden space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-start">
-                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Tagihan Kelompok</span>
-                            <span id="userUniqueCode" class="bg-indigo-50 text-indigo-700 text-[10px] font-mono font-bold px-2 py-0.5 rounded-md">Kode Unik: ---</span>
-                        </div>
-                        <p class="text-2xl font-black text-slate-900 font-mono mt-2" id="userTotalTagihan">Rp 0</p>
+                <div class="billing-list">
+                    <div class="billing-item"><span>Durasi Program</span><strong id="bill-total-months">0 mth</strong></div>
+                    <div class="billing-item"><span>Sisa Tenor</span><strong id="bill-months">0 mth</strong></div>
+                    <div class="billing-item"><span>3 Digit Kode Unik</span><strong id="bill-code" class="tg-text-link">000</strong></div>
+                    <div class="billing-divider"></div>
+                    <div class="billing-item total-row">
+                        <span>Total Tagihan Anda</span>
+                        <span id="bill-total" class="price-tag">Rp 0</span>
                     </div>
                 </div>
-                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
-                    <div>
-                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Pembayaran Disetujui</span>
-                        <p class="text-2xl font-black text-emerald-600 font-mono mt-2" id="userTotalBayar">Rp 0</p>
-                    </div>
-                </div>
-                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-start">
-                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Sisa Tagihan</span>
-                            <span id="userSisaBulanBadge" class="bg-amber-50 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-md">-- Bulan Sisa</span>
-                        </div>
-                        <p class="text-2xl font-black text-rose-600 font-mono mt-2" id="userSisaTagihan">Rp 0</p>
-                    </div>
-                </div>
+                <button onclick="openQrisModal()" class="tg-btn-qris">Bayar Cepat via QRIS</button>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="lg:col-span-1 space-y-6">
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                        <div class="flex justify-between items-center">
-                            <h3 class="font-extrabold text-sm uppercase tracking-wider text-slate-500"><i class="fa-solid fa-users mr-1.5"></i>Anggota Keluarga</h3>
-                            <button onclick="bukaModalKeluarga()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-bold text-xs px-2.5 py-1.5 rounded-lg transition-all cursor-pointer"><i class="fa-solid fa-plus mr-1"></i>Tambah</button>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-xs text-left">
-                                <thead>
-                                    <tr class="border-b border-slate-100 text-slate-400 font-bold uppercase">
-                                        <th class="pb-2">Nama</th>
-                                        <th class="pb-2">Hubungan</th>
-                                        <th class="pb-2 text-right">Biaya</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="listKeluarga" class="divide-y divide-slate-50">
-                                    </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                        <h3 class="font-extrabold text-sm uppercase tracking-wider text-slate-500"><i class="fa-solid fa-wallet mr-1.5"></i>Simulasi Cicilan Bulan Ini</h3>
-                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 text-center space-y-1">
-                            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400" id="userStatusBulanIni">Status: Membaca data...</p>
-                            <p class="text-xl font-black text-indigo-600 font-mono" id="userIuranPerBulan">Rp 0</p>
-                            <p class="text-[10px] text-slate-400">Rekomendasi nominal transfer lunas bertahap.</p>
-                        </div>
-                        <div class="space-y-3 pt-1">
-                            <button onclick="simulasiPilihFoto()" class="w-full border border-dashed border-slate-300 hover:border-indigo-400 bg-slate-50/50 p-3 rounded-xl text-center text-xs font-semibold text-slate-500 transition-all cursor-pointer flex items-center justify-center gap-1" id="txtPhotoStatus">
-                                <i class="fa-solid fa-plus text-[10px] mr-1"></i>Tambah Foto Bukti
-                            </button>
-                            <input type="file" id="payPhotoInput" class="hidden" accept="image/*" onchange="handleFotoTerpilih()">
-                            <button onclick="kirimPembayaranSederhana()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs transition-all shadow-sm cursor-pointer">
-                                Konfirmasi & Kirim Bukti Pembayaran
-                            </button>
-                        </div>
-                        <div class="space-y-2 pt-2 border-t border-slate-100">
-                            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Riwayat Pembayaran Kelompok</p>
-                            <div id="userPaymentHistory" class="space-y-2 max-h-[150px] overflow-y-auto pr-1">
-                                </div>
-                        </div>
-                    </div>
+            <div class="ios-card">
+                <div class="card-header-icon">
+                    <span class="icon-label">[Bus]</span>
+                    <h3>Manifes Keluarga & Kursi</h3>
+                </div>
+                
+                <div id="seat-closed-alert" class="ios-notice-danger hidden">
+                    Akses modifikasi kursi bus ditutup oleh Super Admin.
                 </div>
 
-                <div class="lg:col-span-2 space-y-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
-                        <div>
-                            <h3 class="font-extrabold text-sm uppercase tracking-wider text-slate-500"><i class="fa-solid fa-chair mr-1.5"></i>Pilih Denah Kursi Bus</h3>
-                            <p class="text-[11px] text-slate-400 font-medium">Sistem kunci Concurrency aktif pintar.</p>
-                        </div>
-                        <select id="userBusSelect" onchange="renderBusMap()" class="bg-slate-50 border border-slate-200 text-xs font-bold rounded-xl px-3 py-1.5 focus:outline-none focus:border-indigo-500">
-                            </select>
-                    </div>
-
-                    <div id="statusKursiUser" class="hidden bg-rose-50 text-rose-700 p-4 rounded-xl text-xs font-semibold text-center border border-rose-100"></div>
-
-                    <div id="busMapContainer" class="hidden space-y-4">
-                        <div class="flex flex-wrap items-center gap-4 text-[10px] font-bold bg-slate-50 p-2.5 rounded-xl border border-slate-100 justify-center">
-                            <div class="flex items-center gap-1.5"><span class="w-3 h-3 bg-emerald-50 border border-emerald-200 rounded"></span><span class="text-emerald-800">Tersedia</span></div>
-                            <div class="flex items-center gap-1.5"><span class="w-3 h-3 bg-indigo-600 border border-indigo-700 rounded"></span><span class="text-indigo-600">Milik Anda</span></div>
-                            <div class="flex items-center gap-1.5"><span class="w-3 h-3 bg-slate-200 border border-slate-300 rounded"></span><span class="text-slate-500">Karyawan Lain</span></div>
-                        </div>
-
-                        <div class="border border-slate-200 bg-slate-100/50 p-4 rounded-2xl max-w-sm mx-auto shadow-inner relative">
-                            <div class="w-full text-center border-b-2 border-slate-300 pb-2 mb-4 font-black text-[10px] tracking-widest text-slate-400 uppercase flex items-center justify-center gap-1"><i class="fa-solid fa-circle-user text-xs"></i> AREA KEMUDI DEPAN</div>
-                            <div class="grid grid-cols-6 gap-2" id="busGrid">
-                                </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="viewAdmin" class="hidden space-y-6">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Kas Masuk Aman</span>
-                    <p class="text-2xl font-black text-emerald-600 font-mono mt-1" id="admTotalKas">Rp 0</p>
-                </div>
-                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm relative">
-                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Antrean Verifikasi</span>
-                    <p class="text-2xl font-black text-amber-500 font-mono mt-1" id="admPendingCount">0</p>
-                    <span class="absolute top-5 right-5 w-2 h-2 bg-amber-500 rounded-full animate-ping" id="badgePendingCount"></span>
-                </div>
-                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Peserta Terdaftar</span>
-                    <p class="text-2xl font-black text-slate-900 font-mono mt-1" id="admTotalPeserta">0 Jiwa</p>
-                    <span class="text-[10px] text-slate-400 font-semibold block mt-0.5" id="admTotalPesertaDetail">0 Dewasa, 0 Anak</span>
-                </div>
-                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-2 flex flex-col justify-center">
-                    <button id="btnToggleKursiAdmin" onclick="toggleAksesKursiGlobal()" class="w-full text-xs font-bold py-1.5 rounded-xl cursor-pointer transition-all shadow-sm flex items-center justify-center gap-1"></button>
-                    <button onclick="clearAllDataLog()" class="w-full bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-600 text-xs font-bold py-1.5 rounded-xl cursor-pointer transition-all flex items-center justify-center gap-1"><i class="fa-solid fa-trash-can"></i> Reset Database</button>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="lg:col-span-1 space-y-6">
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                        <h3 class="font-extrabold text-sm uppercase tracking-wider text-slate-500"><i class="fa-solid fa-sliders mr-1.5"></i>Konfigurasi Utama Event</h3>
-                        <div class="space-y-3">
-                            <div>
-                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Target Bulan & Tahun Event</label>
-                                <div class="flex gap-2">
-                                    <input type="month" id="admEventMonth" class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-indigo-500 font-bold">
-                                    <button onclick="updateEventMonthGlobal()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-3 py-1.5 rounded-xl cursor-pointer transition-all shadow-xs">Set</button>
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Biaya Pokok per Jiwa (IDR)</label>
-                                <div class="flex gap-2">
-                                    <input type="number" id="admTargetCost" class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-indigo-500 font-bold font-mono">
-                                    <button onclick="updateTargetCostGlobal()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-3 py-1.5 rounded-xl cursor-pointer transition-all shadow-xs">Set</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="space-y-3">
-                        <h3 class="font-extrabold text-sm uppercase tracking-wider text-slate-500 px-1"><i class="fa-solid fa-receipt mr-1.5"></i>Validasi Pembayaran Masuk</h3>
-                        <div id="admListVerifikasiCards" class="space-y-3">
-                            </div>
-                    </div>
-                </div>
-
-                <div class="lg:col-span-2 space-y-6">
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
-                            <div>
-                                <h3 class="font-extrabold text-sm uppercase tracking-wider text-slate-500"><i class="fa-solid fa-eye mr-1.5"></i>Monitor Kursi Penumpang</h3>
-                                <p class="text-[11px] text-slate-400 font-medium">Laporan status keterisian bus aktual (Read Only Admin).</p>
-                            </div>
-                            <select id="admBusMonitorSelect" onchange="renderAdminBusMonitor()" class="bg-slate-50 border border-slate-200 text-xs font-bold rounded-xl px-3 py-1.5 focus:outline-none">
-                                </select>
-                        </div>
-                        <div class="border border-slate-200 bg-slate-50 p-4 rounded-2xl max-w-sm mx-auto shadow-xs">
-                            <div class="grid grid-cols-6 gap-2" id="admBusGrid">
-                                </div>
-                        </div>
-                    </div>
-
-                    <div class="space-y-3">
-                        <h3 class="font-extrabold text-sm uppercase tracking-wider text-slate-500 px-1"><i class="fa-solid fa-folder-tree mr-1.5"></i>Daftar Rekap Finansial Karyawan</h3>
-                        <div id="admListKaryawanCards" class="space-y-3">
-                            </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <div id="modalKeluarga" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fade-in">
-        <div class="bg-white rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl border border-slate-100">
-            <div class="flex justify-between items-center border-b border-slate-100 pb-2">
-                <h4 class="font-extrabold text-slate-900 text-sm uppercase tracking-wider"><i class="fa-solid fa-user-plus text-indigo-600 mr-1.5"></i>Tambah Anggota</h4>
-                <button onclick="tutupModalKeluarga()" class="text-slate-400 hover:text-slate-600 text-xs cursor-pointer"><i class="fa-solid fa-xmark text-sm"></i></button>
-            </div>
-            <div class="space-y-3">
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Nama Lengkap</label>
-                    <input type="text" id="kelNama" placeholder="Nama anggota keluarga" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-indigo-500 font-medium">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Hubungan</label>
-                    <select id="kelHubungan" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none font-medium">
-                        <option value="Istri">Istri</option>
-                        <option value="Suami">Suami</option>
-                        <option value="Anak">Anak</option>
-                        <option value="Orang Tua">Orang Tua</option>
+                <div id="family-input-form" class="family-flex-form">
+                    <input type="text" id="member-nama" placeholder="Nama Anggota Keluarga">
+                    <select id="member-seat">
+                        <option value="">Pilih Kursi</option>
                     </select>
+                    <button onclick="addFamilyMember()" class="ios-btn-add">+</button>
                 </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Kategori Umur</label>
-                    <select id="kelKategori" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none font-medium">
-                        <option value="Dewasa">Dewasa (&gt; 5 Tahun)</option>
-                        <option value="Anak">Anak (≤ 5 Tahun)</option>
-                    </select>
+
+                <div class="table-wrapper">
+                    <table class="ios-table">
+                        <thead>
+                            <tr>
+                                <th>Nama Peserta</th>
+                                <th>Kursi</th>
+                                <th>Gabung</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="family-list-table"></tbody>
+                    </table>
                 </div>
             </div>
-            <div class="flex items-center gap-2 pt-2">
-                <button onclick="tutupModalKeluarga()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-2 rounded-xl text-xs transition-all cursor-pointer">Batal</button>
-                <button onclick="simpanKeluarga()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-xl text-xs transition-all cursor-pointer shadow-sm">Simpan</button>
+        </div>
+
+        <div id="admin-page" class="page hidden">
+            <div class="ios-card admin-card">
+                <div class="card-header-icon">
+                    <span class="icon-label">[Sistem]</span>
+                    <h3>Panel Kontrol Super Admin</h3>
+                </div>
+                <div class="ios-form-grid">
+                    <div class="form-field">
+                        <label>Total Durasi (Bulan)</label>
+                        <input type="number" id="set-total-months" min="1">
+                    </div>
+                    <div class="form-field">
+                        <label>Sisa Bulan Berjalan</label>
+                        <input type="number" id="set-months" min="1">
+                    </div>
+                    <div class="form-field">
+                        <label>Biaya Per Orang (Rp)</label>
+                        <input type="number" id="set-price" step="50000">
+                    </div>
+                    <div class="form-field">
+                        <label>Akses Kursi Bus</label>
+                        <select id="set-seat-status">
+                            <option value="buka">Buka Akses</option>
+                            <option value="tutup">Tutup Akses</option>
+                        </select>
+                    </div>
+                </div>
+                <button onclick="saveAdminSettings()" class="tg-btn-primary" style="margin-top: 15px;">Simpan Perubahan Global</button>
+                
+                <div class="tg-token-box">
+                    <div class="token-meta">
+                        <span class="token-label">Token Registrasi WA Aktif</span>
+                        <div class="token-badge" id="admin-active-token">GEN-0000</div>
+                    </div>
+                    <div class="token-actions">
+                        <button onclick="generateNewTokenManual()" class="ios-btn-secondary">Acak Baru</button>
+                        <button onclick="copyTokenText()" class="tg-btn-text">Salin Balasan Chat</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ios-card">
+                <div class="card-header-icon">
+                    <span class="icon-label">[Keuangan]</span>
+                    <h3>Verifikasi Manual Pembayaran</h3>
+                </div>
+                <div class="table-wrapper">
+                    <table class="ios-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nama Peserta</th>
+                                <th>Kursi</th>
+                                <th>Status</th>
+                                <th style="text-align: right;">Aksi Tindakan</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-payment-table"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="qris-modal" class="ios-modal-overlay hidden">
+        <div class="ios-modal-sheet">
+            <div class="modal-indicator"></div>
+            <div class="modal-header">
+                <h3>Pembayaran QRIS Interaktif</h3>
+                <button onclick="closeQrisModal()" class="close-modal-btn">X</button>
+            </div>
+            <div class="modal-body">
+                <p class="qris-instruction">Silakan pindai QRIS di bawah menggunakan e-Wallet atau m-Banking Anda.</p>
+                
+                <div class="qris-box-wrapper">
+                    <div class="qris-brand">QRIS</div>
+                    <div class="qris-qrcode-graphic">
+                        <div class="qr-matrix-mock">
+                            <div class="qr-corner top-left"></div>
+                            <div class="qr-corner top-right"></div>
+                            <div class="qr-corner bottom-left"></div>
+                            <div class="qr-center-logo">GATH</div>
+                        </div>
+                    </div>
+                    <div class="qris-footer-text">NMIID: ID102648291073</div>
+                </div>
+
+                <div class="qris-invoice-details">
+                    <div class="inv-row"><span>Nominal Transfer</span><strong id="qris-modal-amount">Rp 0</strong></div>
+                    <div class="inv-row"><span>Status Validasi</span><span class="badge-pending">Menunggu Konfirmasi Admin</span></div>
+                </div>
+                
+                <div class="ios-notice-info">
+                    Info: Kode unik ID Anda sudah otomatis ditambahkan ke dalam digit terakhir nominal QRIS di atas untuk mempercepat verifikasi manual oleh Super Admin.
+                </div>
+                <button onclick="closeQrisModal()" class="tg-btn-primary" style="margin-top: 15px;">Saya Sudah Transfer</button>
             </div>
         </div>
     </div>
 
-    <footer class="bg-white border-t border-slate-200 py-4 text-center text-[11px] text-slate-400 font-medium">
-        &copy; 2026 Portal Reservasi Internal Komunitas Bus. All Rights Reserved.
-    </footer>
-
-    <script>
-        let fotoTerpilihBase64 = null;
-        const KURSI_PER_BUS = 50; 
-        let currentSession = null;
-        let isRegisterState = false;
-
-        // --- Enkripsi SHA-256 Sederhana & Stabil ---
-        async function hashPassword(string) {
-            const utf8 = new TextEncoder().encode(string);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        // --- 1. SINKRONISASI DATABASE LOCALSTORAGE ---
-        async function initDatabase() {
-            if (!localStorage.getItem('fam_global_config')) {
-                const currentYear = new Date().getFullYear();
-                localStorage.setItem('fam_global_config', JSON.stringify({
-                    aksesKursi: false,
-                    targetEventMonth: `${currentYear}-12`,
-                    targetCostPerPerson: 1000000 
-                }));
-            }
-            
-            // Inisialisasi User & Akun Admin Default
-            if (!localStorage.getItem('fam_users')) {
-                const initialUsers = {};
-                // Password 'admin123' di-hash dengan SHA-256 menjadi '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9'
-                initialUsers['admin'] = { 
-                    username: 'admin', 
-                    password: '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', 
-                    nama: 'Super Admin', 
-                    isAdmin: true 
-                };
-                localStorage.setItem('fam_users', JSON.stringify(initialUsers));
-            }
-        }
-
-        // --- 2. ENGINE HITUNG BULAN OTOMATIS ---
-        function hitungSisaBulanOtomatis() {
-            const config = JSON.parse(localStorage.getItem('fam_global_config'));
-            const targetStr = config.targetEventMonth;
-            
-            const hariIni = new Date();
-            const tahunSekarang = hariIni.getFullYear();
-            const bulanSekarang = hariIni.getMonth() + 1;
-
-            const parts = targetStr.split('-');
-            const tahunTarget = parseInt(parts[0]);
-            const bulanTarget = parseInt(parts[1]);
-
-            let selisihBulan = ((tahunTarget - tahunSekarang) * 12) + (bulanTarget - bulanSekarang);
-            return selisihBulan <= 0 ? 1 : selisihBulan;
-        }
-
-        function formatIDR(angka) {
-            return 'Rp ' + parseInt(angka).toLocaleString('id-ID');
-        }
-
-        // --- 3. SYSTEM AUTHENTICATION (FIXED LOGIC) ---
-        function updateNavbarUI() {
-            const navAuth = document.getElementById('navAuth');
-            if (currentSession) {
-                navAuth.innerHTML = `
-                    <div class="text-right text-sm hidden md:block">
-                        <p class="font-bold"><i class="fa-solid fa-user-circle text-slate-400 mr-1"></i>${currentSession.nama}</p>
-                        <p class="text-xs text-slate-400">${currentSession.isAdmin ? 'Administrator' : 'Karyawan'}</p>
-                    </div>
-                    <button onclick="logout()" class="bg-rose-50 text-rose-600 hover:bg-rose-100 text-sm font-semibold px-4 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1"><i class="fa-solid fa-right-from-bracket text-xs"></i> Keluar</button>
-                `;
-            } else {
-                navAuth.innerHTML = `<span class="text-xs text-slate-400"><i class="fa-solid fa-user-lock mr-1"></i>Silahkan login dahulu</span>`;
-            }
-        }
-
-        function toggleAuthMode() {
-            isRegisterState = !isRegisterState;
-            document.getElementById('authTitle').innerHTML = isRegisterState ? '<i class="fa-solid fa-user-plus mr-2"></i>Daftar Akun Baru' : '<i class="fa-solid fa-right-to-bracket mr-2"></i>Masuk Aplikasi';
-            document.getElementById('registerFields').classList.toggle('hidden', !isRegisterState);
-            document.getElementById('btnPrimaryAuth').innerText = isRegisterState ? 'Buat Akun' : 'Masuk';
-            document.getElementById('authToggleText').innerText = isRegisterState ? 'Sudah punya akun?' : 'Belum punya akun?';
-            document.getElementById('btnToggleAuth').innerText = isRegisterState ? 'Login disini' : 'Daftar Sekarang';
-            
-            // Bersihkan input form setiap kali tukar mode
-            document.getElementById('authUsername').value = "";
-            document.getElementById('authPassword').value = "";
-            document.getElementById('authNama').value = "";
-        }
-
-        async function handleAuthSubmit() {
-            const users = JSON.parse(localStorage.getItem('fam_users')) || {};
-            const u = document.getElementById('authUsername').value.trim().toLowerCase(); 
-            const p = document.getElementById('authPassword').value;
-
-            if (!u || !p) {
-                alert('[Peringatan] Username & Password wajib diisi!');
-                return;
-            }
-
-            // Proses Enkripsi Input Password ke SHA-256
-            const hashedPasswordInput = await hashPassword(p);
-
-            if (isRegisterState) {
-                // LOGIKA PENDAFTARAN
-                if (users[u]) {
-                    alert('[Error] Username / NIK sudah terdaftar di sistem!');
-                    return;
-                }
-                
-                const namaInput = document.getElementById('authNama').value.trim();
-                
-                // Generasi unik 3 digit iuran pembulatan otomatis
-                let code;
-                do {
-                    code = Math.floor(Math.random() * 900 + 100).toString();
-                } while (Object.values(users).some(user => user.uniqueCode === code));
-
-                users[u] = {
-                    username: u,
-                    password: hashedPasswordInput, 
-                    nama: namaInput || u,
-                    isAdmin: false,
-                    uniqueCode: code,
-                    keluarga: [],
-                    payments: [],
-                    kursi: []
-                };
-                
-                localStorage.setItem('fam_users', JSON.stringify(users));
-                alert(`[Sukses] Pendaftaran Berhasil!\nUsername Anda: ${u}\nKode Unik Transfer Anda: ${code}`);
-                toggleAuthMode();
-            } else {
-                // LOGIKA LOGIN
-                const targetUser = users[u];
-
-                if (targetUser && targetUser.password === hashedPasswordInput) {
-                    currentSession = targetUser;
-                    document.getElementById('viewAuth').classList.add('hidden');
-                    updateNavbarUI();
-                    renderDashboard();
-                } else {
-                    alert('[Error] Username atau Password salah. Silahkan periksa kembali.');
-                }
-            }
-        }
-
-        function logout() {
-            currentSession = null;
-            document.getElementById('viewKaryawan').classList.add('hidden');
-            document.getElementById('viewAdmin').classList.add('hidden');
-            document.getElementById('viewAuth').classList.remove('hidden');
-            updateNavbarUI();
-            toggleAuthMode(); 
-        }
-
-        // --- 4. LOGIKA ENGINE HITUNG FINANSIAL ---
-        function hitungKeuanganKaryawan(user) {
-            const config = JSON.parse(localStorage.getItem('fam_global_config'));
-            const baseTargetPerOrang = config.targetCostPerPerson || 1000000;
-            
-            let dewasaCount = 1; 
-            let anakCount = 0;
-
-            if(user.keluarga) {
-                user.keluarga.forEach(k => {
-                    if(k.kategori === 'Anak') anakCount++;
-                    else dewasaCount++;
-                });
-            }
-
-            const jumlahAnggota = dewasaCount + anakCount; 
-            const targetMurni = jumlahAnggota * baseTargetPerOrang;
-            const totalTargetPlusUnik = targetMurni + parseInt(user.uniqueCode || 0);
-
-            const totalSudahBayar = (user.payments || [])
-                .filter(p => p.status === 'Approved')
-                .reduce((sum, p) => sum + p.nominal, 0);
-
-            const sisaTagihan = Math.max(0, totalTargetPlusUnik - totalSudahBayar);
-            const sisaBulanDinamis = hitungSisaBulanOtomatis();
-            
-            let iuranMurni = Math.ceil(sisaTagihan / sisaBulanDinamis);
-            let iuranPerBulanSisaPalingPas = iuranMurni;
-
-            if (sisaTagihan > 0 && iuranMurni > 1000) {
-                const uniqueInt = parseInt(user.uniqueCode || 0);
-                const baseRibuan = Math.floor(iuranMurni / 1000) * 1000;
-                iuranPerBulanSisaPalingPas = baseRibuan + uniqueInt;
-                
-                if (iuranPerBulanSisaPalingPas < iuranMurni) {
-                    iuranPerBulanSisaPalingPas += 1000;
-                }
-                if (iuranPerBulanSisaPalingPas > sisaTagihan) {
-                    iuranPerBulanSisaPalingPas = sisaTagihan;
-                }
-            }
-
-            const targetSeharusnyaSudahBayar = (targetMurni / sisaBulanDinamis);
-            const statusBulanIni = totalSudahBayar >= targetSeharusnyaSudahBayar ? "Status: Lunas (Aman)" : "Status: Belum Lunas";
-
-            return { 
-                totalTargetPlusUnik, 
-                totalSudahBayar, 
-                sisaTagihan, 
-                iuranPerBulanSisa: iuranPerBulanSisaPalingPas, 
-                jumlahAnggota, 
-                dewasaCount,
-                anakCount,
-                sisaBulanDinamis,
-                statusBulanIni,
-                baseTargetPerOrang
-            };
-        }
-
-        // --- 5. DETEKSI TOTAL BUS YANG DIBUTUHKAN SISTEM ---
-        function dapatkanTotalBusSistem() {
-            const users = JSON.parse(localStorage.getItem('fam_users')) || {};
-            let tertinggi = 1;
-            Object.values(users).forEach(u => {
-                if(u.kursi) {
-                    u.kursi.forEach(keyStr => {
-                        const match = keyStr.match(/Bus(\d+)-/);
-                        if(match) {
-                            const bNum = parseInt(match[1]);
-                            if(bNum > tertinggi) tertinggi = bNum;
-                        }
-                    });
-                }
-            });
-            return tertinggi;
-        }
-
-        // --- 6. RENDER UTAMA DASHBOARD INTERFACE ---
-        function renderDashboard() {
-            if (!currentSession) return;
-            const users = JSON.parse(localStorage.getItem('fam_users'));
-            currentSession = users[currentSession.username];
-
-            if (currentSession.isAdmin) {
-                renderAdminDashboard();
-            } else {
-                renderKaryawanDashboard();
-            }
-        }
-
-        function renderKaryawanDashboard() {
-            document.getElementById('viewKaryawan').classList.remove('hidden');
-            const keu = hitungKeuanganKaryawan(currentSession);
-
-            document.getElementById('userUniqueCode').innerHTML = `<i class="fa-solid fa-fingerprint text-[10px] mr-1"></i>Kode Unik: ${currentSession.uniqueCode}`;
-            document.getElementById('userTotalTagihan').innerText = formatIDR(keu.totalTargetPlusUnik);
-            document.getElementById('userTotalBayar').innerText = formatIDR(keu.totalSudahBayar);
-            document.getElementById('userSisaTagihan').innerText = formatIDR(keu.sisaTagihan);
-            
-            document.getElementById('userSisaBulanBadge').innerHTML = `<i class="fa-solid fa-calendar-check mr-1"></i>${keu.sisaBulanDinamis} Bulan Menuju Event`;
-            document.getElementById('userIuranPerBulan').innerText = formatIDR(keu.iuranPerBulanSisa);
-            document.getElementById('userStatusBulanIni').innerText = keu.statusBulanIni;
-
-            const tbody = document.getElementById('listKeluarga');
-            tbody.innerHTML = `
-                <tr class="bg-indigo-50/50 font-medium">
-                    <td class="py-2.5 px-1">${currentSession.nama}</td>
-                    <td class="py-2.5">Karyawan Utama (<span class="text-xs font-bold text-indigo-700">Dewasa</span>)</td>
-                    <td class="py-2.5 text-right">${formatIDR(keu.baseTargetPerOrang)}</td>
-                </tr>
-            `;
-            if(currentSession.keluarga) {
-                currentSession.keluarga.forEach(k => {
-                    const katBadge = k.kategori === 'Anak' ? 'bg-amber-100 text-amber-800' : 'bg-indigo-100 text-indigo-800';
-                    tbody.innerHTML += `
-                        <tr>
-                            <td class="py-2 px-1">${k.nama}</td>
-                            <td>${k.hubungan} (<span class="text-xs px-1.5 py-0.5 rounded font-bold ${katBadge}">${k.kategori || 'Dewasa'}</span>)</td>
-                            <td class="text-right">${formatIDR(keu.baseTargetPerOrang)}</td>
-                        </tr>`;
-                });
-            }
-
-            const histDiv = document.getElementById('userPaymentHistory');
-            histDiv.innerHTML = currentSession.payments.length === 0 ? '<p class="text-xs text-slate-400">Belum ada transfer.</p>' : '';
-            currentSession.payments.forEach(p => {
-                let badgeColor = 'bg-amber-100 text-amber-700';
-                if(p.status === 'Approved') badgeColor = 'bg-emerald-100 text-emerald-700';
-                if(p.status === 'Rejected') badgeColor = 'bg-rose-100 text-rose-700';
-
-                histDiv.innerHTML += `
-                    <div class="p-3 border rounded-xl bg-slate-50 text-xs flex justify-between items-center">
-                        <div><p class="font-bold">${formatIDR(p.nominal)}</p><p class="text-[10px] text-slate-400">${p.tanggal}</p></div>
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold ${badgeColor}">${p.status}</span>
-                    </div>
-                `;
-            });
-
-            const uSelect = document.getElementById('userBusSelect');
-            const totalBusSkrg = dapatkanTotalBusSistem();
-            uSelect.innerHTML = '';
-            for(let i=1; i<=totalBusSkrg; i++) {
-                uSelect.innerHTML += `<option value="${i}">Bus ${i}</option>`;
-            }
-            if(!uSelect.value) uSelect.value = "1";
-
-            renderBusMap();
-        }
-
-        function renderAdminDashboard() {
-            document.getElementById('viewAdmin').classList.remove('hidden');
-            const users = JSON.parse(localStorage.getItem('fam_users'));
-            const config = JSON.parse(localStorage.getItem('fam_global_config'));
-
-            document.getElementById('admEventMonth').value = config.targetEventMonth;
-            document.getElementById('admTargetCost').value = config.targetCostPerPerson || 1000000;
-
-            let totalKas = 0, pendingCount = 0, totalPesertaGlobal = 0, totalDewasaGlobal = 0, totalAnakGlobal = 0;
-            
-            const cardVerifikasiContainer = document.getElementById('admListVerifikasiCards');
-            const cardKaryawanContainer = document.getElementById('admListKaryawanCards');
-            
-            cardVerifikasiContainer.innerHTML = '';
-            cardKaryawanContainer.innerHTML = '';
-
-            if (config.aksesKursi) {
-                document.getElementById('btnToggleKursiAdmin').innerHTML = '<i class="fa-solid fa-lock"></i> Tutup Akses Kursi Bus';
-                document.getElementById('btnToggleKursiAdmin').className = "w-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold py-1.5 rounded-xl cursor-pointer transition-all shadow-sm flex items-center justify-center gap-1";
-            } else {
-                document.getElementById('btnToggleKursiAdmin').innerHTML = '<i class="fa-solid fa-lock-open"></i> Buka Akses Kursi Bus';
-                document.getElementById('btnToggleKursiAdmin').className = "w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-1.5 rounded-xl cursor-pointer transition-all shadow-sm flex items-center justify-center gap-1";
-            }
-
-            Object.values(users).forEach(u => {
-                if(u.isAdmin) return;
-                const keu = hitungKeuanganKaryawan(u);
-                
-                totalKas += keu.totalSudahBayar;
-                totalPesertaGlobal += keu.jumlahAnggota;
-                totalDewasaGlobal += keu.dewasaCount;
-                totalAnakGlobal += keu.anakCount;
-
-                if (u.payments) {
-                    u.payments.forEach((p, idx) => {
-                        if (p.status === 'Pending') {
-                            pendingCount++;
-                            cardVerifikasiContainer.innerHTML += `
-                                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between gap-3 hover:shadow-md transition-all">
-                                    <div class="flex justify-between items-start">
-                                        <div>
-                                            <h4 class="font-bold text-slate-800 text-sm">${u.nama}</h4>
-                                            <p class="text-[10px] text-slate-400 font-mono">Kode Unik Kelompok: ${u.uniqueCode}</p>
-                                        </div>
-                                        <span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded-full">Menunggu Validasi</span>
-                                    </div>
-                                    <div class="grid grid-cols-2 gap-2 text-xs border-y border-slate-100 py-2">
-                                        <div>
-                                            <p class="text-[10px] text-slate-400 font-bold">NOMINAL</p>
-                                            <p class="font-black text-indigo-600 text-sm font-mono">${formatIDR(p.nominal)}</p>
-                                        </div>
-                                        <div>
-                                            <p class="text-[10px] text-slate-400 font-bold">BUKTI / FOTO</p>
-                                            <p class="text-[11px] text-slate-600 font-mono italic truncate select-all" title="${p.bukti}">${p.bukti}</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center justify-end gap-2 pt-1">
-                                        <button onclick="rejectPembayaran('${u.username}', ${idx})" class="flex-1 sm:flex-none bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold px-3 py-1.5 rounded-xl transition-all cursor-pointer text-center flex items-center justify-center gap-1">
-                                            <i class="fa-solid fa-xmark"></i> Reject
-                                        </button>
-                                        <button onclick="approvePembayaran('${u.username}', ${idx})" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-1.5 rounded-xl transition-all shadow-xs cursor-pointer text-center flex items-center justify-center gap-1">
-                                            <i class="fa-solid fa-check"></i> Approve
-                                        </button>
-                                    </div>
-                                </div>
-                            `;
-                        }
-                    });
-                }
-
-                let textKursi = '-';
-                if(u.kursi && u.kursi.length > 0) {
-                    textKursi = u.kursi.map(kStr => kStr.replace("Bus", "Bus ").replace("-Seat", " Kursi ")).join(', ');
-                }
-
-                cardKaryawanContainer.innerHTML += `
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-indigo-300 transition-all">
-                        <div class="space-y-1 min-w-[150px]">
-                            <h4 class="font-bold text-slate-900 text-sm">${u.nama}</h4>
-                            <div class="flex flex-wrap items-center gap-1.5">
-                                <span class="bg-indigo-50 text-indigo-950 font-black text-[11px] px-2 py-0.5 rounded-md">${keu.jumlahAnggota} Jiwa</span>
-                                <span class="text-[10px] text-slate-500 font-medium">(${keu.dewasaCount} Dws, ${keu.anakCount} Ank)</span>
-                            </div>
-                            <p class="text-[11px] text-slate-500 font-medium">Alokasi: <span class="font-sans font-bold text-indigo-600">${textKursi}</span></p>
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 text-center sm:text-right flex-1 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                            <div>
-                                <p class="text-[9px] text-slate-400 font-bold uppercase">Total Tagihan</p>
-                                <p class="text-xs font-bold text-slate-700 font-mono mt-0.5">${formatIDR(keu.totalTargetPlusUnik)}</p>
-                            </div>
-                            <div>
-                                <p class="text-[9px] text-emerald-600 font-bold uppercase">Masuk</p>
-                                <p class="text-xs font-black text-emerald-600 font-mono mt-0.5">${formatIDR(keu.totalSudahBayar)}</p>
-                            </div>
-                            <div>
-                                <p class="text-[9px] text-rose-500 font-bold uppercase">Sisa</p>
-                                <p class="text-xs font-black text-rose-600 font-mono mt-0.5">${formatIDR(keu.sisaTagihan)}</p>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-
-            document.getElementById('admTotalKas').innerText = formatIDR(totalKas);
-            document.getElementById('admPendingCount').innerText = pendingCount;
-            document.getElementById('badgePendingCount').innerText = pendingCount;
-            
-            document.getElementById('admTotalPeserta').innerText = totalPesertaGlobal + ' Jiwa';
-            document.getElementById('admTotalPesertaDetail').innerText = `${totalDewasaGlobal} Dewasa, ${totalAnakGlobal} Anak`;
-
-            if(pendingCount === 0) {
-                cardVerifikasiContainer.innerHTML = `
-                    <div class="p-8 text-center text-slate-400 border border-dashed border-slate-200 rounded-xl bg-white italic font-medium w-full flex flex-col items-center justify-center gap-2">
-                        <i class="fa-solid fa-folder-open text-xl text-slate-300"></i>
-                        <span>Antrean bersih. Belum ada pembayaran masuk.</span>
-                    </div>`;
-            }
-
-            const admBusSelect = document.getElementById('admBusMonitorSelect');
-            const totalBusSkrg = dapatkanTotalBusSistem();
-            const nilaiLama = admBusSelect.value;
-            admBusSelect.innerHTML = '';
-            for(let i=1; i<=totalBusSkrg + 1; i++) {
-                admBusSelect.innerHTML += `<option value="${i}">Bus ${i}</option>`;
-            }
-            admBusSelect.value = nilaiLama && parseInt(nilaiLama) <= (totalBusSkrg+1) ? nilaiLama : "1";
-
-            renderAdminBusMonitor();
-        }
-
-        // --- 7. INTERAKSI UPLOAD FOTO SIMULASI ---
-        function simulasiPilihFoto() { document.getElementById('payPhotoInput').click(); }
-        function handleFotoTerpilih() {
-            const fileInput = document.getElementById('payPhotoInput');
-            if(fileInput.files && fileInput.files[0]) {
-                const file = fileInput.files[0];
-                document.getElementById('txtPhotoStatus').innerHTML = `<i class="fa-solid fa-check-double text-emerald-500 mr-1"></i> ${file.name} Siap Kirim`;
-                fotoTerpilihBase64 = `Foto: ${file.name}`;
-            }
-        }
-
-        // --- 8. LOGIKA TRANSAKSI USER & VALIDASI ADMIN ---
-        function kirimPembayaranSederhana() {
-            const keu = hitungKeuanganKaryawan(currentSession);
-            if (keu.sisaTagihan <= 0) return alert('[Peringatan] Tagihan Anda sudah lunas sepenuhnya!');
-            if (!fotoTerpilihBase64) return alert('[Peringatan] Silahkan tambahkan foto bukti transfer terlebih dahulu!');
-
-            const nominalTransferOtomatis = keu.iuranPerBulanSisa;
-            const users = JSON.parse(localStorage.getItem('fam_users'));
-            if(!users[currentSession.username].payments) users[currentSession.username].payments = [];
-            
-            users[currentSession.username].payments.push({
-                nominal: nominalTransferOtomatis, 
-                bukti: fotoTerpilihBase64, 
-                status: 'Pending',
-                tanggal: new Date().toLocaleDateString('id-ID')
-            });
-            
-            localStorage.setItem('fam_users', JSON.stringify(users));
-            alert(`[Sukses] Pembayaran sebesar ${formatIDR(nominalTransferOtomatis)} telah dikonfirmasi ke admin.`);
-            
-            fotoTerpilihBase64 = null;
-            document.getElementById('txtPhotoStatus').innerHTML = '<i class="fa-solid fa-plus text-[10px] mr-1"></i>Tambah Foto Bukti';
-            document.getElementById('payPhotoInput').value = "";
-            renderDashboard();
-        }
-
-        function approvePembayaran(username, paymentIndex) {
-            const users = JSON.parse(localStorage.getItem('fam_users'));
-            users[username].payments[paymentIndex].status = 'Approved';
-            localStorage.setItem('fam_users', JSON.stringify(users));
-            alert('[Sukses] Pembayaran BERHASIL disetujui!');
-            renderDashboard();
-        }
-
-        function rejectPembayaran(username, paymentIndex) {
-            if (confirm("[Konfirmasi] Apakah Anda yakin ingin menolak (Reject) bukti pembayaran ini?")) {
-                const users = JSON.parse(localStorage.getItem('fam_users'));
-                users[username].payments[paymentIndex].status = 'Rejected';
-                localStorage.setItem('fam_users', JSON.stringify(users));
-                alert('[Informasi] Pembayaran ditolak.');
-                renderDashboard();
-            }
-        }
-
-        // --- 9. GLOBAL ADMIN CONFIG ACTIONS ---
-        function updateTargetCostGlobal() {
-            const inputVal = parseInt(document.getElementById('admTargetCost').value);
-            if (!inputVal || inputVal <= 0) return alert('[Error] Target iuran tidak valid!');
-
-            const config = JSON.parse(localStorage.getItem('fam_global_config'));
-            const yakin = confirm(`[Perhatian] KONFIRMASI PERUBAHAN BIAYA:\n\nApakah Anda yakin ingin mengubah target biaya per orang dari ${formatIDR(config.targetCostPerPerson)} menjadi ${formatIDR(inputVal)}?\n\nTindakan ini akan mengalkulasi ulang semua sisa cicilan karyawan secara realtime.`);
-            
-            if (yakin) {
-                config.targetCostPerPerson = inputVal;
-                localStorage.setItem('fam_global_config', JSON.stringify(config));
-                alert(`[Sukses] Target biaya diperbarui ke ${formatIDR(inputVal)}.`);
-                renderDashboard();
-            }
-        }
-
-        function updateEventMonthGlobal() {
-            const val = document.getElementById('admEventMonth').value;
-            if(!val) return alert('[Error] Silahkan tentukan bulan terlebih dahulu!');
-            
-            const config = JSON.parse(localStorage.getItem('fam_global_config'));
-            const yakin = confirm(`[Perhatian] KONFIRMASI PINDAH BULAN EVENT:\n\nApakah Anda yakin ingin mengubah waktu pelaksanaan event menjadi: ${val}?\n\nSisa bulan iuran berkala otomatis bertambah/berkurang mengikuti pilihan Anda.`);
-            
-            if (yakin) {
-                config.targetEventMonth = val;
-                localStorage.setItem('fam_global_config', JSON.stringify(config));
-                alert(`[Sukses] Bulan target event diubah ke: ${val}.`);
-                renderDashboard();
-            }
-        }
-
-        // --- 10. MULTI-BUS & SEAT LAYOUT MAP ENGINE (BIG BUS TIPE KIRI 2 - KANAN 3) ---
-        function buatStrukturBigBus23(targetBusNo, occupiedSeats, periksaAksiKlik, contextUser) {
-    let htmlStr = '';
-    let seatCounter = 1;
-    const databaseKaryawan = JSON.parse(localStorage.getItem('fam_users'));
-
-    for (let baris = 1; baris <= 10; baris++) {
-        for (let kolom = 1; kolom <= 6; kolom++) { // PERBAIKAN: font-sans diganti kolom++
-            
-            // Logika lorong di kolom ke-3
-            if (kolom === 3) {
-                htmlStr += `<div class="h-8 flex items-center justify-center text-[9px] text-slate-300 font-bold uppercase"><i class="fa-solid fa-arrows-left-right text-[8px] mr-0.5"></i>Lrg</div>`;
-                continue; // Lanjut ke iterasi berikutnya untuk kolom ke-4
-            } 
-            
-            const currentSeatIndex = seatCounter;
-            const seatKeyString = `Bus${targetBusNo}-Seat${currentSeatIndex}`;
-            const isOccupiedBy = occupiedSeats[seatKeyString];
-            
-            let btnClass = "h-8 rounded-md text-[10px] font-bold text-center transition-all flex items-center justify-center border px-0.5 ";
-            let onClickAttr = '';
-            let namaHover = "Kosong";
-
-            if (isOccupiedBy) {
-                const pemilik = databaseKaryawan[isOccupiedBy];
-                namaHover = pemilik ? pemilik.nama : "Terisi";
-
-                if (contextUser && isOccupiedBy === contextUser.username) {
-                    btnClass += "bg-indigo-600 border-indigo-700 text-white shadow-xs";
-                } else {
-                    btnClass += "bg-slate-200 border-slate-300 text-slate-600 cursor-not-allowed";
-                }
-            } else {
-                btnClass += "bg-emerald-50 border-emerald-200 text-emerald-800 hover:bg-emerald-100 cursor-pointer";
-            }
-
-            if (periksaAksiKlik) {
-                const isMine = (isOccupiedBy && contextUser && isOccupiedBy === contextUser.username);
-                onClickAttr = `onclick="pilihKursiSmartEngine('${seatKeyString}', ${isOccupiedBy ? 'true' : 'false'}, ${isMine ? 'true' : 'false'}, ${targetBusNo})"`;
-            }
-
-            htmlStr += `<button ${onClickAttr} class="${btnClass}" title="Bus ${targetBusNo} - Kursi ${currentSeatIndex}">${currentSeatIndex}</button>`;
-            seatCounter++;
-        }
-    }
-    return htmlStr;
-}
-
-
-        function renderBusMap() {
-            const config = JSON.parse(localStorage.getItem('fam_global_config'));
-            const statusBox = document.getElementById('statusKursiUser');
-            const mapContainer = document.getElementById('busMapContainer');
-            const grid = document.getElementById('busGrid');
-
-            if (!config.aksesKursi) {
-                statusBox.innerHTML = '<i class="fa-solid fa-lock mr-1.5"></i> Akses pemesanan denah kursi bus belum dibuka oleh Admin.';
-                statusBox.classList.remove('hidden'); mapContainer.classList.add('hidden');
-                return;
-            }
-            statusBox.classList.add('hidden'); mapContainer.classList.remove('hidden');
-
-            const users = JSON.parse(localStorage.getItem('fam_users'));
-            let occupiedSeats = {};
-            Object.values(users).forEach(u => {
-                if(u.kursi) u.kursi.forEach(s => { occupiedSeats[s] = u.username; });
-            });
-
-            const targetBusSelected = document.getElementById('userBusSelect').value || "1";
-            grid.innerHTML = buatStrukturBigBus23(targetBusSelected, occupiedSeats, true, currentSession);
-        }
-
-        function renderAdminBusMonitor() {
-            const users = JSON.parse(localStorage.getItem('fam_users'));
-            let occupiedSeats = {};
-            Object.values(users).forEach(u => {
-                if(u.kursi) u.kursi.forEach(s => { occupiedSeats[s] = u.username; });
-            });
-
-            const targetBusSelected = document.getElementById('admBusMonitorSelect').value || "1";
-            const gridAdmin = document.getElementById('admBusGrid');
-            gridAdmin.innerHTML = buatStrukturBigBus23(targetBusSelected, occupiedSeats, false, null);
-        }
-
-        function clearAllDataLog() {
-            if (confirm("[Peringatan Kritis] Apakah Anda benar-benar ingin MENGHAPUS SEMUA DATA KARYAWAN, DAFTAR KELUARGA, KAS MASUK, dan PILIHAN KURSI?\n\nData yang dihapus tidak bisa dipulihkan kembali.")) {
-                if (confirm("[Validasi Akhir] Tekan OK untuk mengosongkan database sistem sekarang.")) {
-                    localStorage.removeItem('fam_users');
-                    localStorage.removeItem('fam_global_config');
-                    initDatabase();
-                    alert("[Sukses] Database berhasil dibersihkan ke kondisi awal pabrik!");
-                    window.location.reload();
-                }
-            }
-        }
-
-        function toggleAksesKursiGlobal() {
-            const config = JSON.parse(localStorage.getItem('fam_global_config'));
-            config.aksesKursi = !config.aksesKursi;
-            localStorage.setItem('fam_global_config', JSON.stringify(config));
-            renderDashboard();
-        }
-
-        function bukaModalKeluarga() { document.getElementById('modalKeluarga').classList.remove('hidden'); }
-        function tutupModalKeluarga() { document.getElementById('modalKeluarga').classList.add('hidden'); }
-        
-        function simpanKeluarga() {
-            const nama = document.getElementById('kelNama').value.trim();
-            const hubungan = document.getElementById('kelHubungan').value;
-            const kategori = document.getElementById('kelKategori').value;
-            if(!nama) return alert('[Peringatan] Isi nama keluarga!');
-
-            const users = JSON.parse(localStorage.getItem('fam_users'));
-            if(!users[currentSession.username].keluarga) users[currentSession.username].keluarga = [];
-            
-            users[currentSession.username].keluarga.push({ nama, hubungan, kategori });
-            
-            localStorage.setItem('fam_users', JSON.stringify(users));
-            tutupModalKeluarga();
-            document.getElementById('kelNama').value = '';
-            alert('[Sukses] Anggota keluarga berhasil ditambah!');
-            renderDashboard();
-        }
-
-        function pilihKursiSmartEngine(seatKeyString, isOccupied, isMine, targetBusNo) {
-            const usersGlobal = JSON.parse(localStorage.getItem('fam_users'));
-            
-            let namaPemesanTerbaru = null;
-            Object.values(usersGlobal).forEach(u => {
-                if (u.username !== currentSession.username && u.kursi && u.kursi.includes(seatKeyString)) {
-                    namaPemesanTerbaru = u.nama;
-                }
-            });
-
-            if (namaPemesanTerbaru) {
-                alert(`[Error] CONCURRENCY LOCK ERROR:\n\nMaaf, kursi ini baru saja dipesan oleh "${namaPemesanTerbaru}".\nSistem membatalkan aksi Anda untuk mencegah data ganda. Halaman akan diperbarui otomatis.`);
-                renderDashboard();
-                return;
-            }
-
-            if (isOccupied && !isMine) return alert('[Peringatan] Kursi tersebut sudah dipesan oleh karyawan lain!');
-            
-            let mySeats = usersGlobal[currentSession.username].kursi || [];
-            const keu = hitungKeuanganKaryawan(currentSession);
-            
-            if (isMine) {
-                mySeats = mySeats.filter(s => s !== seatKeyString);
-                alert(`[Informasi] Anda melepas pesanan ${seatKeyString.replace("Bus", "Bus ").replace("-Seat", " Kursi ")}`);
-            } else {
-                if (mySeats.length >= keu.jumlahAnggota) {
-                    return alert(`[Peringatan] Batas kuota maksimal kelompok Anda adalah ${keu.jumlahAnggota} kursi sesuai jumlah jiwa pendaftaran.`);
-                }
-
-                if (targetBusNo > 1) {
-                    let totalTerisiBusSebelumnya = 0;
-                    Object.values(usersGlobal).forEach(u => {
-                        if(u.kursi) {
-                            u.kursi.forEach(sStr => {
-                                if(sStr.startsWith(`Bus${targetBusNo - 1}-`)) totalTerisiBusSebelumnya++;
-                            });
-                        }
-                    });
-
-                    if (totalTerisiBusSebelumnya < KURSI_PER_BUS) {
-                        return alert(`[Perhatian] SMART ENGINE SYSTEM:\n\nMaaf, Bus ${targetBusNo - 1} belum terisi penuh (${totalTerisiBusSebelumnya}/${KURSI_PER_BUS} Kursi).\nSilahkan penuhi alokasi kursi di Bus ${targetBusNo - 1} terlebih dahulu.`);
-                    }
-                }
-
-                mySeats.push(seatKeyString);
-                alert(`[Sukses] Berhasil memesan ${seatKeyString.replace("Bus", "Bus ").replace("-Seat", " Kursi ")}`);
-            }
-
-            usersGlobal[currentSession.username].kursi = mySeats;
-            localStorage.setItem('fam_users', JSON.stringify(usersGlobal));
-            renderDashboard();
-        }
-
-        // --- 11. TRIGGERS ON LOAD ---
-        window.addEventListener('DOMContentLoaded', async () => {
-            await initDatabase();
-            
-            document.getElementById('btnPrimaryAuth').onclick = handleAuthSubmit;
-            document.getElementById('btnToggleAuth').onclick = toggleAuthMode;
-            
-            isRegisterState = true; 
-            toggleAuthMode(); 
-            
-            document.getElementById('viewAuth').classList.remove('hidden');
-            updateNavbarUI();
-        });
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>
