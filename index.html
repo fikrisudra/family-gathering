@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Family Gathering Dashboard v2.9.1</title>
-    <!-- Tailwind CSS untuk UI yang rapi, modern, dan responsive -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -16,19 +16,17 @@
 </head>
 <body class="bg-slate-100 font-sans min-h-screen text-slate-800">
 
-    <!-- Top Navigation Bar -->
     <nav class="bg-white shadow-sm border-b border-slate-200 px-6 py-4 flex justify-between items-center sticky top-0 z-50">
         <h1 class="text-xl font-bold text-indigo-600 flex items-center gap-2">
-            🎉 FamGather <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-normal">Smart Engine v2.9.1</span>
+            <i class="fa-solid fa-champagne-glasses"></i> FamGather <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-normal">Smart Engine v2.9.1</span>
         </h1>
         <div id="navAuth" class="flex items-center gap-4"></div>
     </nav>
 
     <main class="max-w-7xl mx-auto p-4 md:p-6 space-y-6">
 
-        <!-- ================= 1. Halaman Login / Registrasi ================= -->
         <section id="viewAuth" class="max-w-md mx-auto bg-white rounded-2xl shadow-xl p-6 mt-10 hidden">
-            <h2 class="text-2xl font-bold text-center mb-6" id="authTitle">Masuk Aplikasi</h2>
+            <h2 class="text-2xl font-bold text-center mb-6" id="authTitle"><i class="fa-solid fa-right-to-bracket mr-2"></i>Masuk Aplikasi</h2>
             
             <div class="space-y-4">
                 <div>
@@ -45,8 +43,9 @@
                         <label class="block text-sm font-medium mb-1">Nama Lengkap Karyawan</label>
                         <input type="text" id="authNama" class="w-full px-3 py-2 border rounded-xl outline-none focus:ring-2 focus:ring-indigo-500">
                     </div>
-                    <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100 text-xs text-indigo-800">
-                        ℹ️ <strong>Sistem Otomatis:</strong> Sisa bulan iuran dihitung otomatis berdasarkan target bulan pelaksanaan kegiatan yang dikelola Admin.
+                    <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100 text-xs text-indigo-800 flex items-start gap-2">
+                        <i class="fa-solid fa-circle-info mt-0.5"></i>
+                        <span><strong>Sistem Otomatis:</strong> Sisa bulan iuran dihitung otomatis berdasarkan target bulan pelaksanaan kegiatan yang dikelola Admin.</span>
                     </div>
                 </div>
 
@@ -59,15 +58,13 @@
             </div>
         </section>
 
-        <!-- ================= 2. DASHBOARD KARYAWAN ================= -->
         <section id="viewKaryawan" class="grid grid-cols-1 md:grid-cols-3 gap-6 hidden">
             <div class="md:col-span-2 space-y-6">
-                <!-- Ringkasan Finansial Kelompok -->
                 <div class="bg-gradient-to-br from-indigo-600 to-violet-700 rounded-2xl shadow-xl p-6 text-white relative overflow-hidden">
                     <div class="relative z-10">
                         <div class="flex justify-between items-start">
                             <p class="text-indigo-100 text-sm font-medium uppercase tracking-wider">Total Tagihan Kelompok Anda</p>
-                            <span class="bg-white/20 px-3 py-1 rounded-full text-xs font-mono" id="userUniqueCode">Kode Unik: ---</span>
+                            <span class="bg-white/20 px-3 py-1 rounded-full text-xs font-mono" id="userUniqueCode"><i class="fa-solid fa-fingerprint mr-1"></i>Kode Unik: ---</span>
                         </div>
                         <h3 class="text-3xl font-black mt-2" id="userTotalTagihan">Rp 0</h3>
                         
@@ -84,11 +81,12 @@
                     </div>
                 </div>
 
-                <!-- Rencana Iuran Pintar -->
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-4">
                     <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                        <h4 class="text-lg font-bold text-slate-800 flex items-center gap-2">📊 Rencana Iuran Pintar</h4>
-                        <span id="userSisaBulanBadge" class="bg-indigo-50 text-indigo-700 text-xs px-3 py-1 rounded-full font-semibold">-- Bulan Tersisa</span>
+                        <h4 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-pie text-indigo-500"></i> Rencana Iuran Pintar
+                        </h4>
+                        <span id="userSisaBulanBadge" class="bg-indigo-50 text-indigo-700 text-xs px-3 py-1 rounded-full font-semibold"><i class="fa-solid fa-calendar-days mr-1"></i>-- Bulan Tersisa</span>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="p-4 bg-indigo-50/50 rounded-xl border border-indigo-100">
@@ -103,12 +101,11 @@
                     </div>
                 </div>
 
-                <!-- Manajemen Anggota Keluarga -->
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
                     <div class="flex justify-between items-center mb-4">
-                        <h4 class="text-lg font-bold">Anggota Keluarga Terdaftar</h4>
-                        <button onclick="bukaModalKeluarga()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm px-3 py-1.5 rounded-xl transition-all flex items-center gap-1 cursor-pointer">
-                            ➕ Tambah Keluarga
+                        <h4 class="text-lg font-bold"><i class="fa-solid fa-people-group text-slate-500 mr-1"></i> Anggota Keluarga Terdaftar</h4>
+                        <button onclick="bukaModalKeluarga()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer">
+                            <i class="fa-solid fa-user-plus text-xs"></i> Tambah Keluarga
                         </button>
                     </div>
                     <div class="overflow-x-auto">
@@ -125,73 +122,66 @@
                     </div>
                 </div>
 
-                <!-- Pemilihan Kursi Bus Karyawan -->
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                    <h4 class="text-lg font-bold mb-2">Pilih Kursi Bus (Tipe Big Bus 2-3)</h4>
+                    <h4 class="text-lg font-bold mb-2"><i class="fa-solid fa-bus text-slate-500 mr-1"></i> Pilih Kursi Bus (Tipe Big Bus 2-3)</h4>
                     <div id="statusKursiUser" class="mb-4 text-sm font-semibold text-amber-600 bg-amber-50 p-3 rounded-xl hidden"></div>
                     <div id="busMapContainer" class="hidden space-y-6">
-                        <!-- Kontrol Pindah Bus jika multi-bus aktif -->
                         <div class="flex items-center gap-2" id="userBusSelectorContainer">
                             <label class="text-xs font-bold text-slate-600">Pilih Unit Bus:</label>
                             <select id="userBusSelect" onchange="renderBusMap()" class="text-xs border border-slate-200 px-3 py-1.5 rounded-xl bg-slate-50 font-bold outline-none"></select>
                         </div>
                         <div class="max-w-md mx-auto p-4 bg-slate-50 rounded-2xl border border-slate-200">
-                            <!-- Label Petunjuk Arah Depan Bus -->
-                            <div class="w-full bg-slate-300 text-slate-700 text-[10px] font-bold text-center py-1 rounded-lg mb-4 tracking-widest uppercase">🚌 Bagian Depan / Kemudi</div>
+                            <div class="w-full bg-slate-300 text-slate-700 text-[10px] font-bold text-center py-1 rounded-lg mb-4 tracking-widest uppercase"><i class="fa-solid fa-dharmachakra mr-1 animate-spin"></i> Bagian Depan / Kemudi</div>
                             <div class="grid grid-cols-6 gap-y-3 gap-x-1" id="busGrid"></div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Panel Pembayaran Samping Karyawan -->
             <div class="space-y-6">
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 text-center">
-                    <h4 class="text-lg font-bold mb-2 text-left">Kirim Bukti Transfer</h4>
+                    <h4 class="text-lg font-bold mb-2 text-left"><i class="fa-solid fa-receipt text-slate-500 mr-1"></i> Kirim Bukti Transfer</h4>
                     <p class="text-xs text-slate-400 text-left mb-4">Pastikan nominal transfer Anda sudah sesuai dengan nominal iuran wajib bulan ini.</p>
                     
                     <div class="space-y-4">
                         <div class="border-2 border-dashed border-slate-200 hover:border-indigo-500 rounded-xl p-4 transition-all bg-slate-50 cursor-pointer relative" onclick="simulasiPilihFoto()">
                             <input type="file" id="payPhotoInput" class="hidden" accept="image/*" onchange="handleFotoTerpilih()">
-                            <div id="uploadPlaceholder" class="space-y-2">
-                                <span class="text-2xl">📸</span>
-                                <p class="text-xs font-semibold text-indigo-600" id="txtPhotoStatus">➕ Tambah Foto Bukti</p>
+                            <div id="uploadPlaceholder" class="space-y-2 py-2">
+                                <i class="fa-solid fa-camera text-2xl text-slate-400"></i>
+                                <p class="text-xs font-semibold text-indigo-600" id="txtPhotoStatus"><i class="fa-solid fa-plus text-[10px] mr-1"></i>Tambah Foto Bukti</p>
                             </div>
                         </div>
-                        <button onclick="kirimPembayaranSederhana()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl font-bold transition-all shadow-md shadow-indigo-100 cursor-pointer">
-                            Konfirmasi Sudah Bayar
+                        <button onclick="kirimPembayaranSederhana()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl font-bold transition-all shadow-md shadow-indigo-100 cursor-pointer flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-circle-check"></i> Konfirmasi Sudah Bayar
                         </button>
                     </div>
                 </div>
 
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                    <h4 class="text-sm font-bold mb-3 text-slate-500 uppercase tracking-wider">Riwayat Pembayaran</h4>
+                    <h4 class="text-sm font-bold mb-3 text-slate-500 uppercase tracking-wider"><i class="fa-solid fa-clock-rotate-left mr-1"></i> Riwayat Pembayaran</h4>
                     <div id="userPaymentHistory" class="space-y-3 max-h-60 overflow-y-auto pr-1"></div>
                 </div>
             </div>
         </section>
 
-        <!-- ================= 3. DASHBOARD SUPER ADMIN ================= -->
         <section id="viewAdmin" class="space-y-6 hidden">
             
-            <!-- PANEL KONTROL GLOBAL -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Panel Konfigurasi Utama -->
                 <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4 lg:col-span-1 flex flex-col justify-between">
                     <div>
                         <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                            ⚙️ Konfigurasi Event Global
+                            <i class="fa-solid fa-sliders text-indigo-500"></i> Konfigurasi Event Global
                         </h3>
                         <div class="space-y-3">
                             <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">🗓️ Bulan Pelaksanaan:</label>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1"><i class="fa-solid fa-calendar text-slate-400 mr-1"></i> Bulan Pelaksanaan:</label>
                                 <div class="flex gap-2">
                                     <input type="month" id="admEventMonth" class="flex-1 border border-slate-200 px-3 py-1.5 rounded-xl text-sm font-medium outline-none bg-slate-50">
                                     <button onclick="updateEventMonthGlobal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer">Set</button>
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">💰 Target Biaya per Jiwa (Rp):</label>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1"><i class="fa-solid fa-money-bill-wave text-slate-400 mr-1"></i> Target Biaya per Jiwa (Rp):</label>
                                 <div class="flex gap-2">
                                     <input type="number" id="admTargetCost" placeholder="1000000" class="flex-1 border border-slate-200 px-3 py-1.5 rounded-xl text-sm font-bold text-indigo-600 outline-none bg-slate-50">
                                     <button onclick="updateTargetCostGlobal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer">Set</button>
@@ -200,13 +190,12 @@
                         </div>
                     </div>
                     <div class="pt-2 border-t border-slate-100">
-                        <button onclick="clearAllDataLog()" class="w-full text-center text-xs bg-rose-50 text-rose-600 hover:bg-rose-100 py-2 rounded-xl font-bold transition-all border border-rose-100 cursor-pointer">
-                            🚨 Reset Semua Data
+                        <button onclick="clearAllDataLog()" class="w-full text-center text-xs bg-rose-50 text-rose-600 hover:bg-rose-100 py-2 rounded-xl font-bold transition-all border border-rose-100 cursor-pointer flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Reset Semua Data
                         </button>
                     </div>
                 </div>
 
-                <!-- Blok Informasi & Statistik Ringkas -->
                 <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-center">
                         <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Total Kas Masuk</p>
@@ -225,17 +214,16 @@
                             <p class="text-[11px] text-slate-500 font-semibold" id="admTotalPesertaDetail">0 Dewasa, 0 Anak</p>
                         </div>
                         <div class="pt-2 border-t border-slate-100">
-                            <button id="btnToggleKursiAdmin" onclick="toggleAksesKursiGlobal()" class="w-full text-white text-xs font-bold py-1.5 rounded-lg transition-all text-center"></button>
+                            <button id="btnToggleKursiAdmin" onclick="toggleAksesKursiGlobal()" class="w-full text-white text-xs font-bold py-1.5 rounded-lg transition-all text-center flex items-center justify-center gap-1"></button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- MONITORING DENAH KURS BUS REALTIME (PANEL ADMIN) -->
             <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2 border-b border-slate-100 pb-3">
                     <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
-                        🚌 Live Monitoring Denah Kursi Bus (Tipe 2-3)
+                        <i class="fa-solid fa-eye text-indigo-500"></i> Live Monitoring Denah Kursi Bus (Tipe 2-3)
                     </h3>
                     <div class="flex items-center gap-2">
                         <label class="text-xs font-bold text-slate-500">Lihat Monitor Bus:</label>
@@ -243,30 +231,27 @@
                     </div>
                 </div>
                 <div class="max-w-md mx-auto p-4 bg-slate-50 rounded-2xl border border-slate-200">
-                    <div class="w-full bg-slate-300 text-slate-700 text-[10px] font-bold text-center py-1 rounded-lg mb-4 tracking-widest uppercase">🚌 Bagian Depan / Kemudi</div>
+                    <div class="w-full bg-slate-300 text-slate-700 text-[10px] font-bold text-center py-1 rounded-lg mb-4 tracking-widest uppercase"><i class="fa-solid fa-dharmachakra mr-1"></i> Bagian Depan / Kemudi</div>
                     <div class="grid grid-cols-6 gap-y-3 gap-x-1" id="admBusGrid"></div>
                 </div>
             </div>
 
-            <!-- AREA DATA KARTU TERPADU -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 
-                <!-- KARTU UTAMA 1: ANTREAN VERIFIKASI -->
                 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden lg:col-span-5">
                     <div class="bg-amber-50 border-b border-slate-100 px-4 py-3.5 flex justify-between items-center">
                         <h3 class="text-sm font-bold text-amber-800 uppercase tracking-wider flex items-center gap-1.5">
-                            ⏳ Antrean Validasi Bukti
+                            <i class="fa-solid fa-hourglass-half"></i> Antrean Validasi Bukti
                         </h3>
                         <span id="badgePendingCount" class="bg-amber-200 text-amber-900 text-xs font-bold px-2.5 py-0.5 rounded-full">0</span>
                     </div>
                     <div class="p-4 max-h-[500px] overflow-y-auto space-y-3" id="admListVerifikasiCards"></div>
                 </div>
 
-                <!-- KARTU UTAMA 2: MONITORING FINANSIAL REALTIME -->
                 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden lg:col-span-7">
                     <div class="bg-slate-50 border-b border-slate-100 px-4 py-3.5">
                         <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider">
-                            👥 Realtime Ledger Keuangan Karyawan
+                            <i class="fa-solid fa-database text-slate-500 mr-1"></i> Realtime Ledger Keuangan Karyawan
                         </h3>
                     </div>
                     <div class="p-4 max-h-[500px] overflow-y-auto space-y-3" id="admListKaryawanCards"></div>
@@ -276,10 +261,9 @@
         </section>
     </main>
 
-    <!-- Modal Tambah Anggota Keluarga -->
     <div id="modalKeluarga" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-2xl p-6 w-full max-w-sm space-y-4">
-            <h3 class="text-lg font-bold">Tambah Anggota Keluarga</h3>
+            <h3 class="text-lg font-bold"><i class="fa-solid fa-user-plus text-slate-500 mr-1"></i> Tambah Anggota Keluarga</h3>
             <div>
                 <label class="block text-xs font-semibold mb-1">Nama Lengkap</label>
                 <input type="text" id="kelNama" class="w-full px-3 py-2 border rounded-xl outline-none">
@@ -299,8 +283,9 @@
                     <option value="Anak">Anak (Balita/Remaja)</option>
                 </select>
             </div>
-            <div class="bg-amber-50 text-amber-800 text-xs p-3 rounded-xl">
-                ⚠️ Menambahkan keluarga akan menambah tagihan sesuai target biaya per orang, lalu otomatis dibagi rata ke sisa bulan pembayaran.
+            <div class="bg-amber-50 text-amber-800 text-xs p-3 rounded-xl flex gap-2 items-start">
+                <i class="fa-solid fa-triangle-exclamation mt-0.5"></i>
+                <span>Menambahkan keluarga akan menambah tagihan sesuai target biaya per orang, lalu otomatis dibagi rata ke sisa bulan pembayaran.</span>
             </div>
             <div class="flex justify-end gap-2 text-sm pt-2">
                 <button onclick="tutupModalKeluarga()" class="px-4 py-2 border rounded-xl cursor-pointer">Batal</button>
@@ -309,13 +294,20 @@
         </div>
     </div>
 
-    <!-- ================= JAVASCRIPT ENGINE LOGIC ================= -->
     <script>
         let fotoTerpilihBase64 = null;
         const KURSI_PER_BUS = 50; 
 
+        // --- Enkripsi SHA-256 ---
+        async function hashPassword(string) {
+            const utf8 = new TextEncoder().encode(string);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
         // --- 1. SINKRONISASI DATABASE LOCALSTORAGE ---
-        function initDatabase() {
+        async function initDatabase() {
             if (!localStorage.getItem('fam_global_config')) {
                 const currentYear = new Date().getFullYear();
                 localStorage.setItem('fam_global_config', JSON.stringify({
@@ -325,8 +317,9 @@
                 }));
             }
             if (!localStorage.getItem('fam_users')) {
+                // Password default 'admin123' di-hash sesuai enkripsi SHA-256
                 const initialUsers = {
-                    'admin': { username: 'admin', password: 'admin123', nama: 'Super Admin', isAdmin: true }
+                    'admin': { username: 'admin', password: '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', nama: 'Super Admin', isAdmin: true }
                 };
                 localStorage.setItem('fam_users', JSON.stringify(initialUsers));
             }
@@ -363,34 +356,36 @@
             if (currentSession) {
                 navAuth.innerHTML = `
                     <div class="text-right text-sm hidden md:block">
-                        <p class="font-bold">${currentSession.nama}</p>
+                        <p class="font-bold"><i class="fa-solid fa-user-circle text-slate-400 mr-1"></i>${currentSession.nama}</p>
                         <p class="text-xs text-slate-400">${currentSession.isAdmin ? 'Administrator' : 'Karyawan'}</p>
                     </div>
-                    <button onclick="logout()" class="bg-rose-50 text-rose-600 hover:bg-rose-100 text-sm font-semibold px-4 py-2 rounded-xl transition-all cursor-pointer">Keluar</button>
+                    <button onclick="logout()" class="bg-rose-50 text-rose-600 hover:bg-rose-100 text-sm font-semibold px-4 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1"><i class="fa-solid fa-right-from-bracket text-xs"></i> Keluar</button>
                 `;
             } else {
-                navAuth.innerHTML = `<span class="text-xs text-slate-400">Silahkan login dahulu</span>`;
+                navAuth.innerHTML = `<span class="text-xs text-slate-400"><i class="fa-solid fa-user-lock mr-1"></i>Silahkan login dahulu</span>`;
             }
         }
 
         function toggleAuthMode() {
             isRegisterState = !isRegisterState;
-            document.getElementById('authTitle').innerText = isRegisterState ? 'Daftar Akun Baru' : 'Masuk Aplikasi';
+            document.getElementById('authTitle').innerHTML = isRegisterState ? '<i class="fa-solid fa-user-plus mr-2"></i>Daftar Akun Baru' : '<i class="fa-solid fa-right-to-bracket mr-2"></i>Masuk Aplikasi';
             document.getElementById('registerFields').classList.toggle('hidden', !isRegisterState);
             document.getElementById('btnPrimaryAuth').innerText = isRegisterState ? 'Buat Akun' : 'Masuk';
             document.getElementById('authToggleText').innerText = isRegisterState ? 'Sudah punya akun?' : 'Belum punya akun?';
             document.getElementById('btnToggleAuth').innerText = isRegisterState ? 'Login disini' : 'Daftar Sekarang';
         }
 
-        function handleAuthSubmit() {
+        async function handleAuthSubmit() {
             const users = JSON.parse(localStorage.getItem('fam_users'));
             const u = document.getElementById('authUsername').value.trim();
             const p = document.getElementById('authPassword').value;
 
-            if(!u || !p) return alert('Username & Password wajib diisi');
+            if(!u || !p) return alert('[Peringatan] Username & Password wajib diisi');
+
+            const hashedPassword = await hashPassword(p);
 
             if (isRegisterState) {
-                if(users[u]) return alert('Username/NIK sudah terdaftar!');
+                if(users[u]) return alert('[Error] Username/NIK sudah terdaftar!');
                 const nama = document.getElementById('authNama').value.trim();
                 
                 let code;
@@ -399,21 +394,21 @@
                 } while (Object.values(users).some(user => user.uniqueCode === code));
 
                 users[u] = {
-                    username: u, password: p, nama: nama || u,
+                    username: u, password: hashedPassword, nama: nama || u,
                     isAdmin: false, uniqueCode: code,
                     keluarga: [], payments: [], kursi: []
                 };
                 localStorage.setItem('fam_users', JSON.stringify(users));
-                alert(`Pendaftaran Sukses! Digit Unik Anda: ${code}`);
+                alert(`[Sukses] Pendaftaran Berhasil! Digit Unik Anda: ${code}`);
                 toggleAuthMode();
             } else {
-                if (users[u] && users[u].password === p) {
+                if (users[u] && users[u].password === hashedPassword) {
                     currentSession = users[u];
                     document.getElementById('viewAuth').classList.add('hidden');
                     updateNavbarUI();
                     renderDashboard();
                 } else {
-                    alert('Identitas login salah.');
+                    alert('[Error] Identitas login salah.');
                 }
             }
         }
@@ -441,7 +436,6 @@
                 });
             }
 
-            // Perbaikan core typo agar dashboard tidak blank / kosong lagi
             const jumlahAnggota = dewasaCount + anakCount; 
             const targetMurni = jumlahAnggota * baseTargetPerOrang;
             const totalTargetPlusUnik = targetMurni + parseInt(user.uniqueCode);
@@ -470,7 +464,7 @@
             }
 
             const targetSeharusnyaSudahBayar = (targetMurni / sisaBulanDinamis);
-            const statusBulanIni = totalSudahBayar >= targetSeharusnyaSudahBayar ? "🟢 Lunas (Bulan Ini Aman)" : "🟡 Belum Lunas Bulan Ini";
+            const statusBulanIni = totalSudahBayar >= targetSeharusnyaSudahBayar ? "Status: Lunas (Aman)" : "Status: Belum Lunas";
 
             return { 
                 totalTargetPlusUnik, 
@@ -521,12 +515,12 @@
             document.getElementById('viewKaryawan').classList.remove('hidden');
             const keu = hitungKeuanganKaryawan(currentSession);
 
-            document.getElementById('userUniqueCode').innerText = `Kode Unik: ${currentSession.uniqueCode}`;
+            document.getElementById('userUniqueCode').innerHTML = `<i class="fa-solid fa-fingerprint text-[10px] mr-1"></i>Kode Unik: ${currentSession.uniqueCode}`;
             document.getElementById('userTotalTagihan').innerText = formatIDR(keu.totalTargetPlusUnik);
             document.getElementById('userTotalBayar').innerText = formatIDR(keu.totalSudahBayar);
             document.getElementById('userSisaTagihan').innerText = formatIDR(keu.sisaTagihan);
             
-            document.getElementById('userSisaBulanBadge').innerText = `${keu.sisaBulanDinamis} Bulan Menuju Event`;
+            document.getElementById('userSisaBulanBadge').innerHTML = `<i class="fa-solid fa-calendar-check mr-1"></i>${keu.sisaBulanDinamis} Bulan Menuju Event`;
             document.getElementById('userIuranPerBulan').innerText = formatIDR(keu.iuranPerBulanSisa);
             document.getElementById('userStatusBulanIni').innerText = keu.statusBulanIni;
 
@@ -592,10 +586,13 @@
             cardVerifikasiContainer.innerHTML = '';
             cardKaryawanContainer.innerHTML = '';
 
-            document.getElementById('btnToggleKursiAdmin').innerText = config.aksesKursi ? '🔒 Tutup Akses Kursi Bus' : '🔓 Buka Akses Kursi Bus';
-            document.getElementById('btnToggleKursiAdmin').className = config.aksesKursi 
-                ? "w-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold py-1.5 rounded-xl cursor-pointer transition-all shadow-sm"
-                : "w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-1.5 rounded-xl cursor-pointer transition-all shadow-sm";
+            if (config.aksesKursi) {
+                document.getElementById('btnToggleKursiAdmin').innerHTML = '<i class="fa-solid fa-lock"></i> Tutup Akses Kursi Bus';
+                document.getElementById('btnToggleKursiAdmin').className = "w-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold py-1.5 rounded-xl cursor-pointer transition-all shadow-sm flex items-center justify-center gap-1";
+            } else {
+                document.getElementById('btnToggleKursiAdmin').innerHTML = '<i class="fa-solid fa-lock-open"></i> Buka Akses Kursi Bus';
+                document.getElementById('btnToggleKursiAdmin').className = "w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-1.5 rounded-xl cursor-pointer transition-all shadow-sm flex items-center justify-center gap-1";
+            }
 
             Object.values(users).forEach(u => {
                 if(u.isAdmin) return;
@@ -629,11 +626,11 @@
                                     </div>
                                 </div>
                                 <div class="flex items-center justify-end gap-2 pt-1">
-                                    <button onclick="rejectPembayaran('${u.username}', ${idx})" class="flex-1 sm:flex-none bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold px-3 py-1.5 rounded-xl transition-all cursor-pointer text-center">
-                                        ❌ Reject
+                                    <button onclick="rejectPembayaran('${u.username}', ${idx})" class="flex-1 sm:flex-none bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold px-3 py-1.5 rounded-xl transition-all cursor-pointer text-center flex items-center justify-center gap-1">
+                                        <i class="fa-solid fa-xmark"></i> Reject
                                     </button>
-                                    <button onclick="approvePembayaran('${u.username}', ${idx})" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-1.5 rounded-xl transition-all shadow-xs cursor-pointer text-center">
-                                        ✅ Approve
+                                    <button onclick="approvePembayaran('${u.username}', ${idx})" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-1.5 rounded-xl transition-all shadow-xs cursor-pointer text-center flex items-center justify-center gap-1">
+                                        <i class="fa-solid fa-check"></i> Approve
                                     </button>
                                 </div>
                             </div>
@@ -684,8 +681,9 @@
 
             if(pendingCount === 0) {
                 cardVerifikasiContainer.innerHTML = `
-                    <div class="p-8 text-center text-slate-400 border border-dashed border-slate-200 rounded-xl bg-white italic font-medium w-full">
-                        🎉 Antrean bersih. Belum ada pembayaran masuk.
+                    <div class="p-8 text-center text-slate-400 border border-dashed border-slate-200 rounded-xl bg-white italic font-medium w-full flex flex-col items-center justify-center gap-2">
+                        <i class="fa-solid fa-folder-open text-xl text-slate-300"></i>
+                        <span>Antrean bersih. Belum ada pembayaran masuk.</span>
                     </div>`;
             }
 
@@ -707,7 +705,7 @@
             const fileInput = document.getElementById('payPhotoInput');
             if(fileInput.files && fileInput.files[0]) {
                 const file = fileInput.files[0];
-                document.getElementById('txtPhotoStatus').innerText = `✅ ${file.name} Siap Kirim`;
+                document.getElementById('txtPhotoStatus').innerHTML = `<i class="fa-solid fa-check-double text-emerald-500 mr-1"></i> ${file.name} Siap Kirim`;
                 fotoTerpilihBase64 = `Foto: ${file.name}`;
             }
         }
@@ -715,8 +713,8 @@
         // --- 8. LOGIKA TRANSAKSI USER & VALIDASI ADMIN ---
         function kirimPembayaranSederhana() {
             const keu = hitungKeuanganKaryawan(currentSession);
-            if (keu.sisaTagihan <= 0) return alert('Tagihan Anda sudah lunas sepenuhnya!');
-            if (!fotoTerpilihBase64) return alert('Silahkan tambahkan foto bukti transfer terlebih dahulu!');
+            if (keu.sisaTagihan <= 0) return alert('[Peringatan] Tagihan Anda sudah lunas sepenuhnya!');
+            if (!fotoTerpilihBase64) return alert('[Peringatan] Silahkan tambahkan foto bukti transfer terlebih dahulu!');
 
             const nominalTransferOtomatis = keu.iuranPerBulanSisa;
             const users = JSON.parse(localStorage.getItem('fam_users'));
@@ -728,10 +726,10 @@
             });
             
             localStorage.setItem('fam_users', JSON.stringify(users));
-            alert(`Sukses! Pembayaran sebesar ${formatIDR(nominalTransferOtomatis)} telah dikonfirmasi ke admin.`);
+            alert(`[Sukses] Pembayaran sebesar ${formatIDR(nominalTransferOtomatis)} telah dikonfirmasi ke admin.`);
             
             fotoTerpilihBase64 = null;
-            document.getElementById('txtPhotoStatus').innerText = "➕ Tambah Foto Bukti";
+            document.getElementById('txtPhotoStatus').innerHTML = '<i class="fa-solid fa-plus text-[10px] mr-1"></i>Tambah Foto Bukti';
             document.getElementById('payPhotoInput').value = "";
             renderDashboard();
         }
@@ -740,16 +738,16 @@
             const users = JSON.parse(localStorage.getItem('fam_users'));
             users[username].payments[paymentIndex].status = 'Approved';
             localStorage.setItem('fam_users', JSON.stringify(users));
-            alert('Pembayaran BERHASIL disetujui!');
+            alert('[Sukses] Pembayaran BERHASIL disetujui!');
             renderDashboard();
         }
 
         function rejectPembayaran(username, paymentIndex) {
-            if (confirm("Apakah Anda yakin ingin menolak (Reject) bukti pembayaran ini?")) {
+            if (confirm("[Konfirmasi] Apakah Anda yakin ingin menolak (Reject) bukti pembayaran ini?")) {
                 const users = JSON.parse(localStorage.getItem('fam_users'));
                 users[username].payments[paymentIndex].status = 'Rejected';
                 localStorage.setItem('fam_users', JSON.stringify(users));
-                alert('Pembayaran ditolak.');
+                alert('[Informasi] Pembayaran ditolak.');
                 renderDashboard();
             }
         }
@@ -757,72 +755,32 @@
         // --- 9. GLOBAL ADMIN CONFIG ACTIONS ---
         function updateTargetCostGlobal() {
             const inputVal = parseInt(document.getElementById('admTargetCost').value);
-            if (!inputVal || inputVal <= 0) return alert('Target iuran tidak valid!');
+            if (!inputVal || inputVal <= 0) return alert('[Error] Target iuran tidak valid!');
 
             const config = JSON.parse(localStorage.getItem('fam_global_config'));
-            const yakin = confirm(`⚠️ KONFIRMASI PERUBAHAN BIAYA:\n\nApakah Anda yakin ingin mengubah target biaya per orang dari ${formatIDR(config.targetCostPerPerson)} menjadi ${formatIDR(inputVal)}?\n\nTindakan ini akan mengalkulasi ulang semua sisa cicilan karyawan secara realtime.`);
+            const yakin = confirm(`[Perhatian] KONFIRMASI PERUBAHAN BIAYA:\n\nApakah Anda yakin ingin mengubah target biaya per orang dari ${formatIDR(config.targetCostPerPerson)} menjadi ${formatIDR(inputVal)}?\n\nTindakan ini akan mengalkulasi ulang semua sisa cicilan karyawan secara realtime.`);
             
             if (yakin) {
                 config.targetCostPerPerson = inputVal;
                 localStorage.setItem('fam_global_config', JSON.stringify(config));
-                alert(`🎯 Sukses! Target biaya diperbarui ke ${formatIDR(inputVal)}.`);
+                alert(`[Sukses] Target biaya diperbarui ke ${formatIDR(inputVal)}.`);
                 renderDashboard();
             }
         }
 
         function updateEventMonthGlobal() {
             const val = document.getElementById('admEventMonth').value;
-            if(!val) return alert('Silahkan tentukan bulan terlebih dahulu!');
+            if(!val) return alert('[Error] Silahkan tentukan bulan terlebih dahulu!');
             
             const config = JSON.parse(localStorage.getItem('fam_global_config'));
-            const yakin = confirm(`⚠️ KONFIRMASI PINDAH BULAN EVENT:\n\nApakah Anda yakin ingin mengubah waktu pelaksanaan event menjadi: ${val}?\n\nSisa bulan iuran berkala otomatis bertambah/berkurang mengikuti pilihan Anda.`);
+            const yakin = confirm(`[Perhatian] KONFIRMASI PINDAH BULAN EVENT:\n\nApakah Anda yakin ingin mengubah waktu pelaksanaan event menjadi: ${val}?\n\nSisa bulan iuran berkala otomatis bertambah/berkurang mengikuti pilihan Anda.`);
             
             if (yakin) {
                 config.targetEventMonth = val;
                 localStorage.setItem('fam_global_config', JSON.stringify(config));
-                alert(`📆 Sukses! Bulan target event diubah ke: ${val}.`);
+                alert(`[Sukses] Bulan target event diubah ke: ${val}.`);
                 renderDashboard();
             }
-        }
-
-        function clearAllDataLog() {
-            if (confirm("🚨 PERINGATAN SANGAT KRITIS:\n\nApakah Anda benar-benar ingin MENGHAPUS SEMUA DATA KARYAWAN, DAFTAR KELUARGA, KAS MASUK, dan PILIHAN KURSI?\n\nData yang dihapus tidak bisa dipulihkan kembali.")) {
-                if (confirm("🔒 VALIDASI AKHIR:\n\nTekan OK untuk mengosongkan database sistem sekarang.")) {
-                    localStorage.removeItem('fam_users');
-                    localStorage.removeItem('fam_global_config');
-                    initDatabase();
-                    alert("🔄 Database berhasil dibersihkan ke kondisi awal pabrik!");
-                    window.location.reload();
-                }
-            }
-        }
-
-        function toggleAksesKursiGlobal() {
-            const config = JSON.parse(localStorage.getItem('fam_global_config'));
-            config.aksesKursi = !config.aksesKursi;
-            localStorage.setItem('fam_global_config', JSON.stringify(config));
-            renderDashboard();
-        }
-
-        function bukaModalKeluarga() { document.getElementById('modalKeluarga').classList.remove('hidden'); }
-        function tutupModalKeluarga() { document.getElementById('modalKeluarga').classList.add('hidden'); }
-        
-        function simpanKeluarga() {
-            const nama = document.getElementById('kelNama').value.trim();
-            const hubungan = document.getElementById('kelHubungan').value;
-            const kategori = document.getElementById('kelKategori').value;
-            if(!nama) return alert('Isi nama keluarga!');
-
-            const users = JSON.parse(localStorage.getItem('fam_users'));
-            if(!users[currentSession.username].keluarga) users[currentSession.username].keluarga = [];
-            
-            users[currentSession.username].keluarga.push({ nama, hubungan, kategori });
-            
-            localStorage.setItem('fam_users', JSON.stringify(users));
-            tutupModalKeluarga();
-            document.getElementById('kelNama').value = '';
-            alert('Anggota keluarga berhasil ditambah!');
-            renderDashboard();
         }
 
         // --- 10. MULTI-BUS & SEAT LAYOUT MAP ENGINE (BIG BUS TIPE KIRI 2 - KANAN 3) ---
@@ -834,7 +792,7 @@
             for (let baris = 1; baris <= 10; baris++) {
                 for (let kolom = 1; kolom <= 6; kolom++) {
                     if (kolom === 3) {
-                        htmlStr += `<div class="h-8 flex items-center justify-center text-[9px] text-slate-300 font-bold uppercase">Lrg</div>`;
+                        htmlStr += `<div class="h-8 flex items-center justify-center text-[9px] text-slate-300 font-bold uppercase"><i class="fa-solid fa-arrows-left-right text-[8px] mr-0.5"></i>Lrg</div>`;
                     } else {
                         const currentSeatIndex = seatCounter;
                         const seatKeyString = `Bus${targetBusNo}-Seat${currentSeatIndex}`;
@@ -894,7 +852,7 @@
             const grid = document.getElementById('busGrid');
 
             if (!config.aksesKursi) {
-                statusBox.innerText = "🔒 Akses pemesanan denah kursi bus belum dibuka oleh Admin.";
+                statusBox.innerHTML = '<i class="fa-solid fa-lock mr-1.5"></i> Akses pemesanan denah kursi bus belum dibuka oleh Admin.';
                 statusBox.classList.remove('hidden'); mapContainer.classList.add('hidden');
                 return;
             }
@@ -922,6 +880,46 @@
             gridAdmin.innerHTML = buatStrukturBigBus23(targetBusSelected, occupiedSeats, false, null);
         }
 
+        function clearAllDataLog() {
+            if (confirm("[Peringatan Kritis] Apakah Anda benar-benar ingin MENGHAPUS SEMUA DATA KARYAWAN, DAFTAR KELUARGA, KAS MASUK, dan PILIHAN KURSI?\n\nData yang dihapus tidak bisa dipulihkan kembali.")) {
+                if (confirm("[Validasi Akhir] Tekan OK untuk mengosongkan database sistem sekarang.")) {
+                    localStorage.removeItem('fam_users');
+                    localStorage.removeItem('fam_global_config');
+                    initDatabase();
+                    alert("[Sukses] Database berhasil dibersihkan ke kondisi awal pabrik!");
+                    window.location.reload();
+                }
+            }
+        }
+
+        function toggleAksesKursiGlobal() {
+            const config = JSON.parse(localStorage.getItem('fam_global_config'));
+            config.aksesKursi = !config.aksesKursi;
+            localStorage.setItem('fam_global_config', JSON.stringify(config));
+            renderDashboard();
+        }
+
+        function bukaModalKeluarga() { document.getElementById('modalKeluarga').classList.remove('hidden'); }
+        function tutupModalKeluarga() { document.getElementById('modalKeluarga').classList.add('hidden'); }
+        
+        function simpanKeluarga() {
+            const nama = document.getElementById('kelNama').value.trim();
+            const hubungan = document.getElementById('kelHubungan').value;
+            const kategori = document.getElementById('kelKategori').value;
+            if(!nama) return alert('[Peringatan] Isi nama keluarga!');
+
+            const users = JSON.parse(localStorage.getItem('fam_users'));
+            if(!users[currentSession.username].keluarga) users[currentSession.username].keluarga = [];
+            
+            users[currentSession.username].keluarga.push({ nama, hubungan, kategori });
+            
+            localStorage.setItem('fam_users', JSON.stringify(users));
+            tutupModalKeluarga();
+            document.getElementById('kelNama').value = '';
+            alert('[Sukses] Anggota keluarga berhasil ditambah!');
+            renderDashboard();
+        }
+
         function pilihKursiSmartEngine(seatKeyString, isOccupied, isMine, targetBusNo) {
             const usersGlobal = JSON.parse(localStorage.getItem('fam_users'));
             
@@ -933,22 +931,22 @@
             });
 
             if (namaPemesanTerbaru) {
-                alert(`🚨 CONCURRENCY LOCK ERROR:\n\nMaaf, kursi ini baru saja dipesan oleh "${namaPemesanTerbaru}".\nSistem membatalkan aksi Anda untuk mencegah data ganda. Halaman akan diperbarui otomatis.`);
+                alert(`[Error] CONCURRENCY LOCK ERROR:\n\nMaaf, kursi ini baru saja dipesan oleh "${namaPemesanTerbaru}".\nSistem membatalkan aksi Anda untuk mencegah data ganda. Halaman akan diperbarui otomatis.`);
                 renderDashboard();
                 return;
             }
 
-            if (isOccupied && !isMine) return alert('Kursi tersebut sudah dipesan oleh karyawan lain!');
+            if (isOccupied && !isMine) return alert('[Peringatan] Kursi tersebut sudah dipesan oleh karyawan lain!');
             
             let mySeats = usersGlobal[currentSession.username].kursi || [];
             const keu = hitungKeuanganKaryawan(currentSession);
             
             if (isMine) {
                 mySeats = mySeats.filter(s => s !== seatKeyString);
-                alert(`Anda melepas pesanan ${seatKeyString.replace("Bus", "Bus ").replace("-Seat", " Kursi ")}`);
+                alert(`[Informasi] Anda melepas pesanan ${seatKeyString.replace("Bus", "Bus ").replace("-Seat", " Kursi ")}`);
             } else {
                 if (mySeats.length >= keu.jumlahAnggota) {
-                    return alert(`Batas kuota maksimal kelompok Anda adalah ${keu.jumlahAnggota} kursi sesuai jumlah jiwa pendaftaran.`);
+                    return alert(`[Peringatan] Batas kuota maksimal kelompok Anda adalah ${keu.jumlahAnggota} kursi sesuai jumlah jiwa pendaftaran.`);
                 }
 
                 if (targetBusNo > 1) {
@@ -962,12 +960,12 @@
                     });
 
                     if (totalTerisiBusSebelumnya < KURSI_PER_BUS) {
-                        return alert(`🚨 SMART ENGINE SYSTEM:\n\nMaaf, Bus ${targetBusNo - 1} belum terisi penuh (${totalTerisiBusSebelumnya}/${KURSI_PER_BUS} Kursi).\nSilahkan penuhi alokasi kursi di Bus ${targetBusNo - 1} terlebih dahulu.`);
+                        return alert(`[Perhatian] SMART ENGINE SYSTEM:\n\nMaaf, Bus ${targetBusNo - 1} belum terisi penuh (${totalTerisiBusSebelumnya}/${KURSI_PER_BUS} Kursi).\nSilahkan penuhi alokasi kursi di Bus ${targetBusNo - 1} terlebih dahulu.`);
                     }
                 }
 
                 mySeats.push(seatKeyString);
-                alert(`Berhasil memesan ${seatKeyString.replace("Bus", "Bus ").replace("-Seat", " Kursi ")}`);
+                alert(`[Sukses] Berhasil memesan ${seatKeyString.replace("Bus", "Bus ").replace("-Seat", " Kursi ")}`);
             }
 
             usersGlobal[currentSession.username].kursi = mySeats;
