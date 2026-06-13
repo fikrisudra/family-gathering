@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Family Gathering Dashboard v2.1</title>
+    <title>Family Gathering Dashboard v2.2</title>
+    <!-- Tailwind CSS untuk UI yang rapi, modern, dan responsive -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); }
@@ -11,15 +12,17 @@
 </head>
 <body class="bg-slate-100 font-sans min-h-screen text-slate-800">
 
+    <!-- Top Navigation Bar -->
     <nav class="bg-white shadow-sm border-b border-slate-200 px-6 py-4 flex justify-between items-center sticky top-0 z-50">
         <h1 class="text-xl font-bold text-indigo-600 flex items-center gap-2">
-            🎉 FamGather <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-normal">Smart Engine v2.1</span>
+            🎉 FamGather <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-normal">Smart Engine v2.2</span>
         </h1>
         <div id="navAuth" class="flex items-center gap-4"></div>
     </nav>
 
     <main class="max-w-6xl mx-auto p-4 md:p-6 space-y-6">
 
+        <!-- ================= 1. Halaman Login / Registrasi ================= -->
         <section id="viewAuth" class="max-w-md mx-auto bg-white rounded-2xl shadow-xl p-6 mt-10 hidden">
             <h2 class="text-2xl font-bold text-center mb-6" id="authTitle">Masuk Aplikasi</h2>
             
@@ -52,8 +55,10 @@
             </div>
         </section>
 
+        <!-- ================= 2. DASHBOARD KARYAWAN ================= -->
         <section id="viewKaryawan" class="grid grid-cols-1 md:grid-cols-3 gap-6 hidden">
             <div class="md:col-span-2 space-y-6">
+                <!-- Ringkasan Finansial Kelompok -->
                 <div class="bg-gradient-to-br from-indigo-600 to-violet-700 rounded-2xl shadow-xl p-6 text-white relative overflow-hidden">
                     <div class="relative z-10">
                         <div class="flex justify-between items-start">
@@ -75,6 +80,7 @@
                     </div>
                 </div>
 
+                <!-- Rencana Iuran Pintar (Monthly Smart Planner) -->
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-4">
                     <div class="flex justify-between items-center border-b border-slate-100 pb-3">
                         <h4 class="text-lg font-bold text-slate-800 flex items-center gap-2">📊 Rencana Iuran Pintar</h4>
@@ -93,6 +99,7 @@
                     </div>
                 </div>
 
+                <!-- Manajemen Anggota Keluarga -->
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
                     <div class="flex justify-between items-center mb-4">
                         <h4 class="text-lg font-bold">Anggota Keluarga Terdaftar</h4>
@@ -114,6 +121,7 @@
                     </div>
                 </div>
 
+                <!-- Pemilihan Kursi Bus -->
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
                     <h4 class="text-lg font-bold mb-2">Pilih Kursi Bus</h4>
                     <div id="statusKursiUser" class="mb-4 text-sm font-semibold text-amber-600 bg-amber-50 p-3 rounded-xl hidden"></div>
@@ -123,6 +131,7 @@
                 </div>
             </div>
 
+            <!-- Panel Pembayaran Samping Karyawan -->
             <div class="space-y-6">
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
                     <h4 class="text-lg font-bold mb-4">Kirim Bukti Bayar</h4>
@@ -149,7 +158,9 @@
             </div>
         </section>
 
+        <!-- ================= 3. DASHBOARD SUPER ADMIN ================= -->
         <section id="viewAdmin" class="space-y-6 hidden">
+            <!-- Global Admin Settings Bar & Reset Total -->
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap gap-4 items-center justify-between">
                 <div class="flex items-center gap-3">
                     <label class="text-sm font-bold text-slate-700">🗓️ Bulan Pelaksanaan Event:</label>
@@ -160,6 +171,7 @@
                 </button>
             </div>
 
+            <!-- Ringkasan Statistik Admin -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
                     <p class="text-xs text-slate-400 font-bold uppercase">Total Kas Masuk</p>
@@ -179,6 +191,7 @@
                 </div>
             </div>
 
+            <!-- Tabel Antrean Verifikasi Pembayaran Manual -->
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
                 <h3 class="text-lg font-bold mb-4 text-amber-600 flex items-center gap-2">⏳ Verifikasi Pembayaran Manual</h3>
                 <div class="overflow-x-auto">
@@ -197,6 +210,7 @@
                 </div>
             </div>
 
+            <!-- Monitoring Finansial Realtime Seluruh Karyawan -->
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
                 <h3 class="text-lg font-bold mb-4">👥 Monitoring Keuangan Seluruh Karyawan</h3>
                 <div class="overflow-x-auto">
@@ -218,6 +232,7 @@
         </section>
     </main>
 
+    <!-- Modal Tambah Anggota Keluarga -->
     <div id="modalKeluarga" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-2xl p-6 w-full max-w-sm space-y-4">
             <h3 class="text-lg font-bold">Tambah Anggota Keluarga</h3>
@@ -243,6 +258,7 @@
         </div>
     </div>
 
+    <!-- ================= JAVASCRIPT ENGINE LOGIC ================= -->
     <script>
         // --- 1. SINKRONISASI DATABASE LOCALSTORAGE ---
         function initDatabase() {
@@ -254,10 +270,10 @@
                     targetEventMonth: `${currentYear}-12` 
                 }));
             }
+            // MODIFIKASI: Hanya membuat akun admin utama saja agar setelah reset data kosong bersih tanpa data demo karyawan
             if (!localStorage.getItem('fam_users')) {
                 const initialUsers = {
-                    'admin': { username: 'admin', password: 'admin123', nama: 'Super Admin', isAdmin: true },
-                    'karyawan1': { username: 'karyawan1', password: '123', nama: 'Fikri Sudrajat', isAdmin: false, uniqueCode: '015', keluarga: [], payments: [], kursi: [] }
+                    'admin': { username: 'admin', password: 'admin123', nama: 'Super Admin', isAdmin: true }
                 };
                 localStorage.setItem('fam_users', JSON.stringify(initialUsers));
             }
@@ -523,7 +539,7 @@
                 localStorage.removeItem('fam_users');
                 localStorage.removeItem('fam_global_config');
                 initDatabase();
-                alert("🔄 Seluruh database berhasil dibersihkan ke kondisi awal!");
+                alert("🔄 Seluruh database berhasil dibersihkan ke kondisi awal! Total peserta kembali menjadi 0.");
                 window.location.reload();
             }
         }
