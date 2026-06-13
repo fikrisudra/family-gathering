@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Family Gathering Dashboard v2.5</title>
+    <title>Family Gathering Dashboard v2.6</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); }
-        /* Kustomisasi scrollbar agar lebih minimalis di area tabel */
+        /* Kustomisasi scrollbar internal vertikal agar tetap rapi */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
@@ -18,7 +18,7 @@
 
     <nav class="bg-white shadow-sm border-b border-slate-200 px-6 py-4 flex justify-between items-center sticky top-0 z-50">
         <h1 class="text-xl font-bold text-indigo-600 flex items-center gap-2">
-            🎉 FamGather <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-normal">Smart Engine v2.5</span>
+            🎉 FamGather <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-normal">Smart Engine v2.6</span>
         </h1>
         <div id="navAuth" class="flex items-center gap-4"></div>
     </nav>
@@ -175,8 +175,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
-                        <button onclick="clearAllDataLog()" class="w-full text-center text-xs bg-rose-50 text-rose-600 hover:bg-rose-100 py-2 rounded-xl font-bold transition-all border border-rose-100">
+                    <div class="pt-2 border-t border-slate-100">
+                        <button onclick="clearAllDataLog()" class="w-full text-center text-xs bg-rose-50 text-rose-600 hover:bg-rose-100 py-2 rounded-xl font-bold transition-all border border-rose-100 cursor-pointer">
                             🚨 Reset Semua Data
                         </button>
                     </div>
@@ -208,48 +208,22 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 lg:col-span-5">
-                    <div class="flex justify-between items-center mb-3">
-                        <h3 class="text-sm font-bold text-amber-600 uppercase tracking-wider flex items-center gap-1.5">
-                            ⏳ Antrean Validasi (<span id="badgePendingCount">0</span>)
-                        </h3>
-                    </div>
-                    <div class="max-h-[450px] overflow-y-auto border border-slate-100 rounded-xl">
-                        <table class="w-full text-left border-collapse text-xs min-w-[350px]">
-                            <thead class="bg-slate-50 text-slate-400 font-bold sticky top-0 shadow-sm z-10">
-                                <tr>
-                                    <th class="p-3">Karyawan</th>
-                                    <th class="p-3">Nominal (+Kode)</th>
-                                    <th class="p-3">Bukti</th>
-                                    <th class="p-3 text-right">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="admListVerifikasi" class="divide-y divide-slate-100"></tbody>
-                        </table>
-                    </div>
+                <div class="space-y-3 lg:col-span-5">
+                    <h3 class="text-sm font-bold text-amber-600 uppercase tracking-wider flex items-center gap-1.5 px-1">
+                        ⏳ Antrean Validasi Bukti (<span id="badgePendingCount">0</span>)
+                    </h3>
+                    
+                    <div class="max-h-[500px] overflow-y-auto space-y-3 pr-1" id="admListVerifikasiCards">
+                        </div>
                 </div>
 
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 lg:col-span-7">
-                    <div class="flex justify-between items-center mb-3">
-                        <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider">
-                            👥 Realtime Ledger Keuangan Karyawan
-                        </h3>
-                    </div>
-                    <div class="max-h-[450px] overflow-y-auto border border-slate-100 rounded-xl">
-                        <table class="w-full text-left border-collapse text-xs min-w-[550px]">
-                            <thead class="bg-slate-50 text-slate-400 font-bold sticky top-0 shadow-sm z-10">
-                                <tr>
-                                    <th class="p-3">Nama Karyawan</th>
-                                    <th class="p-3">Rincian Jiwa</th>
-                                    <th class="p-3">Target Tagihan</th>
-                                    <th class="p-3 text-emerald-600">Masuk</th>
-                                    <th class="p-3 text-rose-600">Sisa</th>
-                                    <th class="p-3">Kursi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="admListKaryawan" class="divide-y divide-slate-100 bg-white"></tbody>
-                        </table>
-                    </div>
+                <div class="space-y-3 lg:col-span-7">
+                    <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider px-1">
+                        👥 Realtime Ledger Keuangan Karyawan
+                    </h3>
+                    
+                    <div class="max-h-[500px] overflow-y-auto space-y-3 pr-1" id="admListKaryawanCards">
+                        </div>
                 </div>
 
             </div>
@@ -528,15 +502,17 @@
             const users = JSON.parse(localStorage.getItem('fam_users'));
             const config = JSON.parse(localStorage.getItem('fam_global_config'));
 
+            // Mengisi form input tanpa memicu event loop
             document.getElementById('admEventMonth').value = config.targetEventMonth;
             document.getElementById('admTargetCost').value = config.targetCostPerPerson || 1000000;
 
             let totalKas = 0, pendingCount = 0, totalPesertaGlobal = 0, totalDewasaGlobal = 0, totalAnakGlobal = 0;
-            const tbodyVerifikasi = document.getElementById('admListVerifikasi');
-            const tbodyKaryawan = document.getElementById('admListKaryawan');
             
-            tbodyVerifikasi.innerHTML = '';
-            tbodyKaryawan.innerHTML = '';
+            const cardVerifikasiContainer = document.getElementById('admListVerifikasiCards');
+            const cardKaryawanContainer = document.getElementById('admListKaryawanCards');
+            
+            cardVerifikasiContainer.innerHTML = '';
+            cardKaryawanContainer.innerHTML = '';
 
             document.getElementById('btnToggleKursiAdmin').innerText = config.aksesKursi ? '🔒 Tutup Akses Kursi Bus' : '🔓 Buka Akses Kursi Bus';
             document.getElementById('btnToggleKursiAdmin').className = config.aksesKursi 
@@ -552,37 +528,66 @@
                 totalDewasaGlobal += keu.dewasaCount;
                 totalAnakGlobal += keu.anakCount;
 
+                // 1. RENDER KARTU ANTREAN VERIFIKASI
                 u.payments.forEach((p, idx) => {
                     if (p.status === 'Pending') {
                         pendingCount++;
-                        tbodyVerifikasi.innerHTML += `
-                            <tr class="hover:bg-amber-50/40 transition-colors">
-                                <td class="p-3">
-                                    <p class="font-bold text-slate-800">${u.nama}</p>
-                                    <p class="text-[10px] text-slate-400 font-mono">Unik: ${u.uniqueCode}</p>
-                                </td>
-                                <td class="p-3 font-bold text-slate-950 font-mono">${formatIDR(p.nominal)}</td>
-                                <td class="p-3 font-medium text-indigo-600 italic select-all">${p.bukti}</td>
-                                <td class="p-3 text-right">
-                                    <button onclick="approvePembayaran('${u.username}', ${idx})" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg transition-all shadow-sm cursor-pointer">Approve</button>
-                                </td>
-                            </tr>
+                        cardVerifikasiContainer.innerHTML += `
+                            <div class="bg-white p-4 rounded-xl border border-amber-200 shadow-xs flex flex-col justify-between gap-3 hover:shadow-md transition-all">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h4 class="font-bold text-slate-800 text-sm">${u.nama}</h4>
+                                        <p class="text-[10px] text-slate-400 font-mono">Kode Unik Kelompok: ${u.uniqueCode}</p>
+                                    </div>
+                                    <span class="bg-amber-50 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full">Menunggu</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2 text-xs border-y border-slate-50 py-2">
+                                    <div>
+                                        <p class="text-[10px] text-slate-400 font-medium">NOMINAL TRANSFER</p>
+                                        <p class="font-black text-emerald-600 text-sm font-mono">${formatIDR(p.nominal)}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] text-slate-400 font-medium">BUKTI / FOTO</p>
+                                        <p class="text-[11px] text-indigo-600 font-mono italic truncate select-all" title="${p.bukti}">${p.bukti}</p>
+                                    </div>
+                                </div>
+                                <div class="flex justify-end">
+                                    <button onclick="approvePembayaran('${u.username}', ${idx})" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-1.5 rounded-lg transition-all shadow-xs cursor-pointer text-center">
+                                        ✅ Valid / Approve
+                                    </button>
+                                </div>
+                            </div>
                         `;
                     }
                 });
 
-                tbodyKaryawan.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="p-3 font-bold text-slate-800">${u.nama}</td>
-                        <td class="p-3">
-                            <span class="font-bold text-indigo-950">${keu.jumlahAnggota} Jiwa</span>
-                            <div class="text-[10px] text-slate-500 font-medium">${keu.dewasaCount} Dws, ${keu.anakCount} Ank</div>
-                        </td>
-                        <td class="p-3 font-semibold text-slate-700 font-mono">${formatIDR(keu.totalTargetPlusUnik)}</td>
-                        <td class="p-3 text-emerald-600 font-bold font-mono">${formatIDR(keu.totalSudahBayar)}</td>
-                        <td class="p-3 text-rose-600 font-bold font-mono">${formatIDR(keu.sisaTagihan)}</td>
-                        <td class="p-3 text-xs font-mono text-indigo-600 font-bold">${u.kursi && u.kursi.length > 0 ? u.kursi.join(', ') : '-'}</td>
-                    </tr>
+                // 2. RENDER KARTU MONITORING FINANSIAL REALTIME
+                cardKaryawanContainer.innerHTML += `
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-indigo-300 transition-all">
+                        <div class="space-y-1 min-w-[150px]">
+                            <h4 class="font-bold text-slate-900 text-sm">${u.nama}</h4>
+                            <div class="flex flex-wrap items-center gap-1.5">
+                                <span class="bg-indigo-50 text-indigo-950 font-black text-[11px] px-2 py-0.5 rounded-md">${keu.jumlahAnggota} Jiwa</span>
+                                <span class="text-[10px] text-slate-500 font-medium">(${keu.dewasaCount} Dws, ${keu.anakCount} Ank)</span>
+                            </div>
+                            <p class="text-[11px] text-slate-400">Kursi Bus: <span class="font-mono font-bold text-indigo-600">${u.kursi && u.kursi.length > 0 ? u.kursi.join(', ') : '-'}</span></p>
+                        </div>
+                        
+                        <div class="grid grid-cols-3 gap-2 text-center sm:text-right flex-1 bg-slate-50/70 p-2.5 rounded-xl border border-slate-100">
+                            <div>
+                                <p class="text-[9px] text-slate-400 font-bold uppercase">Total Tagihan</p>
+                                <p class="text-xs font-bold text-slate-700 font-mono mt-0.5">${formatIDR(keu.totalTargetPlusUnik)}</p>
+                            </div>
+                            <div>
+                                <p class="text-[9px] text-emerald-600 font-bold uppercase">Masuk</p>
+                                <p class="text-xs font-black text-emerald-600 font-mono mt-0.5">${formatIDR(keu.totalSudahBayar)}</p>
+                            </div>
+                            <div>
+                                <p class="text-[9px] text-rose-500 font-bold uppercase">Sisa</p>
+                                <p class="text-xs font-black text-rose-600 font-mono mt-0.5">${formatIDR(keu.sisaTagihan)}</p>
+                            </div>
+                        </div>
+                    </div>
                 `;
             });
 
@@ -594,7 +599,10 @@
             document.getElementById('admTotalPesertaDetail').innerText = `${totalDewasaGlobal} Dewasa, ${totalAnakGlobal} Anak`;
 
             if(pendingCount === 0) {
-                tbodyVerifikasi.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-slate-400 italic font-medium">🎉 Antrean bersih. Belum ada pembayaran baru.</td></tr>`;
+                cardVerifikasiContainer.innerHTML = `
+                    <div class="p-8 text-center text-slate-400 border border-dashed border-slate-200 rounded-xl bg-white italic font-medium">
+                        🎉 Antrean bersih. Belum ada pembayaran masuk.
+                    </div>`;
             }
         }
 
@@ -641,36 +649,53 @@
             renderDashboard();
         }
 
-        // --- 8. GLOBAL ADMIN CONFIG ACTIONS ---
+        // --- 8. GLOBAL ADMIN CONFIG ACTIONS (DENGAN SECURITY CONFIRMATION) ---
         function updateTargetCostGlobal() {
             const inputVal = parseInt(document.getElementById('admTargetCost').value);
-            if (!inputVal || inputVal <= 0) return alert('Target biaya perorang harus valid!');
+            if (!inputVal || inputVal <= 0) return alert('Target iuran tidak valid!');
 
             const config = JSON.parse(localStorage.getItem('fam_global_config'));
-            config.targetCostPerPerson = inputVal;
-            localStorage.setItem('fam_global_config', JSON.stringify(config));
+            if (config.targetCostPerPerson === inputVal) return; // Tidak berubah
+
+            // Tombol Konfirmasi Keamanan
+            const yakin = confirm(`⚠️ KONFIRMASI PERUBAHAN BIAYA:\n\nApakah Anda yakin ingin mengubah target biaya per orang dari ${formatIDR(config.targetCostPerPerson)} menjadi ${formatIDR(inputVal)}?\n\nTindakan ini akan mengalkulasi ulang semua sisa cicilan karyawan secara realtime.`);
             
-            alert(`🎯 Target biaya perorang berhasil diubah menjadi: ${formatIDR(inputVal)}.\nSeluruh tagihan dan cicilan iuran otomatis karyawan telah diperbarui!`);
+            if (yakin) {
+                config.targetCostPerPerson = inputVal;
+                localStorage.setItem('fam_global_config', JSON.stringify(config));
+                alert(`🎯 Sukses! Target biaya diperbarui ke ${formatIDR(inputVal)}.`);
+            }
             renderDashboard();
         }
 
         function updateEventMonthGlobal() {
             const val = document.getElementById('admEventMonth').value;
             if(!val) return;
+            
             const config = JSON.parse(localStorage.getItem('fam_global_config'));
-            config.targetEventMonth = val;
-            localStorage.setItem('fam_global_config', JSON.stringify(config));
-            alert(`Target pelaksanaan diperbarui ke: ${val}. Sisa bulan cicilan terhitung otomatis!`);
+            if (config.targetEventMonth === val) return; // Tidak berubah
+
+            // Tombol Konfirmasi Keamanan
+            const yakin = confirm(`⚠️ KONFIRMASI PINDAH BULAN EVENT:\n\nApakah Anda yakin ingin mengubah waktu pelaksanaan event menjadi: ${val}?\n\nSisa bulan iuran berkala otomatis bertambah/berkurang mengikuti pilihan Anda.`);
+            
+            if (yakin) {
+                config.targetEventMonth = val;
+                localStorage.setItem('fam_global_config', JSON.stringify(config));
+                alert(`📆 Sukses! Bulan target event diubah ke: ${val}.`);
+            }
             renderDashboard();
         }
 
         function clearAllDataLog() {
-            if (confirm("🚨 PERINGATAN Kritis:\nApakah Anda yakin ingin menghapus seluruh data karyawan terdaftar dan riwayat pembayaran? Tindakan ini tidak bisa dibatalkan.")) {
-                localStorage.removeItem('fam_users');
-                localStorage.removeItem('fam_global_config');
-                initDatabase();
-                alert("🔄 Seluruh database berhasil dibersihkan ke kondisi awal!");
-                window.location.reload();
+            // Tombol Konfirmasi Keamanan Berlapis
+            if (confirm("🚨 PERINGATAN SANGAT KRITIS:\n\nApakah Anda benar-benar ingin MENGHAPUS SEMUA DATA KARYAWAN, DAFTAR KELUARGA, KAS MASUK, dan PILIHAN KURSI?\n\nData yang dihapus tidak bisa dipulihkan kembali.")) {
+                if (confirm("🔒 VALIDASI AKHIR:\n\nTekan OK untuk mengosongkan database sistem sekarang.")) {
+                    localStorage.removeItem('fam_users');
+                    localStorage.removeItem('fam_global_config');
+                    initDatabase();
+                    alert("🔄 Database berhasil dibersihkan ke kondisi awal pabrik!");
+                    window.location.reload();
+                }
             }
         }
 
