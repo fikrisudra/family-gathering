@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Family Gathering Dashboard v2.6</title>
+    <title>Family Gathering Dashboard v2.7</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); }
-        /* Kustomisasi scrollbar internal vertikal agar tetap rapi */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
@@ -18,7 +17,7 @@
 
     <nav class="bg-white shadow-sm border-b border-slate-200 px-6 py-4 flex justify-between items-center sticky top-0 z-50">
         <h1 class="text-xl font-bold text-indigo-600 flex items-center gap-2">
-            🎉 FamGather <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-normal">Smart Engine v2.6</span>
+            🎉 FamGather <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-normal">Smart Engine v2.7</span>
         </h1>
         <div id="navAuth" class="flex items-center gap-4"></div>
     </nav>
@@ -44,7 +43,7 @@
                         <input type="text" id="authNama" class="w-full px-3 py-2 border rounded-xl outline-none focus:ring-2 focus:ring-indigo-500">
                     </div>
                     <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100 text-xs text-indigo-800">
-                        ℹ️ <strong>Sistem Otomatis:</strong> Sisa bulan iuran akan langsung dihitung secara otomatis oleh sistem berdasarkan target bulan pelaksanaan kegiatan yang dikelola Admin.
+                        ℹ️ <strong>Sistem Otomatis:</strong> Sisa bulan iuran dihitung otomatis berdasarkan target bulan pelaksanaan kegiatan yang dikelola Admin.
                     </div>
                 </div>
 
@@ -120,10 +119,17 @@
                 </div>
 
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                    <h4 class="text-lg font-bold mb-2">Pilih Kursi Bus</h4>
+                    <h4 class="text-lg font-bold mb-2">Pilih Kursi Bus (Tipe Big Bus 2-3)</h4>
                     <div id="statusKursiUser" class="mb-4 text-sm font-semibold text-amber-600 bg-amber-50 p-3 rounded-xl hidden"></div>
-                    <div id="busMapContainer" class="hidden">
-                        <div class="grid grid-cols-4 gap-2 max-w-sm mx-auto p-4 bg-slate-50 rounded-xl border border-slate-200" id="busGrid"></div>
+                    <div id="busMapContainer" class="hidden space-y-6">
+                        <div class="flex items-center gap-2" id="userBusSelectorContainer">
+                            <label class="text-xs font-bold text-slate-600">Pilih Unit Bus:</label>
+                            <select id="userBusSelect" onchange="renderBusMap()" class="text-xs border border-slate-200 px-3 py-1.5 rounded-xl bg-slate-50 font-bold outline-none"></select>
+                        </div>
+                        <div class="max-w-md mx-auto p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                            <div class="w-full bg-slate-300 text-slate-700 text-[10px] font-bold text-center py-1 rounded-lg mb-4 tracking-widest uppercase">🚌 Bagian Depan / Kemudi</div>
+                            <div class="grid grid-cols-6 gap-y-3 gap-x-1" id="busGrid"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -141,7 +147,6 @@
                                 <p class="text-xs font-semibold text-indigo-600" id="txtPhotoStatus">➕ Tambah Foto Bukti</p>
                             </div>
                         </div>
-
                         <button onclick="kirimPembayaranSederhana()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl font-bold transition-all shadow-md shadow-indigo-100">
                             Konfirmasi Sudah Bayar
                         </button>
@@ -158,7 +163,6 @@
         <section id="viewAdmin" class="space-y-6 hidden">
             
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                
                 <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4 lg:col-span-1 flex flex-col justify-between">
                     <div>
                         <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-1.5">
@@ -167,11 +171,17 @@
                         <div class="space-y-3">
                             <div>
                                 <label class="block text-xs font-semibold text-slate-600 mb-1">🗓️ Bulan Pelaksanaan:</label>
-                                <input type="month" id="admEventMonth" onchange="updateEventMonthGlobal()" class="w-full border border-slate-200 px-3 py-2 rounded-xl text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50">
+                                <div class="flex gap-2">
+                                    <input type="month" id="admEventMonth" class="flex-1 border border-slate-200 px-3 py-1.5 rounded-xl text-sm font-medium outline-none bg-slate-50">
+                                    <button onclick="updateEventMonthGlobal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer">Set</button>
+                                </div>
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-slate-600 mb-1">💰 Target Biaya per Jiwa (Rp):</label>
-                                <input type="number" id="admTargetCost" onchange="updateTargetCostGlobal()" placeholder="Misal: 1000000" class="w-full border border-slate-200 px-3 py-2 rounded-xl text-sm font-bold text-indigo-600 outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50">
+                                <div class="flex gap-2">
+                                    <input type="number" id="admTargetCost" placeholder="1000000" class="flex-1 border border-slate-200 px-3 py-1.5 rounded-xl text-sm font-bold text-indigo-600 outline-none bg-slate-50">
+                                    <button onclick="updateTargetCostGlobal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer">Set</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -206,26 +216,34 @@
                 </div>
             </div>
 
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2 border-b border-slate-100 pb-3">
+                    <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider">🚌 Live Monitoring Denah Kursi Bus (Tipe 2-3)</h3>
+                    <div class="flex items-center gap-2">
+                        <label class="text-xs font-bold text-slate-500">Lihat Monitor Bus:</label>
+                        <select id="admBusMonitorSelect" onchange="renderAdminBusMonitor()" class="text-xs border border-slate-200 px-3 py-1.5 rounded-xl bg-slate-50 font-bold outline-none"></select>
+                    </div>
+                </div>
+                <div class="max-w-md mx-auto p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                    <div class="w-full bg-slate-300 text-slate-700 text-[10px] font-bold text-center py-1 rounded-lg mb-4 tracking-widest uppercase">🚌 Bagian Depan / Kemudi</div>
+                    <div class="grid grid-cols-6 gap-y-3 gap-x-1" id="admBusGrid"></div>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                
                 <div class="space-y-3 lg:col-span-5">
                     <h3 class="text-sm font-bold text-amber-600 uppercase tracking-wider flex items-center gap-1.5 px-1">
                         ⏳ Antrean Validasi Bukti (<span id="badgePendingCount">0</span>)
                     </h3>
-                    
-                    <div class="max-h-[500px] overflow-y-auto space-y-3 pr-1" id="admListVerifikasiCards">
-                        </div>
+                    <div class="max-h-[500px] overflow-y-auto space-y-3 pr-1" id="admListVerifikasiCards"></div>
                 </div>
 
                 <div class="space-y-3 lg:col-span-7">
                     <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider px-1">
                         👥 Realtime Ledger Keuangan Karyawan
                     </h3>
-                    
-                    <div class="max-h-[500px] overflow-y-auto space-y-3 pr-1" id="admListKaryawanCards">
-                        </div>
+                    <div class="max-h-[500px] overflow-y-auto space-y-3 pr-1" id="admListKaryawanCards"></div>
                 </div>
-
             </div>
         </section>
     </main>
@@ -253,7 +271,7 @@
                 </select>
             </div>
             <div class="bg-amber-50 text-amber-800 text-xs p-3 rounded-xl">
-                ⚠️ Menambahkan keluarga di tengah jalan akan menambah tagihan sesuai target biaya perorang yang ditentukan Admin, lalu otomatis dibagi rata ke sisa bulan pembayaran.
+                ⚠️ Menambahkan keluarga akan menambah tagihan sesuai target biaya per orang, lalu otomatis dibagi rata ke sisa bulan pembayaran.
             </div>
             <div class="flex justify-end gap-2 text-sm pt-2">
                 <button onclick="tutupModalKeluarga()" class="px-4 py-2 border rounded-xl">Batal</button>
@@ -264,6 +282,7 @@
 
     <script>
         let fotoTerpilihBase64 = null;
+        const KURSI_PER_BUS = 50; // Kapasitas 1 unit Big Bus (10 baris x 5 kursi)
 
         // --- 1. SINKRONISASI DATABASE LOCALSTORAGE ---
         function initDatabase() {
@@ -271,7 +290,6 @@
                 const currentYear = new Date().getFullYear();
                 localStorage.setItem('fam_global_config', JSON.stringify({
                     aksesKursi: false,
-                    totalKursiBus: 40,
                     targetEventMonth: `${currentYear}-12`,
                     targetCostPerPerson: 1000000 
                 }));
@@ -437,7 +455,26 @@
             };
         }
 
-        // --- 5. RENDER UTAMA DASHBOARD INTERFACE ---
+        // --- 5. DETEKSI TOTAL BUS YANG DIBUTUHKAN SISTEM (Dinamis) ---
+        function dapatkanTotalBusSistem() {
+            const users = JSON.parse(localStorage.getItem('fam_users'));
+            let tertinggi = 1;
+            Object.values(users).forEach(u => {
+                if(u.kursi) {
+                    u.kursi.forEach(keyStr => {
+                        // keyStr format: "BusX-SeatY"
+                        const match = keyStr.match(/Bus(\d+)-/);
+                        if(match) {
+                            const bNum = parseInt(match[1]);
+                            if(bNum > tertinggi) tertinggi = bNum;
+                        }
+                    });
+                }
+            });
+            return tertinggi;
+        }
+
+        // --- 6. RENDER UTAMA DASHBOARD INTERFACE ---
         function renderDashboard() {
             if (!currentSession) return;
             const users = JSON.parse(localStorage.getItem('fam_users'));
@@ -486,7 +523,10 @@
             const histDiv = document.getElementById('userPaymentHistory');
             histDiv.innerHTML = currentSession.payments.length === 0 ? '<p class="text-xs text-slate-400">Belum ada transfer.</p>' : '';
             currentSession.payments.forEach(p => {
-                const badgeColor = p.status === 'Approved' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700';
+                let badgeColor = 'bg-amber-100 text-amber-700';
+                if(p.status === 'Approved') badgeColor = 'bg-emerald-100 text-emerald-700';
+                if(p.status === 'Rejected') badgeColor = 'bg-rose-100 text-rose-700';
+
                 histDiv.innerHTML += `
                     <div class="p-3 border rounded-xl bg-slate-50 text-xs flex justify-between items-center">
                         <div><p class="font-bold">${formatIDR(p.nominal)}</p><p class="text-[10px] text-slate-400">${p.tanggal}</p></div>
@@ -494,6 +534,16 @@
                     </div>
                 `;
             });
+
+            // Perbarui selector bus user
+            const uSelect = document.getElementById('userBusSelect');
+            const totalBusSkrg = dapatkanTotalBusSistem();
+            uSelect.innerHTML = '';
+            for(let i=1; i<=totalBusSkrg; i++) {
+                uSelect.innerHTML += `<option value="${i}">Bus ${i}</option>`;
+            }
+            if(!uSelect.value) uSelect.value = "1";
+
             renderBusMap();
         }
 
@@ -502,7 +552,6 @@
             const users = JSON.parse(localStorage.getItem('fam_users'));
             const config = JSON.parse(localStorage.getItem('fam_global_config'));
 
-            // Mengisi form input tanpa memicu event loop
             document.getElementById('admEventMonth').value = config.targetEventMonth;
             document.getElementById('admTargetCost').value = config.targetCostPerPerson || 1000000;
 
@@ -528,32 +577,35 @@
                 totalDewasaGlobal += keu.dewasaCount;
                 totalAnakGlobal += keu.anakCount;
 
-                // 1. RENDER KARTU ANTREAN VERIFIKASI
+                // 1. ANTREAN VALIDASI (DESAIN KARTU PUTIH SERAGAM + APPROVE & REJECT)
                 u.payments.forEach((p, idx) => {
                     if (p.status === 'Pending') {
                         pendingCount++;
                         cardVerifikasiContainer.innerHTML += `
-                            <div class="bg-white p-4 rounded-xl border border-amber-200 shadow-xs flex flex-col justify-between gap-3 hover:shadow-md transition-all">
+                            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between gap-3 hover:shadow-md transition-all">
                                 <div class="flex justify-between items-start">
                                     <div>
                                         <h4 class="font-bold text-slate-800 text-sm">${u.nama}</h4>
                                         <p class="text-[10px] text-slate-400 font-mono">Kode Unik Kelompok: ${u.uniqueCode}</p>
                                     </div>
-                                    <span class="bg-amber-50 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full">Menunggu</span>
+                                    <span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded-full">Menunggu Validasi</span>
                                 </div>
-                                <div class="grid grid-cols-2 gap-2 text-xs border-y border-slate-50 py-2">
+                                <div class="grid grid-cols-2 gap-2 text-xs border-y border-slate-100 py-2">
                                     <div>
-                                        <p class="text-[10px] text-slate-400 font-medium">NOMINAL TRANSFER</p>
-                                        <p class="font-black text-emerald-600 text-sm font-mono">${formatIDR(p.nominal)}</p>
+                                        <p class="text-[10px] text-slate-400 font-bold">NOMINAL</p>
+                                        <p class="font-black text-indigo-600 text-sm font-mono">${formatIDR(p.nominal)}</p>
                                     </div>
                                     <div>
-                                        <p class="text-[10px] text-slate-400 font-medium">BUKTI / FOTO</p>
-                                        <p class="text-[11px] text-indigo-600 font-mono italic truncate select-all" title="${p.bukti}">${p.bukti}</p>
+                                        <p class="text-[10px] text-slate-400 font-bold">BUKTI / FOTO</p>
+                                        <p class="text-[11px] text-slate-600 font-mono italic truncate select-all" title="${p.bukti}">${p.bukti}</p>
                                     </div>
                                 </div>
-                                <div class="flex justify-end">
-                                    <button onclick="approvePembayaran('${u.username}', ${idx})" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-1.5 rounded-lg transition-all shadow-xs cursor-pointer text-center">
-                                        ✅ Valid / Approve
+                                <div class="flex items-center justify-end gap-2 pt-1">
+                                    <button onclick="rejectPembayaran('${u.username}', ${idx})" class="flex-1 sm:flex-none bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold px-3 py-1.5 rounded-xl transition-all cursor-pointer text-center">
+                                        ❌ Reject
+                                    </button>
+                                    <button onclick="approvePembayaran('${u.username}', ${idx})" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-1.5 rounded-xl transition-all shadow-xs cursor-pointer text-center">
+                                        ✅ Approve
                                     </button>
                                 </div>
                             </div>
@@ -561,19 +613,25 @@
                     }
                 });
 
-                // 2. RENDER KARTU MONITORING FINANSIAL REALTIME
+                // 2. REALTIME LEDGER KARYAWAN (DESAIN KARTU PUTIH SERAGAM)
+                let textKursi = '-';
+                if(u.kursi && u.kursi.length > 0) {
+                    // Tampilkan info bus yang lebih komunikatif
+                    textKursi = u.kursi.map(kStr => kStr.replace("Bus", "Bus ").replace("-Seat", " Kursi ")).join(', ');
+                }
+
                 cardKaryawanContainer.innerHTML += `
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-indigo-300 transition-all">
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-indigo-300 transition-all">
                         <div class="space-y-1 min-w-[150px]">
                             <h4 class="font-bold text-slate-900 text-sm">${u.nama}</h4>
                             <div class="flex flex-wrap items-center gap-1.5">
                                 <span class="bg-indigo-50 text-indigo-950 font-black text-[11px] px-2 py-0.5 rounded-md">${keu.jumlahAnggota} Jiwa</span>
                                 <span class="text-[10px] text-slate-500 font-medium">(${keu.dewasaCount} Dws, ${keu.anakCount} Ank)</span>
                             </div>
-                            <p class="text-[11px] text-slate-400">Kursi Bus: <span class="font-mono font-bold text-indigo-600">${u.kursi && u.kursi.length > 0 ? u.kursi.join(', ') : '-'}</span></p>
+                            <p class="text-[11px] text-slate-500 font-medium">Alokasi: <span class="font-sans font-bold text-indigo-600">${textKursi}</span></p>
                         </div>
                         
-                        <div class="grid grid-cols-3 gap-2 text-center sm:text-right flex-1 bg-slate-50/70 p-2.5 rounded-xl border border-slate-100">
+                        <div class="grid grid-cols-3 gap-2 text-center sm:text-right flex-1 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
                             <div>
                                 <p class="text-[9px] text-slate-400 font-bold uppercase">Total Tagihan</p>
                                 <p class="text-xs font-bold text-slate-700 font-mono mt-0.5">${formatIDR(keu.totalTargetPlusUnik)}</p>
@@ -604,9 +662,21 @@
                         🎉 Antrean bersih. Belum ada pembayaran masuk.
                     </div>`;
             }
+
+            // Atur Selector Monitor Bus Admin
+            const admBusSelect = document.getElementById('admBusMonitorSelect');
+            const totalBusSkrg = dapatkanTotalBusSistem();
+            const nilaiLama = admBusSelect.value;
+            admBusSelect.innerHTML = '';
+            for(let i=1; i<=totalBusSkrg + 1; i++) { // Sediakan +1 untuk ekspansi manual jika ingin melihat bus berikutnya
+                admBusSelect.innerHTML += `<option value="${i}">Bus ${i}</option>`;
+            }
+            admBusSelect.value = nilaiLama && parseInt(nilaiLama) <= (totalBusSkrg+1) ? nilaiLama : "1";
+
+            renderAdminBusMonitor();
         }
 
-        // --- 6. INTERAKSI UPLOAD FOTO SIMULASI ---
+        // --- 7. INTERAKSI UPLOAD FOTO SIMULASI ---
         function simulasiPilihFoto() { document.getElementById('payPhotoInput').click(); }
         function handleFotoTerpilih() {
             const fileInput = document.getElementById('payPhotoInput');
@@ -617,7 +687,7 @@
             }
         }
 
-        // --- 7. LOGIKA TRANSAKSI USER ---
+        // --- 8. LOGIKA TRANSAKSI USER & VALIDASI ADMIN ---
         function kirimPembayaranSederhana() {
             const keu = hitungKeuanganKaryawan(currentSession);
             if (keu.sisaTagihan <= 0) return alert('Tagihan Anda sudah lunas sepenuhnya!');
@@ -645,49 +715,52 @@
             const users = JSON.parse(localStorage.getItem('fam_users'));
             users[username].payments[paymentIndex].status = 'Approved';
             localStorage.setItem('fam_users', JSON.stringify(users));
-            alert('Pembayaran terkonfirmasi sukses!');
+            alert('Pembayaran BERHASIL disetujui!');
             renderDashboard();
         }
 
-        // --- 8. GLOBAL ADMIN CONFIG ACTIONS (DENGAN SECURITY CONFIRMATION) ---
+        function rejectPembayaran(username, paymentIndex) {
+            if (confirm("Apakah Anda yakin ingin menolak (Reject) bukti pembayaran ini?")) {
+                const users = JSON.parse(localStorage.getItem('fam_users'));
+                users[username].payments[paymentIndex].status = 'Rejected';
+                localStorage.setItem('fam_users', JSON.stringify(users));
+                alert('Pembayaran ditolak.');
+                renderDashboard();
+            }
+        }
+
+        // --- 9. GLOBAL ADMIN CONFIG ACTIONS (DENGAN SECURITY CONFIRMATION + TOMBOL SET) ---
         function updateTargetCostGlobal() {
             const inputVal = parseInt(document.getElementById('admTargetCost').value);
             if (!inputVal || inputVal <= 0) return alert('Target iuran tidak valid!');
 
             const config = JSON.parse(localStorage.getItem('fam_global_config'));
-            if (config.targetCostPerPerson === inputVal) return; // Tidak berubah
-
-            // Tombol Konfirmasi Keamanan
             const yakin = confirm(`⚠️ KONFIRMASI PERUBAHAN BIAYA:\n\nApakah Anda yakin ingin mengubah target biaya per orang dari ${formatIDR(config.targetCostPerPerson)} menjadi ${formatIDR(inputVal)}?\n\nTindakan ini akan mengalkulasi ulang semua sisa cicilan karyawan secara realtime.`);
             
             if (yakin) {
                 config.targetCostPerPerson = inputVal;
                 localStorage.setItem('fam_global_config', JSON.stringify(config));
                 alert(`🎯 Sukses! Target biaya diperbarui ke ${formatIDR(inputVal)}.`);
+                renderDashboard();
             }
-            renderDashboard();
         }
 
         function updateEventMonthGlobal() {
             const val = document.getElementById('admEventMonth').value;
-            if(!val) return;
+            if(!val) return alert('Silahkan tentukan bulan terlebih dahulu!');
             
             const config = JSON.parse(localStorage.getItem('fam_global_config'));
-            if (config.targetEventMonth === val) return; // Tidak berubah
-
-            // Tombol Konfirmasi Keamanan
             const yakin = confirm(`⚠️ KONFIRMASI PINDAH BULAN EVENT:\n\nApakah Anda yakin ingin mengubah waktu pelaksanaan event menjadi: ${val}?\n\nSisa bulan iuran berkala otomatis bertambah/berkurang mengikuti pilihan Anda.`);
             
             if (yakin) {
                 config.targetEventMonth = val;
                 localStorage.setItem('fam_global_config', JSON.stringify(config));
                 alert(`📆 Sukses! Bulan target event diubah ke: ${val}.`);
+                renderDashboard();
             }
-            renderDashboard();
         }
 
         function clearAllDataLog() {
-            // Tombol Konfirmasi Keamanan Berlapis
             if (confirm("🚨 PERINGATAN SANGAT KRITIS:\n\nApakah Anda benar-benar ingin MENGHAPUS SEMUA DATA KARYAWAN, DAFTAR KELUARGA, KAS MASUK, dan PILIHAN KURSI?\n\nData yang dihapus tidak bisa dipulihkan kembali.")) {
                 if (confirm("🔒 VALIDASI AKHIR:\n\nTekan OK untuk mengosongkan database sistem sekarang.")) {
                     localStorage.removeItem('fam_users');
@@ -727,7 +800,57 @@
             renderDashboard();
         }
 
-        // --- 9. BUS SEAT ALLOCATION ENGINE ---
+        // --- 10. MULTI-BUS & SEAT LAYOUT MAP ENGINE (BIG BUS TIPE KIRI 2 - KANAN 3) ---
+        // Penjelasan Grid 6 Kolom: Kolom 1-2 (Kiri), Kolom 3 (Lorong Jalan kosong), Kolom 4-6 (Kanan)
+        function buatStrukturBigBus23(targetBusNo, occupiedSeats, periksaAksiKlik, contextUser) {
+            let htmlStr = '';
+            let seatCounter = 1;
+
+            // Baris 1 sampai 10 (Total 50 Kursi)
+            for (let baris = 1; baris <= 10; baris++) {
+                for (let kolom = 1; kolom <= 6; kolom++) {
+                    if (kolom === 3) {
+                        // Kolom Ke-3 adalah Lorong Jalan (Aisle) Bus
+                        htmlStr += `<div class="h-8 flex items-center justify-center text-[9px] text-slate-300 font-bold uppercase">Lrg</div>`;
+                    } else {
+                        const currentSeatIndex = seatCounter;
+                        const seatKeyString = `Bus${targetBusNo}-Seat${currentSeatIndex}`;
+                        const isOccupiedBy = occupiedSeats[seatKeyString];
+                        
+                        let btnClass = "h-8 rounded-md text-[10px] font-bold text-center transition-all flex items-center justify-center border ";
+                        let labelKursi = `S${currentSeatIndex}`;
+                        let onClickAttr = '';
+
+                        if (isOccupiedBy) {
+                            if (contextUser && isOccupiedBy === contextUser.username) {
+                                // Milik User saat ini
+                                btnClass += "bg-indigo-600 border-indigo-700 text-white shadow-xs";
+                                labelKursi = `Milik Anda`;
+                            } else {
+                                // Terisi Orang lain
+                                btnClass += "bg-slate-200 border-slate-300 text-slate-400 cursor-not-allowed";
+                                labelKursi = `Terisi`;
+                            }
+                        } else {
+                            // Kosong
+                            btnClass += "bg-emerald-50 border-emerald-200 text-emerald-800 hover:bg-emerald-100 cursor-pointer";
+                        }
+
+                        // Jika fungsi klik diaktifkan (Untuk User memilih kursi)
+                        if (periksaAksiKlik) {
+                            const isMine = (isOccupiedBy === contextUser.username);
+                            onClickAttr = `onclick="pilihKursiSmartEngine('${seatKeyString}', ${isOccupiedBy ? 'true' : 'false'}, ${isMine}, ${targetBusNo})"`;
+                        }
+
+                        htmlStr += `<button ${onClickAttr} class="${btnClass}" title="Nomor Kursi: ${currentSeatIndex}">${labelKursi}</button>`;
+                        seatCounter++;
+                    }
+                }
+            }
+            return htmlStr;
+        }
+
+        // Render untuk sisi Karyawan
         function renderBusMap() {
             const config = JSON.parse(localStorage.getItem('fam_global_config'));
             const statusBox = document.getElementById('statusKursiUser');
@@ -735,12 +858,11 @@
             const grid = document.getElementById('busGrid');
 
             if (!config.aksesKursi) {
-                statusBox.innerText = "🔒 Akses denah kursi belum dibuka oleh Admin.";
+                statusBox.innerText = "🔒 Akses pemesanan denah kursi bus belum dibuka oleh Admin.";
                 statusBox.classList.remove('hidden'); mapContainer.classList.add('hidden');
                 return;
             }
             statusBox.classList.add('hidden'); mapContainer.classList.remove('hidden');
-            grid.innerHTML = '';
 
             const users = JSON.parse(localStorage.getItem('fam_users'));
             let occupiedSeats = {};
@@ -748,43 +870,66 @@
                 if(u.kursi) u.kursi.forEach(s => { occupiedSeats[s] = u.username; });
             });
 
-            const keu = hitungKeuanganKaryawan(currentSession);
-            const kuotaMaksKursi = keu.jumlahAnggota; 
-            const jumlahKursiSaatIni = currentSession.kursi ? currentSession.kursi.length : 0;
-
-            for (let i = 1; i <= config.totalKursiBus; i++) {
-                const seatId = `B${i}`;
-                const isOccupied = occupiedSeats[seatId];
-                const isMine = isOccupied === currentSession.username;
-
-                let btnClass = "p-2 rounded-lg text-xs font-bold text-center transition-all ";
-                if (isMine) btnClass += "bg-indigo-600 text-white shadow-md";
-                else if (isOccupied) btnClass += "bg-slate-300 text-slate-500 cursor-not-allowed";
-                else btnClass += "bg-emerald-100 text-emerald-800 hover:bg-emerald-200";
-
-                grid.innerHTML += `<button onclick="pilihKursi('${seatId}', ${isOccupied ? 'true' : 'false'}, ${isMine ? 'true' : 'false'}, ${kuotaMaksKursi}, ${jumlahKursiSaatIni})" class="${btnClass}">${seatId}</button>`;
-            }
+            const targetBusSelected = document.getElementById('userBusSelect').value || "1";
+            grid.innerHTML = buatStrukturBigBus23(targetBusSelected, occupiedSeats, true, currentSession);
         }
 
-        function pilihKursi(seatId, isOccupied, isMine, kuotaMaks, jumlahKursi) {
-            if(isOccupied && !isMine) return alert('Kursi sudah terisi!');
+        // Render live monitor di sisi Admin
+        function renderAdminBusMonitor() {
+            const users = JSON.parse(localStorage.getItem('fam_users'));
+            let occupiedSeats = {};
+            Object.values(users).forEach(u => {
+                if(u.kursi) u.kursi.forEach(s => { occupiedSeats[s] = u.username; });
+            });
+
+            const targetBusSelected = document.getElementById('admBusMonitorSelect').value || "1";
+            const gridAdmin = document.getElementById('admBusGrid');
+            gridAdmin.innerHTML = buatStrukturBigBus23(targetBusSelected, occupiedSeats, false, null);
+        }
+
+        // Logika Eksekusi Klik Pemilihan Kursi
+        function pilihKursiSmartEngine(seatKeyString, isOccupied, isMine, targetBusNo) {
+            if (isOccupied && !isMine) return alert('Kursi tersebut sudah dipesan oleh karyawan lain!');
+            
             const users = JSON.parse(localStorage.getItem('fam_users'));
             let mySeats = users[currentSession.username].kursi || [];
-
+            const keu = hitungKeuanganKaryawan(currentSession);
+            
             if (isMine) {
-                mySeats = mySeats.filter(s => s !== seatId);
-                alert(`Kursi ${seatId} dilepas.`);
+                mySeats = mySeats.filter(s => s !== seatKeyString);
+                alert(`Anda melepas pesanan ${seatKeyString.replace("Bus", "Bus ").replace("-Seat", " Kursi ")}`);
             } else {
-                if (jumlahKursi >= kuotaMaks) return alert(`Kuota kursi maksimal kelompok Anda adalah ${kuotaMaks} kursi.`);
-                mySeats.push(seatId);
-                alert(`Berhasil memilih Kursi ${seatId}`);
+                // Periksa kuota iuran berdasarkan jumlah anggota keluarga
+                if (mySeats.length >= keu.jumlahAnggota) {
+                    return alert(`Batas kuota maksimal kelompok Anda adalah ${keu.jumlahAnggota} kursi sesuai jumlah jiwa pendaftaran.`);
+                }
+
+                // VALIDASI OTOMATIS ANTAR BUS (Mencegah loncat ke Bus 2 jika Bus 1 belum penuh)
+                if (targetBusNo > 1) {
+                    let totalTerisiBusSebelumnya = 0;
+                    Object.values(users).forEach(u => {
+                        if(u.kursi) {
+                            u.kursi.forEach(sStr => {
+                                if(sStr.startsWith(`Bus${targetBusNo - 1}-`)) totalTerisiBusSebelumnya++;
+                            });
+                        }
+                    });
+
+                    if (totalTerisiBusSebelumnya < KURSI_PER_BUS) {
+                        return alert(`🚨 SMART ENGINE SYSTEM:\n\nMaaf, Bus ${targetBusNo - 1} belum terisi penuh (${totalTerisiBusSebelumnya}/${KURSI_PER_BUS} Kursi).\nSilahkan penuhi alokasi kursi di Bus ${targetBusNo - 1} terlebih dahulu.`);
+                    }
+                }
+
+                mySeats.push(seatKeyString);
+                alert(`Berhasil memesan ${seatKeyString.replace("Bus", "Bus ").replace("-Seat", " Kursi ")}`);
             }
+
             users[currentSession.username].kursi = mySeats;
             localStorage.setItem('fam_users', JSON.stringify(users));
-            renderBusMap();
+            renderDashboard();
         }
 
-        // --- 10. TRIGGERS ON LOAD ---
+        // --- 11. TRIGGERS ON LOAD ---
         document.getElementById('btnPrimaryAuth').onclick = handleAuthSubmit;
         document.getElementById('btnToggleAuth').onclick = toggleAuthMode;
         
