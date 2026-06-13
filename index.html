@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Family Gathering Dashboard v2.3</title>
+    <title>Family Gathering Dashboard v2.4</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); }
@@ -13,7 +13,7 @@
 
     <nav class="bg-white shadow-sm border-b border-slate-200 px-6 py-4 flex justify-between items-center sticky top-0 z-50">
         <h1 class="text-xl font-bold text-indigo-600 flex items-center gap-2">
-            🎉 FamGather <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-normal">Smart Engine v2.3</span>
+            🎉 FamGather <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-normal">Smart Engine v2.4</span>
         </h1>
         <div id="navAuth" class="flex items-center gap-4"></div>
     </nav>
@@ -105,7 +105,7 @@
                             <thead>
                                 <tr class="border-b border-slate-100 text-slate-400 text-sm">
                                     <th class="pb-2">Nama</th>
-                                    <th class="pb-2">Hubungan</th>
+                                    <th class="pb-2">Hubungan / Kategori</th>
                                     <th class="pb-2 text-right">Target Base</th>
                                 </tr>
                             </thead>
@@ -152,9 +152,15 @@
 
         <section id="viewAdmin" class="space-y-6 hidden">
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap gap-4 items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <label class="text-sm font-bold text-slate-700">🗓️ Bulan Pelaksanaan Event:</label>
-                    <input type="month" id="admEventMonth" onchange="updateEventMonthGlobal()" class="border px-3 py-1 rounded-xl text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500">
+                <div class="flex flex-wrap items-center gap-6">
+                    <div class="flex items-center gap-2">
+                        <label class="text-sm font-bold text-slate-700">🗓️ Bulan Event:</label>
+                        <input type="month" id="admEventMonth" onchange="updateEventMonthGlobal()" class="border px-3 py-1.5 rounded-xl text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <label class="text-sm font-bold text-slate-700">💰 Target per Jiwa (Rp):</label>
+                        <input type="number" id="admTargetCost" onchange="updateTargetCostGlobal()" placeholder="Misal: 1000000" class="border px-3 py-1.5 rounded-xl text-sm font-bold w-36 text-indigo-600 outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
                 </div>
                 <button onclick="clearAllDataLog()" class="text-xs bg-rose-50 text-rose-600 hover:bg-rose-100 px-3 py-1.5 rounded-xl font-bold transition-all">
                     🚨 Reset Semua Data (Karyawan & Pembayaran)
@@ -171,8 +177,9 @@
                     <p class="text-2xl font-black text-amber-500 mt-1" id="admPendingCount">0</p>
                 </div>
                 <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                    <p class="text-xs text-slate-400 font-bold uppercase">Total Peserta (Jiwa)</p>
+                    <p class="text-xs text-slate-400 font-bold uppercase">Total Peserta Terdaftar</p>
                     <p class="text-2xl font-black text-indigo-600 mt-1" id="admTotalPeserta">0</p>
+                    <p class="text-[11px] text-slate-500 mt-0.5 font-medium" id="admTotalPesertaDetail">0 Dewasa, 0 Anak</p>
                 </div>
                 <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
                     <p class="text-xs text-slate-400 font-bold uppercase">Kontrol Kursi Bus</p>
@@ -199,13 +206,13 @@
             </div>
 
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                <h3 class="text-lg font-bold mb-4">👥 Monitoring Keuangan Seluruh Karyawan</h3>
+                <h3 class="text-lg font-bold mb-4">👥 Monitoring Keuangan & Kategori Peserta</h3>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse text-sm">
                         <thead>
                             <tr class="border-b border-slate-200 text-slate-400 bg-slate-50">
                                 <th class="p-3">Karyawan</th>
-                                <th class="p-3">Total Jiwa</th>
+                                <th class="p-3">Total Rincian Jiwa</th>
                                 <th class="p-3">Target + Unik</th>
                                 <th class="p-3">Sudah Bayar</th>
                                 <th class="p-3">Sisa Tagihan</th>
@@ -234,8 +241,15 @@
                     <option value="Orang Tua">Orang Tua</option>
                 </select>
             </div>
+            <div>
+                <label class="block text-xs font-semibold mb-1">Kategori Jiwa</label>
+                <select id="kelKategori" class="w-full px-3 py-2 border rounded-xl outline-none bg-indigo-50 font-medium text-indigo-900">
+                    <option value="Dewasa">Dewasa</option>
+                    <option value="Anak">Anak (Balita/Remaja)</option>
+                </select>
+            </div>
             <div class="bg-amber-50 text-amber-800 text-xs p-3 rounded-xl">
-                ⚠️ Menambahkan keluarga di tengah jalan akan menambah tagihan Rp 1.000.000, lalu langsung dibagi rata ke sisa bulan pembayaran yang tersisa secara otomatis.
+                ⚠️ Menambahkan keluarga di tengah jalan akan menambah tagihan sesuai target biaya perorang yang ditentukan Admin, lalu otomatis dibagi rata ke sisa bulan pembayaran.
             </div>
             <div class="flex justify-end gap-2 text-sm pt-2">
                 <button onclick="tutupModalKeluarga()" class="px-4 py-2 border rounded-xl">Batal</button>
@@ -245,7 +259,6 @@
     </div>
 
     <script>
-        // Global variabel sementara untuk melacak status unggahan foto
         let fotoTerpilihBase64 = null;
 
         // --- 1. SINKRONISASI DATABASE LOCALSTORAGE ---
@@ -255,7 +268,8 @@
                 localStorage.setItem('fam_global_config', JSON.stringify({
                     aksesKursi: false,
                     totalKursiBus: 40,
-                    targetEventMonth: `${currentYear}-12` 
+                    targetEventMonth: `${currentYear}-12`,
+                    targetCostPerPerson: 1000000 // Nilai Default Awal
                 }));
             }
             if (!localStorage.getItem('fam_users')) {
@@ -360,10 +374,23 @@
             updateNavbarUI();
         }
 
-        // --- 4. LOGIKA PINTAR TAGIHAN DAN KAS KELOMPOK ---
+        // --- 4. LOGIKA PINTAR TAGIHAN DAN KAS KELOMPOK (DINAMIS COST + RINCIAN KATEGORI) ---
         function hitungKeuanganKaryawan(user) {
-            const baseTargetPerOrang = 1000000;
-            const jumlahAnggota = 1 + (user.keluarga ? user.keluarga.length : 0); 
+            const config = JSON.parse(localStorage.getItem('fam_global_config'));
+            const baseTargetPerOrang = config.targetCostPerPerson || 1000000; // Mengambil nilai dinamis dari admin
+            
+            // Hitung rincian kategori jiwa
+            let dewasaCount = 1; // Karyawan itu sendiri otomatis dihitung Dewasa
+            let anakCount = 0;
+
+            if(user.keluarga) {
+                user.keluarga.forEach(k => {
+                    if(k.kategori === 'Anak') anakCount++;
+                    else dewasaCount++;
+                });
+            }
+
+            const jumlahAnggota = dewasaCount + anakCount; 
             const targetMurni = jumlahAnggota * baseTargetPerOrang;
             const totalTargetPlusUnik = targetMurni + parseInt(user.uniqueCode);
 
@@ -374,11 +401,10 @@
             const sisaTagihan = Math.max(0, totalTargetPlusUnik - totalSudahBayar);
             const sisaBulanDinamis = hitungSisaBulanOtomatis();
             
-            // Perhitungan iuran bulanan murni sebelum pembulatan
             let iuranMurni = Math.ceil(sisaTagihan / sisaBulanDinamis);
             let iuranPerBulanSisaPalingPas = iuranMurni;
 
-            // PEMBULATAN OTOMATIS: Mengubah akhiran nominal iuran bulanan agar pas dengan kode unik
+            // Pembulatan otomatis kode unik
             if (sisaTagihan > 0 && iuranMurni > 1000) {
                 const uniqueInt = parseInt(user.uniqueCode);
                 const baseRibuan = Math.floor(iuranMurni / 1000) * 1000;
@@ -387,7 +413,6 @@
                 if (iuranPerBulanSisaPalingPas < iuranMurni) {
                     iuranPerBulanSisaPalingPas += 1000;
                 }
-                // Jika iuran pembulatan melebihi sisa total tagihan, kembalikan ke sisa tagihan asli
                 if (iuranPerBulanSisaPalingPas > sisaTagihan) {
                     iuranPerBulanSisaPalingPas = sisaTagihan;
                 }
@@ -402,8 +427,11 @@
                 sisaTagihan, 
                 iuranPerBulanSisa: iuranPerBulanSisaPalingPas, 
                 jumlahAnggota, 
+                dewasaCount,
+                anakCount,
                 sisaBulanDinamis,
-                statusBulanIni
+                statusBulanIni,
+                baseTargetPerOrang
             };
         }
 
@@ -429,7 +457,6 @@
             document.getElementById('userTotalBayar').innerText = formatIDR(keu.totalSudahBayar);
             document.getElementById('userSisaTagihan').innerText = formatIDR(keu.sisaTagihan);
             
-            // Iuran bulanan yang ditampilkan sudah dibulatkan otomatis dengan kode unik di dalam mesin hitung
             document.getElementById('userSisaBulanBadge').innerText = `${keu.sisaBulanDinamis} Bulan Menuju Event`;
             document.getElementById('userIuranPerBulan').innerText = formatIDR(keu.iuranPerBulanSisa);
             document.getElementById('userStatusBulanIni').innerText = keu.statusBulanIni;
@@ -438,13 +465,19 @@
             tbody.innerHTML = `
                 <tr class="bg-indigo-50/50 font-medium">
                     <td class="py-2.5 px-1">${currentSession.nama}</td>
-                    <td class="py-2.5">Karyawan (Utama)</td>
-                    <td class="py-2.5 text-right">${formatIDR(1000000)}</td>
+                    <td class="py-2.5">Karyawan Utama (<span class="text-xs font-bold text-indigo-700">Dewasa</span>)</td>
+                    <td class="py-2.5 text-right">${formatIDR(keu.baseTargetPerOrang)}</td>
                 </tr>
             `;
             if(currentSession.keluarga) {
                 currentSession.keluarga.forEach(k => {
-                    tbody.innerHTML += `<tr><td class="py-2 px-1">${k.nama}</td><td>${k.hubungan}</td><td class="text-right">${formatIDR(1000000)}</td></tr>`;
+                    const katBadge = k.kategori === 'Anak' ? 'bg-amber-100 text-amber-800' : 'bg-indigo-100 text-indigo-800';
+                    tbody.innerHTML += `
+                        <tr>
+                            <td class="py-2 px-1">${k.nama}</td>
+                            <td>${k.hubungan} (<span class="text-xs px-1.5 py-0.5 rounded font-bold ${katBadge}">${k.kategori || 'Dewasa'}</span>)</td>
+                            <td class="text-right">${formatIDR(keu.baseTargetPerOrang)}</td>
+                        </tr>`;
                 });
             }
 
@@ -468,8 +501,9 @@
             const config = JSON.parse(localStorage.getItem('fam_global_config'));
 
             document.getElementById('admEventMonth').value = config.targetEventMonth;
+            document.getElementById('admTargetCost').value = config.targetCostPerPerson || 1000000; // Load input target biaya admin
 
-            let totalKas = 0, pendingCount = 0, totalPeserta = 0;
+            let totalKas = 0, pendingCount = 0, totalPesertaGlobal = 0, totalDewasaGlobal = 0, totalAnakGlobal = 0;
             const tbodyVerifikasi = document.getElementById('admListVerifikasi');
             const tbodyKaryawan = document.getElementById('admListKaryawan');
             
@@ -484,8 +518,11 @@
             Object.values(users).forEach(u => {
                 if(u.isAdmin) return;
                 const keu = hitungKeuanganKaryawan(u);
+                
                 totalKas += keu.totalSudahBayar;
-                totalPeserta += keu.jumlahAnggota;
+                totalPesertaGlobal += keu.jumlahAnggota;
+                totalDewasaGlobal += keu.dewasaCount;
+                totalAnakGlobal += keu.anakCount;
 
                 u.payments.forEach((p, idx) => {
                     if (p.status === 'Pending') {
@@ -504,10 +541,14 @@
                     }
                 });
 
+                // FITUR BARU: Menampilkan Pemisahan Rincian Dewasa dan Anak per baris karyawan
                 tbodyKaryawan.innerHTML += `
                     <tr class="hover:bg-slate-50">
                         <td class="p-3"><p class="font-bold">${u.nama}</p></td>
-                        <td class="p-3 font-medium">${keu.jumlahAnggota} Jiwa</td>
+                        <td class="p-3">
+                            <span class="font-bold text-slate-800">${keu.jumlahAnggota} Jiwa</span>
+                            <div class="text-[11px] text-slate-500 font-medium">${keu.dewasaCount} Dewasa, ${keu.anakCount} Anak</div>
+                        </td>
                         <td class="p-3 font-semibold">${formatIDR(keu.totalTargetPlusUnik)}</td>
                         <td class="p-3 text-emerald-600 font-bold">${formatIDR(keu.totalSudahBayar)}</td>
                         <td class="p-3 text-rose-600 font-bold">${formatIDR(keu.sisaTagihan)}</td>
@@ -518,37 +559,30 @@
 
             document.getElementById('admTotalKas').innerText = formatIDR(totalKas);
             document.getElementById('admPendingCount').innerText = pendingCount;
-            document.getElementById('admTotalPeserta').innerText = totalPeserta + ' Jiwa';
+            
+            // Tampilkan kalkulasi total global kategori ke widget statistik atas admin
+            document.getElementById('admTotalPeserta').innerText = totalPesertaGlobal + ' Jiwa';
+            document.getElementById('admTotalPesertaDetail').innerText = `${totalDewasaGlobal} Dewasa, ${totalAnakGlobal} Anak`;
         }
 
-        // --- 6. INTERAKSI UP-LOAD FOTO SIMULASI ---
-        function simulasiPilihFoto() {
-            document.getElementById('payPhotoInput').click();
-        }
-
+        // --- 6. INTERAKSI UPLOAD FOTO SIMULASI ---
+        function simulasiPilihFoto() { document.getElementById('payPhotoInput').click(); }
         function handleFotoTerpilih() {
             const fileInput = document.getElementById('payPhotoInput');
             if(fileInput.files && fileInput.files[0]) {
                 const file = fileInput.files[0];
                 document.getElementById('txtPhotoStatus').innerText = `✅ ${file.name} Siap Kirim`;
-                fotoTerpilihBase64 = `Foto: ${file.name}`; // Menggunakan nama file sebagai identifikasi di sisi admin
+                fotoTerpilihBase64 = `Foto: ${file.name}`;
             }
         }
 
         // --- 7. LOGIKA KARYAWAN: SELESAI TRANSER LANGSUNG KONFIRMASI ---
         function kirimPembayaranSederhana() {
             const keu = hitungKeuanganKaryawan(currentSession);
-            
-            if (keu.sisaTagihan <= 0) {
-                return alert('Tagihan Anda sudah lunas sepenuhnya!');
-            }
-            if (!fotoTerpilihBase64) {
-                return alert('Silahkan tambahkan foto bukti transfer terlebih dahulu!');
-            }
+            if (keu.sisaTagihan <= 0) return alert('Tagihan Anda sudah lunas sepenuhnya!');
+            if (!fotoTerpilihBase64) return alert('Silahkan tambahkan foto bukti transfer terlebih dahulu!');
 
-            // Sistem mengambil nominal yang sudah dibulatkan otomatis oleh engine pintar di atas
             const nominalTransferOtomatis = keu.iuranPerBulanSisa;
-
             const users = JSON.parse(localStorage.getItem('fam_users'));
             users[currentSession.username].payments.push({
                 nominal: nominalTransferOtomatis, 
@@ -558,13 +592,11 @@
             });
             
             localStorage.setItem('fam_users', JSON.stringify(users));
-            alert(`Sukses! Pembayaran sebesar ${formatIDR(nominalTransferOtomatis)} telah dikonfirmasi ke admin. Menunggu verifikasi.`);
+            alert(`Sukses! Pembayaran sebesar ${formatIDR(nominalTransferOtomatis)} telah dikonfirmasi ke admin.`);
             
-            // Reset form status foto
             fotoTerpilihBase64 = null;
             document.getElementById('txtPhotoStatus').innerText = "➕ Tambah Foto Bukti";
             document.getElementById('payPhotoInput').value = "";
-            
             renderDashboard();
         }
 
@@ -576,7 +608,19 @@
             renderDashboard();
         }
 
-        // --- 8. SETTING ADMIN ACTION ---
+        // --- 8. GLOBAL ADMIN SETTINGS ACTIONS (BARU & REALTIME) ---
+        function updateTargetCostGlobal() {
+            const inputVal = parseInt(document.getElementById('admTargetCost').value);
+            if (!inputVal || inputVal <= 0) return alert('Target biaya perorang harus valid dan lebih besar dari 0!');
+
+            const config = JSON.parse(localStorage.getItem('fam_global_config'));
+            config.targetCostPerPerson = inputVal;
+            localStorage.setItem('fam_global_config', JSON.stringify(config));
+            
+            alert(`🎯 Target biaya perorang berhasil diubah menjadi: ${formatIDR(inputVal)}.\nSeluruh tagihan dan cicilan iuran otomatis karyawan telah diperbarui!`);
+            renderDashboard();
+        }
+
         function updateEventMonthGlobal() {
             const val = document.getElementById('admEventMonth').value;
             if(!val) return;
@@ -592,7 +636,7 @@
                 localStorage.removeItem('fam_users');
                 localStorage.removeItem('fam_global_config');
                 initDatabase();
-                alert("🔄 Seluruh database berhasil dibersihkan ke kondisi awal! Total peserta kembali menjadi 0.");
+                alert("🔄 Seluruh database berhasil dibersihkan ke kondisi awal!");
                 window.location.reload();
             }
         }
@@ -610,16 +654,19 @@
         function simpanKeluarga() {
             const nama = document.getElementById('kelNama').value.trim();
             const hubungan = document.getElementById('kelHubungan').value;
+            const kategori = document.getElementById('kelKategori').value; // Mengambil data kategori jiwa
             if(!nama) return alert('Isi nama keluarga!');
 
             const users = JSON.parse(localStorage.getItem('fam_users'));
             if(!users[currentSession.username].keluarga) users[currentSession.username].keluarga = [];
-            users[currentSession.username].keluarga.push({ nama, hubungan });
+            
+            // Simpan rincian nama, hubungan, dan kategori usia
+            users[currentSession.username].keluarga.push({ nama, hubungan, kategori });
             
             localStorage.setItem('fam_users', JSON.stringify(users));
             tutupModalKeluarga();
             document.getElementById('kelNama').value = '';
-            alert('Anggota keluarga berhasil ditambah! Target keuangan kelompok Anda disesuaikan otomatis.');
+            alert('Anggota keluarga berhasil ditambah!');
             renderDashboard();
         }
 
@@ -671,7 +718,7 @@
                 mySeats = mySeats.filter(s => s !== seatId);
                 alert(`Kursi ${seatId} dilepas.`);
             } else {
-                if (jumlahKursi >= kuotaMaks) return alert(`Kuota kursi maksimal kelompok Anda adalah ${kuotaMaks} kursi sesuai dengan jumlah anggota kelompok terdaftar.`);
+                if (jumlahKursi >= kuotaMaks) return alert(`Kuota kursi maksimal kelompok Anda adalah ${kuotaMaks} kursi.`);
                 mySeats.push(seatId);
                 alert(`Berhasil memilih Kursi ${seatId}`);
             }
